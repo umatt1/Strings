@@ -1,9 +1,62 @@
+/* Collapsible Controls */
 .controls {
   background: white;
-  padding: 20px;
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   margin-bottom: 20px;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.controls.collapsed {
+  margin-bottom: 10px;
+}
+
+.controls-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  cursor: pointer;
+  border-bottom: 2px solid #f0f0f0;
+  transition: background 0.2s ease;
+}
+
+.controls-header:hover {
+  background: linear-gradient(135deg, #e9ecef 0%, #dee2e6 100%);
+}
+
+.controls-header h3 {
+  margin: 0;
+  font-size: 16px;
+  color: #333;
+  font-weight: 600;
+}
+
+.controls .collapse-button {
+  background: none;
+  border: none;
+  font-size: 14px;
+  color: #666;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+}
+
+.controls .collapse-button:hover {
+  background: rgba(0, 0, 0, 0.1);
+  color: #333;
+}
+
+.controls-content {
+  padding: 20px;
+  transition: opacity 0.3s ease;
+}
+
+.controls.collapsed .controls-content {
+  display: none;
 }
 
 .control-section {

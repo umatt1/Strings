@@ -24,6 +24,11 @@ export const PlaybackControls: React.FC<PlaybackControlsProps> = ({
   onClearSelection,
 }) => {
   const [isPlaying, setIsPlaying] = React.useState(false);
+  const [isCollapsed, setIsCollapsed] = React.useState(false);
+
+  const toggleCollapse = () => {
+    setIsCollapsed(!isCollapsed);
+  };
 
   const playBetweenSelectedNotes = async () => {
     if (selectedNotes.length !== 2 || isPlaying) return;
@@ -60,37 +65,48 @@ export const PlaybackControls: React.FC<PlaybackControlsProps> = ({
   };
 
   return (
-    <div className="playback-controls compact">
-      {/* Two-Note Selection Info */}
-      {selectedNotes.length > 0 && (
-        <div className="selection-info compact">
-          <span className="selection-count">
-            {selectedNotes.length === 1 ? '1 note selected' : `${selectedNotes.length} notes selected`}
-          </span>
-          {selectedNotes.length === 2 && (
-            <button 
-              className="play-button compact"
-              onClick={playBetweenSelectedNotes}
-              disabled={isPlaying}
-            >
-              {isPlaying ? '♪' : '▶'}
-            </button>
-          )}
-          <button 
-            className="clear-button compact"
-            onClick={onClearSelection}
-            title="Clear note selection"
-          >
-            ✕
-          </button>
-        </div>
-      )}
+    <div className={`playback-controls ${isCollapsed ? 'collapsed' : ''}`}>
+      <div className="playback-header" onClick={toggleCollapse}>
+        <h3>🎵 Audio & Selection</h3>
+        <button className="collapse-button">
+          {isCollapsed ? '▼' : '▲'}
+        </button>
+      </div>
       
-      {selectedNotes.length === 0 && selectedChordScale && (
-        <div className="chord-info compact">
-          <span className="chord-name">
-            {selectedChordScale.rootNote} {selectedChordScale.type}
-          </span>
+      {!isCollapsed && (
+        <div className="playback-content">
+          {/* Two-Note Selection Info */}
+          {selectedNotes.length > 0 && (
+            <div className="selection-info compact">
+              <span className="selection-count">
+                {selectedNotes.length === 1 ? '1 note selected' : `${selectedNotes.length} notes selected`}
+              </span>
+              {selectedNotes.length === 2 && (
+                <button 
+                  className="play-button compact"
+                  onClick={playBetweenSelectedNotes}
+                  disabled={isPlaying}
+                >
+                  {isPlaying ? '♪' : '▶'}
+                </button>
+              )}
+              <button 
+                className="clear-button compact"
+                onClick={onClearSelection}
+                title="Clear note selection"
+              >
+                ✕
+              </button>
+            </div>
+          )}
+          
+          {selectedNotes.length === 0 && selectedChordScale && (
+            <div className="chord-info compact">
+              <span className="chord-name">
+                {selectedChordScale.rootNote} {selectedChordScale.type}
+              </span>
+            </div>
+          )}
         </div>
       )}
     </div>

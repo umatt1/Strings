@@ -12,7 +12,8 @@
 }
 
 .music-theory-controls.collapsed {
-  width: auto;
+  width: 60px;
+  min-width: 60px;
 }
 
 .theory-header {

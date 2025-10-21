@@ -1,3 +1,64 @@
+/* Collapsible Playback Controls */
+.playback-controls {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  margin-bottom: 20px;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.playback-controls.collapsed {
+  margin-bottom: 10px;
+}
+
+.playback-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  background: linear-gradient(135deg, #e8f5e8 0%, #c8e6c9 100%);
+  cursor: pointer;
+  border-bottom: 2px solid #a5d6a7;
+  transition: background 0.2s ease;
+}
+
+.playback-header:hover {
+  background: linear-gradient(135deg, #c8e6c9 0%, #a5d6a7 100%);
+}
+
+.playback-header h3 {
+  margin: 0;
+  font-size: 16px;
+  color: #2e7d32;
+  font-weight: 600;
+}
+
+.playback-controls .collapse-button {
+  background: none;
+  border: none;
+  font-size: 14px;
+  color: #4caf50;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+}
+
+.playback-controls .collapse-button:hover {
+  background: rgba(76, 175, 80, 0.2);
+  color: #2e7d32;
+}
+
+.playback-content {
+  padding: 20px;
+  transition: opacity 0.3s ease;
+}
+
+.playback-controls.collapsed .playback-content {
+  display: none;
+}
+
 .selection-info {
   background: rgba(76, 175, 80, 0.1);
   border: 2px solid #4CAF50;

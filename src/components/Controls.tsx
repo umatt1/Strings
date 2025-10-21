@@ -38,9 +38,14 @@ export const Controls: React.FC<ControlsProps> = ({
   const [selectedTuning, setSelectedTuning] = React.useState<TuningPreset>(
     GUITAR_TUNINGS.find(t => t.id === 'standard')!
   );
+  const [isCollapsed, setIsCollapsed] = React.useState(false);
   
   const isGuitarSelected = selectedTuning.category === 'guitar';
   const availableTunings = isGuitarSelected ? GUITAR_TUNINGS : BASS_TUNINGS;
+
+  const toggleCollapse = () => {
+    setIsCollapsed(!isCollapsed);
+  };
 
   const handleInstrumentCategoryChange = (category: 'guitar' | 'bass') => {
     const defaultTuning = category === 'guitar' 
@@ -60,34 +65,43 @@ export const Controls: React.FC<ControlsProps> = ({
   };
 
   return (
-    <div className="controls basic-controls-layout">
-      <div className="control-section">
-        <h3>Instrument & Tuning</h3>
-        <div className="instrument-controls">
-          <div className="button-group">
-            <button
-              className={isGuitarSelected ? 'active' : ''}
-              onClick={() => handleInstrumentCategoryChange('guitar')}
-            >
-              Guitar
-            </button>
-            <button
-              className={!isGuitarSelected ? 'active' : ''}
-              onClick={() => handleInstrumentCategoryChange('bass')}
-            >
-              Bass
-            </button>
-          </div>
-          
-          <div className="tuning-selector">
-            <label>Tuning:</label>
-            <select 
-              value={selectedTuning.id} 
-              onChange={(e) => handleTuningChange(e.target.value)}
-            >
-              {availableTunings.map((tuning) => (
-                <option key={tuning.id} value={tuning.id}>
-                  {tuning.name}
+    <div className={`controls ${isCollapsed ? 'collapsed' : ''}`}>
+      <div className="controls-header" onClick={toggleCollapse}>
+        <h3>⚙️ Settings</h3>
+        <button className="collapse-button">
+          {isCollapsed ? '▼' : '▲'}
+        </button>
+      </div>
+      
+      {!isCollapsed && (
+        <div className="controls-content basic-controls-layout">
+          <div className="control-section">
+            <h4>Instrument & Tuning</h4>
+            <div className="instrument-controls">
+              <div className="button-group">
+                <button
+                  className={isGuitarSelected ? 'active' : ''}
+                  onClick={() => handleInstrumentCategoryChange('guitar')}
+                >
+                  Guitar
+                </button>
+                <button
+                  className={!isGuitarSelected ? 'active' : ''}
+                  onClick={() => handleInstrumentCategoryChange('bass')}
+                >
+                  Bass
+                </button>
+              </div>
+              
+              <div className="tuning-selector">
+                <label>Tuning:</label>
+                <select 
+                  value={selectedTuning.id} 
+                  onChange={(e) => handleTuningChange(e.target.value)}
+                >
+                  {availableTunings.map((tuning) => (
+                    <option key={tuning.id} value={tuning.id}>
+                      {tuning.name}
                 </option>
               ))}
             </select>
@@ -123,64 +137,66 @@ export const Controls: React.FC<ControlsProps> = ({
         </div>
       </div>
 
-      <div className="control-section">
-        <h3>Display Options</h3>
-        <div className="display-options">
-          <div className="option-group">
-            <h4>Orientation</h4>
-            <div className="button-group">
-              <button
-                className={orientation === 'horizontal' ? 'active' : ''}
-                onClick={() => onOrientationChange('horizontal')}
-              >
-                Horizontal
-              </button>
-              <button
-                className={orientation === 'vertical' ? 'active' : ''}
-                onClick={() => onOrientationChange('vertical')}
-              >
-                Vertical
-              </button>
+        <div className="control-section">
+          <h4>Display Options</h4>
+          <div className="display-options">
+            <div className="option-group">
+              <h4>Orientation</h4>
+              <div className="button-group">
+                <button
+                  className={orientation === 'horizontal' ? 'active' : ''}
+                  onClick={() => onOrientationChange('horizontal')}
+                >
+                  Horizontal
+                </button>
+                <button
+                  className={orientation === 'vertical' ? 'active' : ''}
+                  onClick={() => onOrientationChange('vertical')}
+                >
+                  Vertical
+                </button>
+              </div>
             </div>
-          </div>
 
-          <div className="option-group">
-            <h4>Fret Markers</h4>
-            <div className="button-group">
-              <button
-                className={fretMarkerMode === 'dots' ? 'active' : ''}
-                onClick={() => onFretMarkerModeChange('dots')}
-              >
-                Dots
-              </button>
-              <button
-                className={fretMarkerMode === 'numbers' ? 'active' : ''}
-                onClick={() => onFretMarkerModeChange('numbers')}
-              >
-                Numbers
-              </button>
+            <div className="option-group">
+              <h4>Fret Markers</h4>
+              <div className="button-group">
+                <button
+                  className={fretMarkerMode === 'dots' ? 'active' : ''}
+                  onClick={() => onFretMarkerModeChange('dots')}
+                >
+                  Dots
+                </button>
+                <button
+                  className={fretMarkerMode === 'numbers' ? 'active' : ''}
+                  onClick={() => onFretMarkerModeChange('numbers')}
+                >
+                  Numbers
+                </button>
+              </div>
             </div>
-          </div>
 
-          <div className="option-group">
-            <h4>String Order</h4>
-            <div className="button-group">
-              <button
-                className={!mirrorStrings ? 'active' : ''}
-                onClick={() => onMirrorStringsChange(false)}
-              >
-                Normal
-              </button>
-              <button
-                className={mirrorStrings ? 'active' : ''}
-                onClick={() => onMirrorStringsChange(true)}
-              >
-                Mirrored
-              </button>
+            <div className="option-group">
+              <h4>String Order</h4>
+              <div className="button-group">
+                <button
+                  className={!mirrorStrings ? 'active' : ''}
+                  onClick={() => onMirrorStringsChange(false)}
+                >
+                  Normal
+                </button>
+                <button
+                  className={mirrorStrings ? 'active' : ''}
+                  onClick={() => onMirrorStringsChange(true)}
+                >
+                  Mirrored
+                </button>
+              </div>
             </div>
           </div>
         </div>
-      </div>
+        </div>
+      )}
     </div>
   );
 };

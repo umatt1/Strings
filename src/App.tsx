@@ -64,8 +64,8 @@ function App() {
   return (
     <div className="app">
       <main className="app-main">
-        {/* Basic Controls - Always at top */}
-        <div className="basic-controls">
+        {/* Top Collapsible Controls */}
+        <div className="top-controls">
           <Controls
             instrument={instrument}
             onInstrumentChange={setInstrument}
@@ -80,29 +80,24 @@ function App() {
             mirrorStrings={mirrorStrings}
             onMirrorStringsChange={setMirrorStrings}
           />
+          
+          <PlaybackControls
+            instrument={instrument}
+            numFrets={numFrets}
+            minFret={minFret}
+            selectedChordScale={selectedChordScale}
+            selectedNotes={selectedNotes}
+            onClearSelection={handleClearSelection}
+          />
         </div>
 
         {/* Main Content Area - Music Theory + Fretboard */}
         <div className="main-content">
           <div className="theory-panel">
-            <div className="music-theory-section">
-              <MusicTheoryControls
-                selectedChordScale={selectedChordScale}
-                onChordScaleChange={setSelectedChordScale}
-              />
-            </div>
-            
-            {/* Compact Playback Controls */}
-            <div className="compact-playback">
-              <PlaybackControls
-                instrument={instrument}
-                numFrets={numFrets}
-                minFret={minFret}
-                selectedChordScale={selectedChordScale}
-                selectedNotes={selectedNotes}
-                onClearSelection={handleClearSelection}
-              />
-            </div>
+            <MusicTheoryControls
+              selectedChordScale={selectedChordScale}
+              onChordScaleChange={setSelectedChordScale}
+            />
           </div>
 
           <div className="fretboard-panel">
