@@ -41,34 +41,47 @@ export const FretboardNote: React.FC<FretboardNoteProps> = ({
   };
 
   const getButtonStyle = () => {
-    if (!isHighlighted || !scaleDegreeInfo) {
-      return {};
+    // If showLabelOnly is true (scale is selected but note is not in it), make it invisible
+    if (showLabelOnly) {
+      return {
+        background: 'transparent',
+        color: 'transparent',
+        borderColor: 'transparent',
+        boxShadow: 'none',
+        cursor: 'default'
+      };
     }
     
-    // Get color from theme based on scale degree
-    let backgroundColor: string;
-    if (scaleDegreeInfo.isImportant) {
-      switch (scaleDegreeInfo.degree) {
-        case 1: backgroundColor = colorTheme.scaleColors.root; break;
-        case 3: backgroundColor = colorTheme.scaleColors.third; break;
-        case 5: backgroundColor = colorTheme.scaleColors.fifth; break;
-        default: backgroundColor = colorTheme.scaleColors.otherImportant;
+    // If highlighted, use theme colors
+    if (isHighlighted && scaleDegreeInfo) {
+      // Get color from theme based on scale degree
+      let backgroundColor: string;
+      if (scaleDegreeInfo.isImportant) {
+        switch (scaleDegreeInfo.degree) {
+          case 1: backgroundColor = colorTheme.scaleColors.root; break;
+          case 3: backgroundColor = colorTheme.scaleColors.third; break;
+          case 5: backgroundColor = colorTheme.scaleColors.fifth; break;
+          default: backgroundColor = colorTheme.scaleColors.otherImportant;
+        }
+      } else {
+        switch (scaleDegreeInfo.degree) {
+          case 2: backgroundColor = colorTheme.scaleColors.second; break;
+          case 4: backgroundColor = colorTheme.scaleColors.fourth; break;
+          case 6: backgroundColor = colorTheme.scaleColors.sixth; break;
+          case 7: backgroundColor = colorTheme.scaleColors.seventh; break;
+          default: backgroundColor = colorTheme.scaleColors.others;
+        }
       }
-    } else {
-      switch (scaleDegreeInfo.degree) {
-        case 2: backgroundColor = colorTheme.scaleColors.second; break;
-        case 4: backgroundColor = colorTheme.scaleColors.fourth; break;
-        case 6: backgroundColor = colorTheme.scaleColors.sixth; break;
-        case 7: backgroundColor = colorTheme.scaleColors.seventh; break;
-        default: backgroundColor = colorTheme.scaleColors.others;
-      }
+      
+      return {
+        background: backgroundColor,
+        color: colorTheme.noteText,
+        borderColor: scaleDegreeInfo.isImportant ? '#333' : '#666'
+      };
     }
     
-    return {
-      background: backgroundColor,
-      color: colorTheme.noteText,
-      borderColor: scaleDegreeInfo.isImportant ? '#333' : '#666'
-    };
+    // Default: no scale selected, use default styling (let CSS handle it)
+    return {};
   };
 
   const getFretLabelContent = () => {
@@ -92,19 +105,7 @@ export const FretboardNote: React.FC<FretboardNoteProps> = ({
     return null;
   };
 
-  // If we're only showing the label (note is not in scale), just render the fret marker
-  if (showLabelOnly) {
-    return (
-      <div className="fret-cell-container">
-        {showFretLabel && getFretLabelContent() && (
-          <div className="fret-label-above">
-            {getFretLabelContent()}
-          </div>
-        )}
-      </div>
-    );
-  }
-
+  // Always render the full structure, but make invisible if not in scale
   return (
     <div className="fret-cell-container">
       {showFretLabel && getFretLabelContent() && (
@@ -113,13 +114,13 @@ export const FretboardNote: React.FC<FretboardNoteProps> = ({
         </div>
       )}
       <button
-        className={`fretboard-note ${isHighlighted ? 'highlighted' : ''} ${scaleDegreeInfo?.isImportant ? 'important' : ''} ${isSelected ? 'selected' : ''}`}
+        className={`fretboard-note ${isHighlighted ? 'highlighted' : ''} ${scaleDegreeInfo?.isImportant ? 'important' : ''} ${isSelected ? 'selected' : ''} ${showLabelOnly ? 'hidden' : ''}`}
         style={getButtonStyle()}
         onClick={handleClick}
         title={`${getNoteName(note)} - ${note.frequency.toFixed(2)} Hz${scaleDegreeInfo ? ` (${scaleDegreeInfo.degree}${scaleDegreeInfo.degree === 1 ? 'st' : scaleDegreeInfo.degree === 2 ? 'nd' : scaleDegreeInfo.degree === 3 ? 'rd' : 'th'})` : ''}${isSelected ? ' - SELECTED' : ''}`}
       >
-        <span className="note-name">{note.name}</span>
-        {scaleDegreeInfo && (
+        <span className="note-name">{showLabelOnly ? '' : note.name}</span>
+        {scaleDegreeInfo && isHighlighted && (
           <span className="scale-degree">{scaleDegreeInfo.degree}</span>
         )}
       </button>

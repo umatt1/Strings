@@ -17,7 +17,7 @@
   display: flex;
   flex-direction: column;
   gap: 0;
-  background: var(--grid-bg, #ffffff);
+  background: transparent;
   padding: 0;
   border-radius: 0;
   border: none;
@@ -26,8 +26,6 @@
   min-height: 100%;
   min-width: 100%;
   width: fit-content;
-  border-top: 1px solid var(--string-border, #ddd);
-  border-bottom: 1px solid var(--string-border, #ddd);
 }
 
 .fretboard-loading {
@@ -88,19 +86,37 @@
 .string-row {
   display: flex;
   align-items: center;
-  background: transparent;
+  background: transparent !important;
   border-radius: 0;
   padding: 0;
   margin: 0;
   border: none;
-  border-bottom: 1px solid var(--string-border, #ddd);
+  border-top: 1px solid #ddd !important;
   position: relative;
   flex: 1;
-  min-height: 60px;
+  min-height: 50px;
+}
+
+/* Add horizontal string line through the middle */
+.string-row::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  height: 2px;
+  background: #888 !important;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.string-row:first-child {
+  border-top: 2px solid #888 !important;
 }
 
 .string-row:last-child {
-  border-bottom: none;
+  border-bottom: 2px solid #888 !important;
 }
 
 .frets {
@@ -118,15 +134,20 @@
   align-items: center;
   justify-content: center;
   position: relative;
-  min-width: 70px;
+  min-width: 60px;
   height: 100%;
-  border-right: 1px solid var(--fret-border, #ddd);
-  background: transparent;
+  background: transparent !important;
   padding: 2px;
+  border-right: 2px solid #aaa !important;
+  box-sizing: border-box;
 }
 
 .fret-cell:first-child {
-  border-left: 3px solid var(--nut-border, #333);
+  border-left: 3px solid #333 !important;
+}
+
+.fret-cell:nth-child(2) {
+  border-left: 3px solid #666 !important;
 }
 
 /* Nut representation - thicker line between open strings (0) and first fret (1) */
@@ -188,18 +209,15 @@
   .string-row {
     padding: 0;
     margin: 0;
-    border-bottom: 1px solid var(--string-border, #ddd);
     flex: 1;
-    min-height: 50px;
+    min-height: 45px;
   }
 
-  .string-row:last-child {
-    border-bottom: none;
-  }.fret-cell {
-  min-width: 55px; /* Wider for touch targets */
-  min-height: 50px;
-  padding: 4px;
-}
+  .fret-cell {
+    min-width: 50px; /* Wider for touch targets */
+    min-height: 45px;
+    padding: 4px;
+  }
 
 /* Large Mobile (480px+) */
 @media (min-width: 480px) {
@@ -213,17 +231,12 @@
   }
 
   .string-row {
-    min-height: 55px;
-    border-bottom: 1px solid var(--string-border, #ddd);
-  }
-
-  .string-row:last-child {
-    border-bottom: none;
+    min-height: 48px;
   }
 
   .fret-cell {
-    min-width: 60px;
-    min-height: 55px;
+    min-width: 55px;
+    min-height: 48px;
   }
 }
 
@@ -249,16 +262,11 @@
   .string-row {
     padding: 0;
     margin: 0;
-    border-bottom: 1px solid var(--string-border, #ddd);
-    min-height: 60px;
-  }
-
-  .string-row:last-child {
-    border-bottom: none;
+    min-height: 50px;
   }
 
   .fret-cell {
-    min-width: 70px;
+    min-width: 60px;
     min-height: auto;
     padding: 2px;
   }
