@@ -62,11 +62,6 @@ function App() {
 
   return (
     <div className="app">
-      <header className="app-header">
-        <h1>🎸 Strings</h1>
-        <p>Interactive Fretboard Explorer</p>
-      </header>
-
       <main className="app-main">
         {/* Main Content Area - Music Theory + Right Column */}
         <div className="main-content">
