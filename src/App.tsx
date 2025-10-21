@@ -80,15 +80,6 @@ function App() {
             mirrorStrings={mirrorStrings}
             onMirrorStringsChange={setMirrorStrings}
           />
-          
-          <PlaybackControls
-            instrument={instrument}
-            numFrets={numFrets}
-            minFret={minFret}
-            selectedChordScale={selectedChordScale}
-            selectedNotes={selectedNotes}
-            onClearSelection={handleClearSelection}
-          />
         </div>
 
         {/* Main Content Area - Music Theory + Fretboard */}
@@ -112,6 +103,18 @@ function App() {
               onNoteSelect={handleNoteSelect}
             />
           </div>
+        </div>
+
+        {/* Bottom Playback Controls */}
+        <div className="bottom-controls">
+          <PlaybackControls
+            instrument={instrument}
+            numFrets={numFrets}
+            minFret={minFret}
+            selectedChordScale={selectedChordScale}
+            selectedNotes={selectedNotes}
+            onClearSelection={handleClearSelection}
+          />
         </div>
       </main>
 

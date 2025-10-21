@@ -69,7 +69,7 @@ export const PlaybackControls: React.FC<PlaybackControlsProps> = ({
       <div className="playback-header" onClick={toggleCollapse}>
         <h3>🎵 Audio & Selection</h3>
         <button className="collapse-button">
-          {isCollapsed ? '▼' : '▲'}
+          {isCollapsed ? '▲' : '▼'}
         </button>
       </div>
       

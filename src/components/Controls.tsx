@@ -74,11 +74,12 @@ export const Controls: React.FC<ControlsProps> = ({
       </div>
       
       {!isCollapsed && (
-        <div className="controls-content basic-controls-layout">
-          <div className="control-section">
-            <h4>Instrument & Tuning</h4>
-            <div className="instrument-controls">
-              <div className="button-group">
+        <div className="controls-content">
+          <div className="controls-horizontal-layout">
+            {/* Instrument & Tuning Section */}
+            <div className="control-group">
+              <h4>Instrument</h4>
+              <div className="button-group compact">
                 <button
                   className={isGuitarSelected ? 'active' : ''}
                   onClick={() => handleInstrumentCategoryChange('guitar')}
@@ -92,8 +93,7 @@ export const Controls: React.FC<ControlsProps> = ({
                   Bass
                 </button>
               </div>
-              
-              <div className="tuning-selector">
+              <div className="tuning-selector compact">
                 <label>Tuning:</label>
                 <select 
                   value={selectedTuning.id} 
@@ -107,60 +107,61 @@ export const Controls: React.FC<ControlsProps> = ({
             </select>
           </div>
         </div>
-      </div>
 
-      <div className="control-section">
-        <h3>Fret Range</h3>
-        <div className="fret-range-controls">
-          <div className="fret-control">
-            <label>Minimum Fret:</label>
-            <input
-              type="range"
-              min="0"
-              max={numFrets}
-              value={minFret}
-              onChange={(e) => onMinFretChange(parseInt(e.target.value))}
-            />
-            <span className="value-display">{minFret}</span>
-          </div>
-          <div className="fret-control">
-            <label>Maximum Frets:</label>
-            <input
-              type="range"
-              min={minFret}
-              max="24"
-              value={numFrets}
-              onChange={(e) => onNumFretsChange(parseInt(e.target.value))}
-            />
-            <span className="value-display">{numFrets}</span>
+        {/* Fret Range Section */}
+        <div className="control-group">
+          <h4>Fret Range</h4>
+          <div className="range-controls">
+            <div className="range-item">
+              <label>Min:</label>
+              <input
+                type="range"
+                min="0"
+                max={numFrets}
+                value={minFret}
+                onChange={(e) => onMinFretChange(parseInt(e.target.value))}
+              />
+              <span className="value-display">{minFret}</span>
+            </div>
+            <div className="range-item">
+              <label>Max:</label>
+              <input
+                type="range"
+                min={minFret}
+                max="24"
+                value={numFrets}
+                onChange={(e) => onNumFretsChange(parseInt(e.target.value))}
+              />
+              <span className="value-display">{numFrets}</span>
+            </div>
           </div>
         </div>
-      </div>
 
-        <div className="control-section">
-          <h4>Display Options</h4>
-          <div className="display-options">
-            <div className="option-group">
-              <h4>Orientation</h4>
-              <div className="button-group">
+        {/* Display Options Section */}
+        <div className="control-group">
+          <h4>Display</h4>
+          <div className="display-grid">
+            <div className="option-subgroup">
+              <label>Orientation:</label>
+              <div className="button-group compact">
                 <button
                   className={orientation === 'horizontal' ? 'active' : ''}
                   onClick={() => onOrientationChange('horizontal')}
                 >
-                  Horizontal
+                  H
                 </button>
                 <button
                   className={orientation === 'vertical' ? 'active' : ''}
                   onClick={() => onOrientationChange('vertical')}
                 >
-                  Vertical
+                  V
                 </button>
               </div>
             </div>
 
-            <div className="option-group">
-              <h4>Fret Markers</h4>
-              <div className="button-group">
+            <div className="option-subgroup">
+              <label>Markers:</label>
+              <div className="button-group compact">
                 <button
                   className={fretMarkerMode === 'dots' ? 'active' : ''}
                   onClick={() => onFretMarkerModeChange('dots')}
@@ -176,9 +177,9 @@ export const Controls: React.FC<ControlsProps> = ({
               </div>
             </div>
 
-            <div className="option-group">
-              <h4>String Order</h4>
-              <div className="button-group">
+            <div className="option-subgroup">
+              <label>Strings:</label>
+              <div className="button-group compact">
                 <button
                   className={!mirrorStrings ? 'active' : ''}
                   onClick={() => onMirrorStringsChange(false)}
@@ -189,12 +190,13 @@ export const Controls: React.FC<ControlsProps> = ({
                   className={mirrorStrings ? 'active' : ''}
                   onClick={() => onMirrorStringsChange(true)}
                 >
-                  Mirrored
+                  Mirror
                 </button>
               </div>
             </div>
           </div>
         </div>
+          </div>
         </div>
       )}
     </div>

@@ -55,6 +55,109 @@
   transition: opacity 0.3s ease;
 }
 
+/* Horizontal Layout for Compact Design */
+.controls-horizontal-layout {
+  display: flex;
+  gap: 30px;
+  flex-wrap: wrap;
+  align-items: flex-start;
+}
+
+.control-group {
+  flex: 1;
+  min-width: 200px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.control-group h4 {
+  margin: 0;
+  font-size: 14px;
+  color: #555;
+  font-weight: 600;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 4px;
+}
+
+.range-controls {
+  display: flex;
+  gap: 15px;
+}
+
+.range-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+}
+
+.range-item label {
+  font-size: 12px;
+  color: #666;
+  min-width: 30px;
+}
+
+.range-item input[type="range"] {
+  flex: 1;
+  min-width: 80px;
+}
+
+.range-item .value-display {
+  font-size: 12px;
+  font-weight: 600;
+  color: #333;
+  min-width: 20px;
+  text-align: center;
+}
+
+.display-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.option-subgroup {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.option-subgroup label {
+  font-size: 12px;
+  color: #666;
+  min-width: 60px;
+}
+
+.button-group.compact {
+  gap: 4px;
+}
+
+.button-group.compact button {
+  padding: 4px 8px;
+  font-size: 11px;
+  min-width: auto;
+}
+
+.tuning-selector.compact {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.tuning-selector.compact label {
+  font-size: 12px;
+  color: #666;
+  min-width: 50px;
+}
+
+.tuning-selector.compact select {
+  flex: 1;
+  padding: 4px 8px;
+  font-size: 12px;
+}
+
 .controls.collapsed .controls-content {
   display: none;
 }
@@ -454,31 +557,22 @@ input[type="range"] {
     padding: 12px 15px;
   }
   
-  .controls-content.basic-controls-layout {
-    display: flex;
+  .controls-horizontal-layout {
     flex-direction: column;
     gap: 15px;
   }
   
-  .display-options {
+  .control-group {
+    min-width: 0;
+  }
+  
+  .range-controls {
     flex-direction: column;
-    gap: 12px;
+    gap: 10px;
   }
   
-  .comprehensive-selectors {
-    flex-direction: column;
-  }
-  
-  .dropdown-section {
-    min-width: auto;
-  }
-  
-  .category-items {
-    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
-  }
-  
-  .quick-buttons {
-    justify-content: center;
+  .display-grid {
+    gap: 10px;
   }
 }
 
@@ -487,12 +581,20 @@ input[type="range"] {
     font-size: 14px;
   }
   
-  .button-group {
-    gap: 4px;
+  .controls-horizontal-layout {
+    gap: 10px;
   }
   
-  .button-group button {
-    padding: 6px 10px;
-    font-size: 12px;
+  .range-item {
+    gap: 6px;
+  }
+  
+  .option-subgroup {
+    gap: 6px;
+  }
+  
+  .button-group.compact button {
+    padding: 3px 6px;
+    font-size: 10px;
   }
 }
