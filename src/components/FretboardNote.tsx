@@ -51,17 +51,22 @@ export const FretboardNote: React.FC<FretboardNoteProps> = ({
   const getFretLabelContent = () => {
     if (!showFretLabel) return null;
     
-    const isMarkerFret = [3, 5, 7, 9, 15, 17, 19, 21].includes(fretNumber);
-    const isDoubleMarker = [12, 24].includes(fretNumber);
-    const isProminentFret = isMarkerFret || isDoubleMarker;
-    
-    if (!isProminentFret) return null;
-    
-    if (fretMarkerMode === 'dots') {
-      return isDoubleMarker ? '••' : '•';
-    } else {
-      return fretNumber.toString();
+    if (fretMarkerMode === 'numbers') {
+      // Numbers mode: show the fret number for all frets (except open)
+      return fretNumber > 0 ? fretNumber.toString() : null;
+    } else if (fretMarkerMode === 'dots') {
+      // Dots mode: show dots only at standard marker positions
+      const isOctaveMarker = [12, 24].includes(fretNumber);
+      const isStandardMarker = [3, 5, 7, 9, 15, 17, 19, 21].includes(fretNumber);
+      
+      if (isOctaveMarker) {
+        return '••'; // Double dots for octave positions
+      } else if (isStandardMarker) {
+        return '•'; // Single dot for standard positions
+      }
     }
+    
+    return null;
   };
 
   return (

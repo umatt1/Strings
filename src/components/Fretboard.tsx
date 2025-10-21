@@ -42,11 +42,19 @@ export const Fretboard: React.FC<FretboardProps> = ({
           ? getScaleDegreeInfo(note.name, selectedChordScale)
           : null;
 
-        // Determine if this fret should show a label
-        const isMarkerFret = [3, 5, 7, 9, 15, 17, 19, 21].includes(fret);
-        const isDoubleMarker = [12, 24].includes(fret);
-        const isProminentFret = isMarkerFret || isDoubleMarker;
-        const showFretLabel = isProminentFret && stringIndex === 0; // Only show on first string to avoid duplication
+        // Determine if this fret should show a label based on mode
+        let showFretLabel = false;
+        if (stringIndex === 0) { // Only show on first string to avoid duplication
+          if (fretMarkerMode === 'numbers') {
+            // Numbers mode: show all fret numbers (except fret 0/open)
+            showFretLabel = fret > 0;
+          } else if (fretMarkerMode === 'dots') {
+            // Dots mode: only standard marker positions
+            const isStandardMarker = [3, 5, 7, 9, 15, 17, 19, 21].includes(fret);
+            const isOctaveMarker = [12, 24].includes(fret);
+            showFretLabel = isStandardMarker || isOctaveMarker;
+          }
+        }
 
         // Check if this note is currently selected by the user
         const isSelected = selectedNotes.some(selectedNote => 
