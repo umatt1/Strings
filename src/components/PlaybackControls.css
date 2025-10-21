@@ -1,3 +1,72 @@
+.selection-info {
+  background: rgba(76, 175, 80, 0.1);
+  border: 2px solid #4CAF50;
+  border-radius: 8px;
+  padding: 12px;
+  margin-bottom: 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+.selection-info p {
+  margin: 0;
+  font-weight: 600;
+  color: #2e7d32;
+}
+
+.clear-button {
+  background: #f44336;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 6px 12px;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 600;
+  transition: background 0.2s ease;
+}
+
+.clear-button:hover {
+  background: #d32f2f;
+}
+
+.play-button.primary {
+  background: #4CAF50;
+  color: white;
+  border: 2px solid #2e7d32;
+  font-weight: 700;
+  font-size: 16px;
+}
+
+.play-button.primary:hover {
+  background: #45a049;
+}
+
+.play-button.secondary {
+  background: #f0f0f0;
+  color: #666;
+  border: 2px solid #ccc;
+  font-size: 14px;
+}
+
+.play-button.secondary:hover {
+  background: #e0e0e0;
+}
+
+.instruction {
+  background: rgba(255, 193, 7, 0.1);
+  border: 2px solid #ffc107;
+  border-radius: 8px;
+  padding: 12px;
+  margin: 8px 0;
+  text-align: center;
+  font-weight: 600;
+  color: #f57c00;
+  font-size: 14px;
+}
+
 .playback-controls {
   background: white;
   padding: 20px;

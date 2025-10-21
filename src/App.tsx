@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import type { InstrumentConfig } from './types/music';
+import type { InstrumentConfig, Note } from './types/music';
 import { GUITAR_TUNINGS, createInstrumentFromTuning } from './types/music';
 import type { ChordScale } from './utils/musicTheory';
 import { Controls } from './components/Controls';
@@ -15,6 +15,34 @@ function App() {
   const [minFret, setMinFret] = useState(0);
   const [orientation, setOrientation] = useState<'horizontal' | 'vertical'>('horizontal');
   const [selectedChordScale, setSelectedChordScale] = useState<ChordScale | undefined>(undefined);
+  const [selectedNotes, setSelectedNotes] = useState<Note[]>([]);
+
+  const handleNoteSelect = (note: Note, _stringIndex: number, _fretNumber: number) => {
+    setSelectedNotes(prev => {
+      // If this note is already selected, remove it
+      const existingIndex = prev.findIndex(n => 
+        n.frequency === note.frequency && 
+        n.name === note.name && 
+        n.octave === note.octave
+      );
+      
+      if (existingIndex >= 0) {
+        return prev.filter((_, index) => index !== existingIndex);
+      }
+      
+      // If we already have 2 notes, replace the oldest with the new one
+      if (prev.length >= 2) {
+        return [prev[1], note];
+      }
+      
+      // Add the new note
+      return [...prev, note];
+    });
+  };
+
+  const handleClearSelection = () => {
+    setSelectedNotes([]);
+  };
 
   const handleMinFretChange = (newMinFret: number) => {
     // Ensure min fret doesn't exceed max fret
@@ -56,6 +84,8 @@ function App() {
           numFrets={numFrets}
           minFret={minFret}
           selectedChordScale={selectedChordScale}
+          selectedNotes={selectedNotes}
+          onClearSelection={handleClearSelection}
         />
 
         <Fretboard
@@ -64,6 +94,7 @@ function App() {
           minFret={minFret}
           orientation={orientation}
           selectedChordScale={selectedChordScale}
+          onNoteSelect={handleNoteSelect}
         />
       </main>
 

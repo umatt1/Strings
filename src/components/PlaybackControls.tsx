@@ -1,6 +1,6 @@
 import React from 'react';
-import type { InstrumentConfig } from '../types/music';
-import { getNoteAtFret } from '../types/music';
+import type { InstrumentConfig, Note } from '../types/music';
+import { getNoteAtFret, getNoteName } from '../types/music';
 import type { ChordScale } from '../utils/musicTheory';
 import { isNoteInChord } from '../utils/musicTheory';
 import { audioPlayer } from '../utils/audio';
@@ -11,6 +11,8 @@ interface PlaybackControlsProps {
   numFrets: number;
   minFret: number;
   selectedChordScale?: ChordScale;
+  selectedNotes: Note[];
+  onClearSelection: () => void;
 }
 
 export const PlaybackControls: React.FC<PlaybackControlsProps> = ({
@@ -18,17 +20,53 @@ export const PlaybackControls: React.FC<PlaybackControlsProps> = ({
   numFrets,
   minFret,
   selectedChordScale,
+  selectedNotes,
+  onClearSelection,
 }) => {
   const [isPlaying, setIsPlaying] = React.useState(false);
 
-  const playHighlightedNotes = async () => {
+  const playBetweenSelectedNotes = async () => {
+    if (selectedNotes.length !== 2 || isPlaying) return;
+
+    setIsPlaying(true);
+
+    const [note1, note2] = selectedNotes;
+    const startFreq = Math.min(note1.frequency, note2.frequency);
+    const endFreq = Math.max(note1.frequency, note2.frequency);
+    
+    const frequencies: number[] = [];
+
+    // Collect all highlighted notes between the selected frequencies
+    for (let stringIndex = 0; stringIndex < instrument.strings.length; stringIndex++) {
+      const stringConfig = instrument.strings[stringIndex];
+      for (let fret = minFret; fret <= numFrets; fret++) {
+        const note = getNoteAtFret(stringConfig.openNote, stringConfig.octave, fret);
+        
+        // Include note if it's highlighted and within the frequency range
+        if (selectedChordScale && 
+            isNoteInChord(note.name, selectedChordScale) &&
+            note.frequency >= startFreq && 
+            note.frequency <= endFreq) {
+          frequencies.push(note.frequency);
+        }
+      }
+    }
+
+    // Sort by frequency and remove duplicates
+    const uniqueFrequencies = Array.from(new Set(frequencies)).sort((a, b) => a - b);
+
+    await audioPlayer.playSequence(uniqueFrequencies, 0.3, 0.1);
+    setIsPlaying(false);
+  };
+
+  const playAllHighlighted = async () => {
     if (!selectedChordScale || isPlaying) return;
 
     setIsPlaying(true);
 
     const frequencies: number[] = [];
 
-    // Collect ALL highlighted notes from the fretboard (every instance)
+    // Collect ALL highlighted notes from the fretboard
     for (let stringIndex = 0; stringIndex < instrument.strings.length; stringIndex++) {
       const stringConfig = instrument.strings[stringIndex];
       for (let fret = minFret; fret <= numFrets; fret++) {
@@ -39,42 +77,10 @@ export const PlaybackControls: React.FC<PlaybackControlsProps> = ({
       }
     }
 
-    // Sort by frequency but keep all instances (no deduplication)
-    frequencies.sort((a, b) => a - b);
+    // Sort by frequency and remove duplicates
+    const uniqueFrequencies = Array.from(new Set(frequencies)).sort((a, b) => a - b);
 
-    await audioPlayer.playSequence(frequencies, 0.2, 0.05);
-    setIsPlaying(false);
-  };
-
-  const playScale = async () => {
-    if (!selectedChordScale || isPlaying) return;
-
-    setIsPlaying(true);
-
-    // Play the scale pattern in order, using the lowest octave notes
-    const scaleNotes = selectedChordScale.notes;
-    const frequencies: number[] = [];
-
-    // Find the lowest occurrence of each scale note
-    for (const scaleName of scaleNotes) {
-      let lowestFreq = Infinity;
-      
-      for (let stringIndex = 0; stringIndex < instrument.strings.length; stringIndex++) {
-        const stringConfig = instrument.strings[stringIndex];
-        for (let fret = minFret; fret <= numFrets; fret++) {
-          const note = getNoteAtFret(stringConfig.openNote, stringConfig.octave, fret);
-          if (note.name === scaleName && note.frequency < lowestFreq) {
-            lowestFreq = note.frequency;
-          }
-        }
-      }
-      
-      if (lowestFreq !== Infinity) {
-        frequencies.push(lowestFreq);
-      }
-    }
-
-    await audioPlayer.playSequence(frequencies, 0.4, 0.1);
+    await audioPlayer.playSequence(uniqueFrequencies, 0.2, 0.05);
     setIsPlaying(false);
   };
 
@@ -89,24 +95,48 @@ export const PlaybackControls: React.FC<PlaybackControlsProps> = ({
   return (
     <div className="playback-controls">
       <h3>Playback</h3>
+      
+      {selectedNotes.length > 0 && (
+        <div className="selection-info">
+          <p>Selected Notes: {selectedNotes.map(note => getNoteName(note)).join(' → ')}</p>
+          <button
+            onClick={onClearSelection}
+            className="clear-button"
+          >
+            Clear Selection
+          </button>
+        </div>
+      )}
+      
       <div className="playback-buttons">
+        {selectedNotes.length === 2 ? (
+          <button
+            onClick={playBetweenSelectedNotes}
+            disabled={isPlaying}
+            className="play-button primary"
+          >
+            {isPlaying ? '🎵 Playing...' : '▶️ Play Between Selected Notes'}
+          </button>
+        ) : (
+          <p className="instruction">
+            {selectedNotes.length === 0 
+              ? "Click two highlighted notes to play the pattern between them"
+              : "Click one more highlighted note to enable playback"
+            }
+          </p>
+        )}
+        
         <button
-          onClick={playHighlightedNotes}
+          onClick={playAllHighlighted}
           disabled={isPlaying}
-          className="play-button"
+          className="play-button secondary"
         >
           {isPlaying ? '🎵 Playing...' : '▶️ Play All Highlighted'}
         </button>
-        <button
-          onClick={playScale}
-          disabled={isPlaying}
-          className="play-button"
-        >
-          {isPlaying ? '🎵 Playing...' : '▶️ Play Scale (Ascending)'}
-        </button>
       </div>
+      
       <p className="playback-info">
-        Selected: <strong>{selectedChordScale.rootNote} {selectedChordScale.type}</strong>
+        Pattern: <strong>{selectedChordScale.rootNote} {selectedChordScale.type}</strong>
       </p>
     </div>
   );
