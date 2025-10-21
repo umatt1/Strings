@@ -1,0 +1,91 @@
+.fretboard {
+  padding: 20px;
+  background: #f9f9f9;
+  border-radius: 8px;
+  overflow-x: auto;
+}
+
+.fretboard-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.string-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: white;
+  padding: 8px;
+  border-radius: 6px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.string-label {
+  min-width: 120px;
+  font-weight: 600;
+  color: #555;
+  font-size: 14px;
+}
+
+.frets {
+  display: flex;
+  gap: 4px;
+  flex-wrap: nowrap;
+}
+
+.fret-cell {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  min-width: 50px;
+}
+
+.fret-marker {
+  font-size: 10px;
+  color: #999;
+  margin-bottom: 2px;
+  font-weight: 500;
+}
+
+.fret-marker.open {
+  font-weight: 700;
+  color: #4CAF50;
+}
+
+/* Vertical orientation */
+.fretboard.vertical .fretboard-grid {
+  flex-direction: row;
+}
+
+.fretboard.vertical .string-row {
+  flex-direction: column;
+  width: auto;
+}
+
+.fretboard.vertical .string-label {
+  min-width: auto;
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+}
+
+.fretboard.vertical .frets {
+  flex-direction: column;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .fretboard {
+    padding: 10px;
+  }
+
+  .string-label {
+    min-width: 80px;
+    font-size: 12px;
+  }
+
+  .fret-cell {
+    min-width: 40px;
+  }
+}
