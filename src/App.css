@@ -33,18 +33,11 @@
   flex: 1;
 }
 
-/* New Layout System - Fretboard Centric */
-.top-controls {
-  margin-bottom: 20px;
-}
-
-.top-controls .controls {
-  margin-bottom: 0;
-}
+/* New Layout System - Three Column */
 
 .main-content {
   display: grid;
-  grid-template-columns: auto 1fr;
+  grid-template-columns: auto 1fr auto;
   gap: 20px;
   align-items: start;
 }
@@ -71,6 +64,16 @@
   flex: 1;
 }
 
+.settings-panel {
+  min-width: 0;
+  width: 280px;
+  transition: width 0.3s ease;
+}
+
+.settings-panel:has(.controls.collapsed) {
+  width: 60px;
+}
+
 .app-footer {
   margin-top: 40px;
   padding: 20px;
@@ -85,23 +88,35 @@
 }
 
 /* Responsive design */
+@media (max-width: 1024px) {
+  .main-content {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto auto;
+    gap: 15px;
+  }
+
+  .theory-panel {
+    order: 1;
+    width: 100% !important;
+  }
+
+  .fretboard-area {
+    order: 2;
+  }
+
+  .settings-panel {
+    order: 3;
+    width: 100% !important;
+  }
+}
+
 @media (max-width: 768px) {
   .app {
     padding: 10px;
   }
 
   .main-content {
-    grid-template-columns: 1fr;
-    gap: 15px;
-  }
-
-  .theory-panel {
-    order: 2;
-    width: 100% !important;
-  }
-
-  .fretboard-area {
-    order: 1;
+    gap: 10px;
   }
 }
 
@@ -111,15 +126,11 @@
   }
   
   .main-content {
-    gap: 10px;
-  }
-  
-  .top-controls {
-    margin: 10px 0;
+    gap: 8px;
   }
   
   .fretboard-area {
-    gap: 10px;
+    gap: 8px;
   }
 }
 

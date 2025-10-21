@@ -63,23 +63,7 @@ function App() {
   return (
     <div className="app">
       <main className="app-main">
-        {/* Top Collapsible Controls */}
-        <div className="top-controls">
-          <Controls
-            instrument={instrument}
-            onInstrumentChange={setInstrument}
-            numFrets={numFrets}
-            onNumFretsChange={handleMaxFretChange}
-            minFret={minFret}
-            onMinFretChange={handleMinFretChange}
-            fretMarkerMode={fretMarkerMode}
-            onFretMarkerModeChange={setFretMarkerMode}
-            mirrorStrings={mirrorStrings}
-            onMirrorStringsChange={setMirrorStrings}
-          />
-        </div>
-
-        {/* Main Content Area - Music Theory + Fretboard + Playback */}
+        {/* Main Content Area - Music Theory + Fretboard + Settings */}
         <div className="main-content">
           <div className="theory-panel">
             <MusicTheoryControls
@@ -111,6 +95,21 @@ function App() {
                 onClearSelection={handleClearSelection}
               />
             </div>
+          </div>
+
+          <div className="settings-panel">
+            <Controls
+              instrument={instrument}
+              onInstrumentChange={setInstrument}
+              numFrets={numFrets}
+              onNumFretsChange={handleMaxFretChange}
+              minFret={minFret}
+              onMinFretChange={handleMinFretChange}
+              fretMarkerMode={fretMarkerMode}
+              onFretMarkerModeChange={setFretMarkerMode}
+              mirrorStrings={mirrorStrings}
+              onMirrorStringsChange={setMirrorStrings}
+            />
           </div>
         </div>
       </main>
