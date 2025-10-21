@@ -12,6 +12,7 @@ interface FretboardProps {
   minFret: number;
   fretMarkerMode: 'dots' | 'numbers';
   selectedChordScale?: ChordScale;
+  selectedNotes?: Note[];
   mirrorStrings?: boolean;
   onNoteSelect?: (note: Note, stringIndex: number, fretNumber: number) => void;
 }
@@ -22,6 +23,7 @@ export const Fretboard: React.FC<FretboardProps> = ({
   minFret,
   fretMarkerMode,
   selectedChordScale,
+  selectedNotes = [],
   mirrorStrings = false,
   onNoteSelect,
 }) => {
@@ -46,6 +48,13 @@ export const Fretboard: React.FC<FretboardProps> = ({
         const isProminentFret = isMarkerFret || isDoubleMarker;
         const showFretLabel = isProminentFret && stringIndex === 0; // Only show on first string to avoid duplication
 
+        // Check if this note is currently selected by the user
+        const isSelected = selectedNotes.some(selectedNote => 
+          selectedNote.frequency === note.frequency && 
+          selectedNote.name === note.name && 
+          selectedNote.octave === note.octave
+        );
+
         frets.push(
           <div key={`${stringIndex}-${fret}`} className="fret-cell">
             <FretboardNote
@@ -53,6 +62,7 @@ export const Fretboard: React.FC<FretboardProps> = ({
               stringIndex={stringIndex}
               fretNumber={fret}
               isHighlighted={isHighlighted}
+              isSelected={isSelected}
               scaleDegreeInfo={scaleDegreeInfo}
               onSelect={onNoteSelect}
               showFretLabel={showFretLabel}

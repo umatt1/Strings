@@ -260,6 +260,31 @@
   transform: none;
 }
 
+.play-button.compact.disabled {
+  background: #ccc;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.no-selection-info {
+  background: rgba(158, 158, 158, 0.08);
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 8px 12px;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+}
+
+.no-selection-text {
+  color: #666;
+  font-weight: 500;
+  flex: 1;
+  font-style: italic;
+}
+
 .clear-button.compact {
   background: #f44336;
   color: white;

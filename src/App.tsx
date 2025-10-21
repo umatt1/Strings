@@ -96,6 +96,7 @@ function App() {
                 minFret={minFret}
                 fretMarkerMode={fretMarkerMode}
                 selectedChordScale={selectedChordScale}
+                selectedNotes={selectedNotes}
                 mirrorStrings={mirrorStrings}
                 onNoteSelect={handleNoteSelect}
               />

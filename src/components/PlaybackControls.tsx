@@ -67,7 +67,7 @@ export const PlaybackControls: React.FC<PlaybackControlsProps> = ({
   return (
     <div className={`playback-controls ${isCollapsed ? 'collapsed' : ''}`}>
       <div className="playback-header" onClick={toggleCollapse}>
-        <h3>🎵 Audio & Selection</h3>
+        <h3>🎵 Listen</h3>
         <button className="collapse-button">
           {isCollapsed ? '▲' : '▼'}
         </button>
@@ -75,8 +75,24 @@ export const PlaybackControls: React.FC<PlaybackControlsProps> = ({
       
       {!isCollapsed && (
         <div className="playback-content">
+          {/* No chord/scale selected message */}
+          {!selectedChordScale && (
+            <div className="no-selection-info">
+              <span className="no-selection-text">
+                Select a chord or scale to enable playback
+              </span>
+              <button 
+                className="play-button compact disabled"
+                disabled
+                title="Select a chord or scale first"
+              >
+                ▶
+              </button>
+            </div>
+          )}
+
           {/* Two-Note Selection Info */}
-          {selectedNotes.length > 0 && (
+          {selectedNotes.length > 0 && selectedChordScale && (
             <div className="selection-info compact">
               <span className="selection-count">
                 {selectedNotes.length === 1 ? '1 note selected' : `${selectedNotes.length} notes selected`}
@@ -86,6 +102,7 @@ export const PlaybackControls: React.FC<PlaybackControlsProps> = ({
                   className="play-button compact"
                   onClick={playBetweenSelectedNotes}
                   disabled={isPlaying}
+                  title="Play notes between selection"
                 >
                   {isPlaying ? '♪' : '▶'}
                 </button>
