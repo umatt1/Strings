@@ -30,32 +30,44 @@ export const Fretboard: React.FC<FretboardProps> = ({
   const renderFretMarkers = () => {
     const markers = [];
     
-    // Add markers for each fret
-    for (let fret = minFret; fret <= numFrets; fret++) {
+    // Add markers for each fret node/wire
+    for (let fret = minFret + 1; fret <= numFrets; fret++) {
       const isMarkerFret = [3, 5, 7, 9, 15, 17, 19, 21].includes(fret);
       const isDoubleMarker = [12, 24].includes(fret);
       const isProminentFret = isMarkerFret || isDoubleMarker;
       
-      markers.push(
-        <div key={`marker-${fret}`} className={`fret-marker-cell ${orientation}`}>
-          <div className="fret-marker-content">
-            {fretMarkerMode === 'dots' && isDoubleMarker && (
-              <div className="fret-position-marker double">••</div>
-            )}
-            {fretMarkerMode === 'dots' && isMarkerFret && !isDoubleMarker && (
-              <div className="fret-position-marker">•</div>
-            )}
-            {fretMarkerMode === 'numbers' && (
-              <div className={`fret-position-number ${isProminentFret ? 'prominent' : 'subtle'}`}>
-                {fret}
-              </div>
-            )}
+      if (isProminentFret) {
+        const fretPosition = fret - minFret; // Position relative to displayed frets
+        const totalFrets = numFrets - minFret + 1;
+        const percentage = (fretPosition / totalFrets) * 100;
+        
+        markers.push(
+          <div 
+            key={`marker-${fret}`} 
+            className={`fret-marker-node ${orientation}`}
+            style={{
+              [orientation === 'horizontal' ? 'left' : 'top']: `${percentage}%`
+            }}
+          >
+            <div className="fret-marker-content">
+              {fretMarkerMode === 'dots' && isDoubleMarker && (
+                <div className="fret-position-marker double">••</div>
+              )}
+              {fretMarkerMode === 'dots' && isMarkerFret && !isDoubleMarker && (
+                <div className="fret-position-marker">•</div>
+              )}
+              {fretMarkerMode === 'numbers' && (
+                <div className={`fret-position-number ${isProminentFret ? 'prominent' : 'subtle'}`}>
+                  {fret}
+                </div>
+              )}
+            </div>
           </div>
-        </div>
-      );
+        );
+      }
     }
     
-    return <div className={`fret-markers-row ${orientation}`}>{markers}</div>;
+    return <div className={`fret-markers-overlay ${orientation}`}>{markers}</div>;
   };
 
   const renderFretboard = () => {
@@ -100,8 +112,8 @@ export const Fretboard: React.FC<FretboardProps> = ({
   return (
     <div className={`fretboard ${orientation}`}>
       <div className="fretboard-grid">
-        {renderFretMarkers()}
         {renderFretboard()}
+        {renderFretMarkers()}
       </div>
     </div>
   );
