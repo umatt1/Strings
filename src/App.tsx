@@ -63,23 +63,7 @@ function App() {
   return (
     <div className="app">
       <main className="app-main">
-        {/* Top Settings Area */}
-        <div className="top-settings">
-          <Controls
-            instrument={instrument}
-            onInstrumentChange={setInstrument}
-            numFrets={numFrets}
-            onNumFretsChange={handleMaxFretChange}
-            minFret={minFret}
-            onMinFretChange={handleMinFretChange}
-            fretMarkerMode={fretMarkerMode}
-            onFretMarkerModeChange={setFretMarkerMode}
-            mirrorStrings={mirrorStrings}
-            onMirrorStringsChange={setMirrorStrings}
-          />
-        </div>
-
-        {/* Main Content Area - Music Theory + Fretboard + Playback */}
+        {/* Main Content Area - Music Theory + Right Column */}
         <div className="main-content">
           <div className="theory-panel">
             <MusicTheoryControls
@@ -88,18 +72,35 @@ function App() {
             />
           </div>
 
-          <div className="fretboard-area">
-            <div className="fretboard-panel">
-              <Fretboard
+          <div className="right-content">
+            <div className="top-settings">
+              <Controls
                 instrument={instrument}
+                onInstrumentChange={setInstrument}
                 numFrets={numFrets}
+                onNumFretsChange={handleMaxFretChange}
                 minFret={minFret}
+                onMinFretChange={handleMinFretChange}
                 fretMarkerMode={fretMarkerMode}
-                selectedChordScale={selectedChordScale}
-                selectedNotes={selectedNotes}
+                onFretMarkerModeChange={setFretMarkerMode}
                 mirrorStrings={mirrorStrings}
-                onNoteSelect={handleNoteSelect}
+                onMirrorStringsChange={setMirrorStrings}
               />
+            </div>
+
+            <div className="fretboard-area">
+              <div className="fretboard-panel">
+                <Fretboard
+                  instrument={instrument}
+                  numFrets={numFrets}
+                  minFret={minFret}
+                  fretMarkerMode={fretMarkerMode}
+                  selectedChordScale={selectedChordScale}
+                  selectedNotes={selectedNotes}
+                  mirrorStrings={mirrorStrings}
+                  onNoteSelect={handleNoteSelect}
+                />
+              </div>
             </div>
             
             <div className="fretboard-playback">

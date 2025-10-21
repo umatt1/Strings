@@ -36,7 +36,6 @@
 /* Top Settings Layout */
 .top-settings {
   margin-bottom: 15px;
-  position: relative;
   z-index: 5;
   transition: all 0.3s ease;
 }
@@ -47,38 +46,33 @@
 }
 
 .main-content {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 15px;
-  align-items: start;
+  display: flex;
+  gap: 20px;
+  align-items: flex-start;
   position: relative;
+  min-height: 70vh;
 }
 
 .theory-panel {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 260px;
+  flex: 0 0 260px;
   z-index: 10;
   transition: all 0.3s ease;
 }
 
 .theory-panel:has(.music-theory-controls.collapsed) {
-  width: 50px;
+  flex: 0 0 50px;
 }
 
-.fretboard-area {
+.right-content {
+  flex: 1;
   display: flex;
   flex-direction: column;
   gap: 15px;
   min-width: 0;
-  flex: 1;
-  margin-left: 280px;
-  transition: margin-left 0.3s ease;
 }
 
-.theory-panel:has(.music-theory-controls.collapsed) + .fretboard-area {
-  margin-left: 70px;
+.fretboard-area {
+  flex: 1;
 }
 
 .fretboard-panel {

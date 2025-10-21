@@ -159,24 +159,24 @@ export const Controls: React.FC<ControlsProps> = ({
             <div className="range-item">
               <label>Min:</label>
               <input
-                type="range"
+                type="number"
                 min="0"
                 max={numFrets}
                 value={minFret}
-                onChange={(e) => onMinFretChange(parseInt(e.target.value))}
+                onChange={(e) => onMinFretChange(parseInt(e.target.value) || 0)}
+                className="number-input"
               />
-              <span className="value-display">{minFret}</span>
             </div>
             <div className="range-item">
               <label>Max:</label>
               <input
-                type="range"
+                type="number"
                 min={minFret}
                 max="24"
                 value={numFrets}
-                onChange={(e) => onNumFretsChange(parseInt(e.target.value))}
+                onChange={(e) => onNumFretsChange(parseInt(e.target.value) || 12)}
+                className="number-input"
               />
-              <span className="value-display">{numFrets}</span>
             </div>
           </div>
         </div>

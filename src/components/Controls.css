@@ -616,3 +616,23 @@ input[type="range"] {
 .export-button:active {
   transform: scale(0.95);
 }
+
+.number-input {
+  width: 60px;
+  padding: 4px 6px;
+  border: 1px solid #ddd;
+  border-radius: 3px;
+  font-size: 12px;
+  text-align: center;
+}
+
+.number-input:focus {
+  outline: none;
+  border-color: #4CAF50;
+}
+
+.range-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
