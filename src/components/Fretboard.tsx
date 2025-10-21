@@ -30,6 +30,7 @@ export const Fretboard: React.FC<FretboardProps> = ({
   const [numFrets, setNumFrets] = useState(INITIAL_FRETS);
   const fretboardRef = useRef<HTMLDivElement>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [isFullscreen, setIsFullscreen] = useState(false);
 
   const handleScroll = useCallback(() => {
     if (!fretboardRef.current || isLoading || numFrets >= MAX_FRETS) return;
@@ -55,6 +56,29 @@ export const Fretboard: React.FC<FretboardProps> = ({
     fretboard.addEventListener('scroll', handleScroll);
     return () => fretboard.removeEventListener('scroll', handleScroll);
   }, [handleScroll]);
+
+  useEffect(() => {
+    const handleFullscreenChange = () => {
+      setIsFullscreen(!!document.fullscreenElement);
+    };
+
+    document.addEventListener('fullscreenchange', handleFullscreenChange);
+    return () => document.removeEventListener('fullscreenchange', handleFullscreenChange);
+  }, []);
+
+  const toggleFullscreen = async () => {
+    if (!fretboardRef.current) return;
+
+    try {
+      if (!document.fullscreenElement) {
+        await fretboardRef.current.requestFullscreen();
+      } else {
+        await document.exitFullscreen();
+      }
+    } catch (error) {
+      console.error('Error toggling fullscreen:', error);
+    }
+  };
   const renderFretboard = () => {
     const stringsToRender = mirrorStrings ? [...instrument.strings].reverse() : instrument.strings;
     const strings = stringsToRender.map((stringConfig, stringIndex) => {
@@ -120,6 +144,13 @@ export const Fretboard: React.FC<FretboardProps> = ({
 
   return (
     <div className="fretboard" ref={fretboardRef}>
+      <button 
+        className="fullscreen-button"
+        onClick={toggleFullscreen}
+        title={isFullscreen ? "Exit fullscreen" : "Enter fullscreen"}
+      >
+        {isFullscreen ? '⤓' : '⛶'}
+      </button>
       <div className="fretboard-grid">
         {renderFretboard()}
       </div>

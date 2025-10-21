@@ -26,8 +26,8 @@ export const MusicTheoryControls: React.FC<MusicTheoryControlsProps> = ({
   onChordScaleChange,
 }) => {
   const [rootNote, setRootNote] = React.useState<NoteName>('C');
-  const [showChordDropdown, setShowChordDropdown] = React.useState(false);
-  const [showScaleDropdown, setShowScaleDropdown] = React.useState(false);
+  const [showChordDropdown, setShowChordDropdown] = React.useState(true); // Default open
+  const [showScaleDropdown, setShowScaleDropdown] = React.useState(true); // Default open
   const [isCollapsed, setIsCollapsed] = React.useState(false);
 
   const handleMusicTheorySelection = (type: ChordType | ScaleType) => {
