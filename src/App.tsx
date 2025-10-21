@@ -79,7 +79,7 @@ function App() {
           />
         </div>
 
-        {/* Main Content Area - Music Theory + Fretboard */}
+        {/* Main Content Area - Music Theory + Fretboard + Playback */}
         <div className="main-content">
           <div className="theory-panel">
             <MusicTheoryControls
@@ -88,29 +88,30 @@ function App() {
             />
           </div>
 
-          <div className="fretboard-panel">
-            <Fretboard
-              instrument={instrument}
-              numFrets={numFrets}
-              minFret={minFret}
-              fretMarkerMode={fretMarkerMode}
-              selectedChordScale={selectedChordScale}
-              mirrorStrings={mirrorStrings}
-              onNoteSelect={handleNoteSelect}
-            />
+          <div className="fretboard-area">
+            <div className="fretboard-panel">
+              <Fretboard
+                instrument={instrument}
+                numFrets={numFrets}
+                minFret={minFret}
+                fretMarkerMode={fretMarkerMode}
+                selectedChordScale={selectedChordScale}
+                mirrorStrings={mirrorStrings}
+                onNoteSelect={handleNoteSelect}
+              />
+            </div>
+            
+            <div className="fretboard-playback">
+              <PlaybackControls
+                instrument={instrument}
+                numFrets={numFrets}
+                minFret={minFret}
+                selectedChordScale={selectedChordScale}
+                selectedNotes={selectedNotes}
+                onClearSelection={handleClearSelection}
+              />
+            </div>
           </div>
-        </div>
-
-        {/* Bottom Playback Controls */}
-        <div className="bottom-controls">
-          <PlaybackControls
-            instrument={instrument}
-            numFrets={numFrets}
-            minFret={minFret}
-            selectedChordScale={selectedChordScale}
-            selectedNotes={selectedNotes}
-            onClearSelection={handleClearSelection}
-          />
         </div>
       </main>
 

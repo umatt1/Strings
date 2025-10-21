@@ -9,8 +9,6 @@ import type {
 import { 
   CHORD_CATEGORIES,
   SCALE_CATEGORIES,
-  COMMON_CHORDS,
-  COMMON_SCALES,
   CHORD_LABELS, 
   SCALE_LABELS,
   getMusicTheoryNotes,
@@ -107,33 +105,6 @@ export const MusicTheoryControls: React.FC<MusicTheoryControlsProps> = ({
           ) : (
             <span className="no-selection">Select a chord or scale</span>
           )}
-        </div>
-
-        {/* Quick Access - Most Common */}
-        <div className="quick-access">
-          <h4>Quick Access</h4>
-          <div className="quick-buttons">
-            {COMMON_CHORDS.map((chord) => (
-              <button
-                key={chord}
-                className={selectedChordScale?.type === chord ? 'active' : ''}
-                onClick={() => handleMusicTheorySelection(chord)}
-              >
-                {CHORD_LABELS[chord]}
-              </button>
-            ))}
-          </div>
-          <div className="quick-buttons">
-            {COMMON_SCALES.map((scale) => (
-              <button
-                key={scale}
-                className={selectedChordScale?.type === scale ? 'active' : ''}
-                onClick={() => handleMusicTheorySelection(scale)}
-              >
-                {SCALE_LABELS[scale]}
-              </button>
-            ))}
-          </div>
         </div>
 
         {/* Comprehensive Dropdowns */}

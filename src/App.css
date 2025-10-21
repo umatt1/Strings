@@ -47,12 +47,11 @@
   grid-template-columns: auto 1fr;
   gap: 20px;
   align-items: start;
-  margin-bottom: 20px;
 }
 
 .theory-panel {
   min-width: 0;
-  width: 350px;
+  width: 280px;
   transition: width 0.3s ease;
 }
 
@@ -60,17 +59,16 @@
   width: 60px;
 }
 
-.fretboard-panel {
+.fretboard-area {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
   min-width: 0;
   flex: 1;
 }
 
-.bottom-controls {
-  margin-top: 20px;
-}
-
-.bottom-controls .playback-controls {
-  margin-bottom: 0;
+.fretboard-panel {
+  flex: 1;
 }
 
 .app-footer {
@@ -102,7 +100,7 @@
     width: 100% !important;
   }
 
-  .fretboard-panel {
+  .fretboard-area {
     order: 1;
   }
 }
@@ -116,9 +114,12 @@
     gap: 10px;
   }
   
-  .top-controls,
-  .bottom-controls {
+  .top-controls {
     margin: 10px 0;
+  }
+  
+  .fretboard-area {
+    gap: 10px;
   }
 }
 
