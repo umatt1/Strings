@@ -8,8 +8,9 @@
   border: none;
   position: relative;
   width: 100%;
-  height: 100%;
+  height: fit-content;
   min-height: 400px;
+  max-height: 100%;
 }
 
 .fretboard-grid {
@@ -21,7 +22,8 @@
   border-radius: 0;
   border: none;
   position: relative;
-  height: 100%;
+  height: fit-content;
+  min-height: 100%;
   min-width: 100%;
   width: fit-content;
 }
@@ -159,8 +161,9 @@
   scroll-behavior: smooth;
   border-radius: 0;
   width: 100%;
-  height: 100%;
+  height: fit-content;
   min-height: 400px;
+  max-height: 100%;
 }
 
 .fullscreen-button {
@@ -181,9 +184,9 @@
 }
 
 .fretboard-grid {
-  padding: 10px 0 0 0; /* Top padding on mobile to prevent label cutoff */
+  padding: 10px 0 10px 0; /* Top and bottom padding on mobile to prevent overflow */
   gap: 3px;
-  height: auto; /* Let content determine height on mobile */
+  height: fit-content; /* Let content determine height on mobile */
   min-height: 100%;
   min-width: 100%;
   width: fit-content;
@@ -210,7 +213,7 @@
   }
 
   .fretboard-grid {
-    padding: 10px 0 0 0; /* Keep top padding */
+    padding: 10px 0 10px 0; /* Keep top and bottom padding */
   }
 
   .string-row {
