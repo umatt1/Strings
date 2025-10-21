@@ -15,9 +15,9 @@ interface FretboardProps {
   onNoteSelect?: (note: Note, stringIndex: number, fretNumber: number) => void;
 }
 
-const INITIAL_FRETS = 15;
+const INITIAL_FRETS = 24;
 const FRETS_TO_LOAD = 12;
-const MAX_FRETS = 100; // Reasonable maximum
+const MAX_FRETS = 500; // Reasonable maximum
 
 export const Fretboard: React.FC<FretboardProps> = ({
   instrument,
@@ -115,19 +115,25 @@ export const Fretboard: React.FC<FretboardProps> = ({
           selectedNote.octave === note.octave
         );
 
+        // Only show notes that are in the selected scale, or all notes if no scale is selected
+        // BUT: always show the note if it has a fret label (to keep fret markers visible)
+        const shouldShowNote = !selectedChordScale || isHighlighted || showFretLabel;
+
         frets.push(
           <div key={`${stringIndex}-${fret}`} className="fret-cell">
-            <FretboardNote
-              note={note}
-              stringIndex={stringIndex}
-              fretNumber={fret}
-              isHighlighted={isHighlighted}
-              isSelected={isSelected}
-              scaleDegreeInfo={scaleDegreeInfo}
-              onSelect={onNoteSelect}
-              showFretLabel={showFretLabel}
-              fretMarkerMode={fretMarkerMode}
-            />
+            {shouldShowNote && (
+              <FretboardNote
+                note={note}
+                stringIndex={stringIndex}
+                fretNumber={fret}
+                isHighlighted={isHighlighted}
+                isSelected={isSelected}
+                scaleDegreeInfo={scaleDegreeInfo}
+                onSelect={onNoteSelect}
+                showFretLabel={showFretLabel}
+                fretMarkerMode={fretMarkerMode}
+              />
+            )}
           </div>
         );
       }
