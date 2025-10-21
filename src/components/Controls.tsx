@@ -5,6 +5,8 @@ import {
   BASS_TUNINGS, 
   createInstrumentFromTuning 
 } from '../types/music';
+import type { ColorTheme } from '../types/theme';
+import { COLOR_THEMES } from '../types/theme';
 import './Controls.css';
 
 interface ControlsProps {
@@ -14,6 +16,8 @@ interface ControlsProps {
   onFretMarkerModeChange: (mode: 'dots' | 'numbers') => void;
   mirrorStrings: boolean;
   onMirrorStringsChange: (mirror: boolean) => void;
+  colorTheme: ColorTheme;
+  onColorThemeChange: (theme: ColorTheme) => void;
 }
 
 export const Controls: React.FC<ControlsProps> = ({
@@ -22,6 +26,8 @@ export const Controls: React.FC<ControlsProps> = ({
   onFretMarkerModeChange,
   mirrorStrings,
   onMirrorStringsChange,
+  colorTheme,
+  onColorThemeChange,
 }) => {
   const [selectedTuning, setSelectedTuning] = React.useState<TuningPreset>(
     GUITAR_TUNINGS.find(t => t.id === 'standard')!
@@ -209,6 +215,21 @@ export const Controls: React.FC<ControlsProps> = ({
                   📄 PDF
                 </button>
               </div>
+            </div>
+
+            <div className="option-subgroup">
+              <label>Color Theme:</label>
+              <select 
+                value={Object.keys(COLOR_THEMES).find(key => COLOR_THEMES[key] === colorTheme) || 'indigo'}
+                onChange={(e) => onColorThemeChange(COLOR_THEMES[e.target.value as keyof typeof COLOR_THEMES])}
+                className="color-theme-select"
+              >
+                {Object.entries(COLOR_THEMES).map(([key, theme]) => (
+                  <option key={key} value={key}>
+                    {theme.name}
+                  </option>
+                ))}
+              </select>
             </div>
           </div>
         </div>

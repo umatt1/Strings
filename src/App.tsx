@@ -2,6 +2,8 @@ import { useState } from 'react';
 import type { InstrumentConfig, Note } from './types/music';
 import { GUITAR_TUNINGS, createInstrumentFromTuning } from './types/music';
 import type { ChordScale } from './utils/musicTheory';
+import type { ColorTheme } from './types/theme';
+import { COLOR_THEMES } from './types/theme';
 import { Controls } from './components/Controls';
 import { MusicTheoryControls } from './components/MusicTheoryControls';
 import { Fretboard } from './components/Fretboard';
@@ -16,6 +18,7 @@ function App() {
   const [mirrorStrings, setMirrorStrings] = useState(false);
   const [selectedChordScale, setSelectedChordScale] = useState<ChordScale | undefined>(undefined);
   const [selectedNotes, setSelectedNotes] = useState<Note[]>([]);
+  const [colorTheme, setColorTheme] = useState<ColorTheme>(COLOR_THEMES.indigo);
 
   const handleNoteSelect = (note: Note, _stringIndex: number, _fretNumber: number) => {
     setSelectedNotes(prev => {
@@ -58,6 +61,8 @@ function App() {
               onFretMarkerModeChange={setFretMarkerMode}
               mirrorStrings={mirrorStrings}
               onMirrorStringsChange={setMirrorStrings}
+              colorTheme={colorTheme}
+              onColorThemeChange={setColorTheme}
             />
           </div>
 
@@ -78,6 +83,8 @@ function App() {
                 onFretMarkerModeChange={setFretMarkerMode}
                 mirrorStrings={mirrorStrings}
                 onMirrorStringsChange={setMirrorStrings}
+                colorTheme={colorTheme}
+                onColorThemeChange={setColorTheme}
               />
             </div>
 
@@ -90,6 +97,7 @@ function App() {
                   selectedNotes={selectedNotes}
                   mirrorStrings={mirrorStrings}
                   onNoteSelect={handleNoteSelect}
+                  colorTheme={colorTheme}
                 />
               </div>
             </div>

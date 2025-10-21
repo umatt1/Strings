@@ -2,7 +2,7 @@ import React from 'react';
 import type { Note } from '../types/music';
 import { getNoteName } from '../types/music';
 import type { ScaleDegreeInfo } from '../utils/musicTheory';
-import { getScaleDegreeColor } from '../utils/musicTheory';
+import type { ColorTheme } from '../types/theme';
 import { audioPlayer } from '../utils/audio';
 import './FretboardNote.css';
 
@@ -17,6 +17,7 @@ interface FretboardNoteProps {
   showFretLabel?: boolean;
   fretMarkerMode?: 'dots' | 'numbers';
   showLabelOnly?: boolean;
+  colorTheme: ColorTheme;
 }
 
 export const FretboardNote: React.FC<FretboardNoteProps> = ({
@@ -30,6 +31,7 @@ export const FretboardNote: React.FC<FretboardNoteProps> = ({
   showFretLabel = false,
   fretMarkerMode = 'numbers',
   showLabelOnly = false,
+  colorTheme,
 }) => {
   const handleClick = () => {
     audioPlayer.playNote(note.frequency);
@@ -43,9 +45,28 @@ export const FretboardNote: React.FC<FretboardNoteProps> = ({
       return {};
     }
     
-    const backgroundColor = getScaleDegreeColor(scaleDegreeInfo.degree, scaleDegreeInfo.isImportant);
+    // Get color from theme based on scale degree
+    let backgroundColor: string;
+    if (scaleDegreeInfo.isImportant) {
+      switch (scaleDegreeInfo.degree) {
+        case 1: backgroundColor = colorTheme.scaleColors.root; break;
+        case 3: backgroundColor = colorTheme.scaleColors.third; break;
+        case 5: backgroundColor = colorTheme.scaleColors.fifth; break;
+        default: backgroundColor = colorTheme.scaleColors.otherImportant;
+      }
+    } else {
+      switch (scaleDegreeInfo.degree) {
+        case 2: backgroundColor = colorTheme.scaleColors.second; break;
+        case 4: backgroundColor = colorTheme.scaleColors.fourth; break;
+        case 6: backgroundColor = colorTheme.scaleColors.sixth; break;
+        case 7: backgroundColor = colorTheme.scaleColors.seventh; break;
+        default: backgroundColor = colorTheme.scaleColors.others;
+      }
+    }
+    
     return {
       background: backgroundColor,
+      color: colorTheme.noteText,
       borderColor: scaleDegreeInfo.isImportant ? '#333' : '#666'
     };
   };

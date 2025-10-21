@@ -1,6 +1,6 @@
 .fretboard {
   padding: 0;
-  background: #f5f5f5;
+  background: var(--fretboard-bg, #f5f5f5);
   border-radius: 0;
   overflow-x: auto;
   overflow-y: hidden;
@@ -17,7 +17,7 @@
   display: flex;
   flex-direction: column;
   gap: 0;
-  background: #ffffff;
+  background: var(--grid-bg, #ffffff);
   padding: 0;
   border-radius: 0;
   border: none;
@@ -26,8 +26,8 @@
   min-height: 100%;
   min-width: 100%;
   width: fit-content;
-  border-top: 1px solid #ddd;
-  border-bottom: 1px solid #ddd;
+  border-top: 1px solid var(--string-border, #ddd);
+  border-bottom: 1px solid var(--string-border, #ddd);
 }
 
 .fretboard-loading {
@@ -74,7 +74,7 @@
 /* Fullscreen mode styles */
 .fretboard:fullscreen {
   padding: 20px;
-  background: #f5f5f5;
+  background: var(--fretboard-bg, #f5f5f5);
   display: flex;
   flex-direction: column;
 }
@@ -93,7 +93,7 @@
   padding: 0;
   margin: 0;
   border: none;
-  border-bottom: 1px solid #ddd;
+  border-bottom: 1px solid var(--string-border, #ddd);
   position: relative;
   flex: 1;
   min-height: 60px;
@@ -120,18 +120,18 @@
   position: relative;
   min-width: 70px;
   height: 100%;
-  border-right: 1px solid #ddd;
+  border-right: 1px solid var(--fret-border, #ddd);
   background: transparent;
   padding: 2px;
 }
 
 .fret-cell:first-child {
-  border-left: 3px solid #333;
+  border-left: 3px solid var(--nut-border, #333);
 }
 
 /* Nut representation - thicker line between open strings (0) and first fret (1) */
 .fret-cell:nth-child(2) {
-  border-left: 3px solid #666;
+  border-left: 3px solid var(--nut-border, #666);
 }
 
 .fret-marker.open {
@@ -185,19 +185,17 @@
   width: fit-content;
 }
 
-.string-row {
-  padding: 0;
-  margin: 0;
-  border-bottom: 1px solid #ddd;
-  flex: 1;
-  min-height: 50px;
-}
+  .string-row {
+    padding: 0;
+    margin: 0;
+    border-bottom: 1px solid var(--string-border, #ddd);
+    flex: 1;
+    min-height: 50px;
+  }
 
-.string-row:last-child {
-  border-bottom: none;
-}
-
-.fret-cell {
+  .string-row:last-child {
+    border-bottom: none;
+  }.fret-cell {
   min-width: 55px; /* Wider for touch targets */
   min-height: 50px;
   padding: 4px;
@@ -216,7 +214,7 @@
 
   .string-row {
     min-height: 55px;
-    border-bottom: 1px solid #ddd;
+    border-bottom: 1px solid var(--string-border, #ddd);
   }
 
   .string-row:last-child {
@@ -235,7 +233,7 @@
     padding: 15px;
     border-radius: 8px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    border: 1px solid #ddd;
+    border: 1px solid var(--string-border, #ddd);
     min-height: 500px;
     overflow-y: hidden; /* Desktop: hide vertical scroll, padding handles labels */
   }
@@ -251,7 +249,7 @@
   .string-row {
     padding: 0;
     margin: 0;
-    border-bottom: 1px solid #ddd;
+    border-bottom: 1px solid var(--string-border, #ddd);
     min-height: 60px;
   }
 

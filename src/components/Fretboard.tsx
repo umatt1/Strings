@@ -4,6 +4,7 @@ import { getNoteAtFret } from '../types/music';
 import { FretboardNote } from './FretboardNote';
 import type { ChordScale } from '../utils/musicTheory';
 import { isNoteInChord, getScaleDegreeInfo } from '../utils/musicTheory';
+import type { ColorTheme } from '../types/theme';
 import './Fretboard.css';
 
 interface FretboardProps {
@@ -13,6 +14,7 @@ interface FretboardProps {
   selectedNotes?: Note[];
   mirrorStrings?: boolean;
   onNoteSelect?: (note: Note, stringIndex: number, fretNumber: number) => void;
+  colorTheme: ColorTheme;
 }
 
 const INITIAL_FRETS = 24;
@@ -26,6 +28,7 @@ export const Fretboard: React.FC<FretboardProps> = ({
   selectedNotes = [],
   mirrorStrings = false,
   onNoteSelect,
+  colorTheme,
 }) => {
   const [numFrets, setNumFrets] = useState(INITIAL_FRETS);
   const fretboardRef = useRef<HTMLDivElement>(null);
@@ -131,6 +134,7 @@ export const Fretboard: React.FC<FretboardProps> = ({
               showFretLabel={showFretLabel}
               fretMarkerMode={fretMarkerMode}
               showLabelOnly={showLabelOnly}
+              colorTheme={colorTheme}
             />
           </div>
         );
@@ -147,7 +151,17 @@ export const Fretboard: React.FC<FretboardProps> = ({
   };
 
   return (
-    <div className="fretboard" ref={fretboardRef}>
+    <div 
+      className="fretboard" 
+      ref={fretboardRef}
+      style={{
+        '--fretboard-bg': colorTheme.fretboardBackground,
+        '--grid-bg': colorTheme.gridBackground,
+        '--string-border': colorTheme.stringBorder,
+        '--fret-border': colorTheme.fretBorder,
+        '--nut-border': colorTheme.nutBorder,
+      } as React.CSSProperties}
+    >
       <button 
         className="fullscreen-button"
         onClick={toggleFullscreen}
