@@ -31,17 +31,17 @@ export const COLOR_THEMES: Record<string, ColorTheme> = {
     nutBorder: '#666',
     noteDefault: '#e8eaf6',
     noteBorder: '#9fa8da',
-    noteText: '#333',
+    noteText: '#ffffff', // White text for better contrast
     scaleColors: {
-      root: '#1a237e',
-      third: '#3f51b5',
-      fifth: '#5c6bc0',
-      otherImportant: '#7986cb',
-      second: '#9fa8da',
-      fourth: '#c5cae9',
-      sixth: '#e8eaf6',
-      seventh: '#b39ddb',
-      others: '#d1c4e9',
+      root: '#0d47a1',      // Degree 1 - Deep blue (colorblind safe)
+      third: '#1976d2',     // Degree 3 - Medium blue
+      fifth: '#42a5f5',     // Degree 5 - Light blue
+      otherImportant: '#64b5f6', // Other important - Lighter blue
+      second: '#ff6f00',    // Degree 2 - Orange (distinct for colorblind)
+      fourth: '#ffa726',    // Degree 4 - Light orange
+      sixth: '#ffb74d',     // Degree 6 - Lighter orange
+      seventh: '#9c27b0',   // Degree 7 - Purple (colorblind safe)
+      others: '#ba68c8',    // Other degrees - Light purple
     },
   },
   warm: {
