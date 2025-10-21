@@ -256,13 +256,159 @@
   border-color: #4CAF50;
 }
 
-/* Responsive adjustments */
-@media (max-width: 768px) {
-  .quick-buttons {
-    grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+/* ============================================
+   MOBILE-FIRST TOUCH OPTIMIZATIONS
+   ============================================ */
+
+/* Base Mobile Styles (320px+) - Touch-First */
+.collapse-button {
+  min-width: 44px;
+  min-height: 44px;
+  padding: 8px;
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0.1);
+}
+
+.collapse-button:active {
+  transform: scale(0.95);
+  background: rgba(0, 0, 0, 0.15);
+}
+
+.root-note-selector select {
+  min-height: 44px;
+  font-size: 16px; /* Prevents iOS zoom */
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.dropdown-toggle {
+  min-height: 48px;
+  padding: 12px 16px;
+  font-size: 14px;
+  touch-action: manipulation;
+}
+
+.dropdown-toggle:active {
+  transform: scale(0.98);
+  background: #f0f0f0;
+}
+
+.category-items {
+  gap: 6px;
+  padding: 8px;
+}
+
+.category-items button {
+  min-height: 44px;
+  min-width: 44px;
+  padding: 10px 12px;
+  font-size: 13px;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: rgba(76, 175, 80, 0.2);
+}
+
+.category-items button:active {
+  transform: scale(0.95);
+  background: #e8f5e8;
+}
+
+.category-items button.active:active {
+  transform: scale(0.95);
+  background: #45a049;
+}
+
+.clear-button {
+  min-width: 44px;
+  min-height: 44px;
+  padding: 10px;
+  touch-action: manipulation;
+}
+
+.clear-button:active {
+  transform: scale(0.9);
+  background: #d32f2f;
+}
+
+/* Remove hover effects on touch devices */
+@media (hover: none) and (pointer: coarse) {
+  .theory-header:hover,
+  .collapse-button:hover,
+  .dropdown-toggle:hover,
+  .category-items button:hover {
+    background: inherit;
+  }
+  
+  .collapse-button:hover {
+    background: none;
+  }
+}
+
+/* Large Mobile (480px+) */
+@media (min-width: 480px) {
+  .theory-header {
+    padding: 16px 20px 14px 20px;
+  }
+  
+  .theory-content {
+    padding: 14px;
+    gap: 12px;
+  }
+  
+  .dropdown-toggle {
+    padding: 12px 18px;
   }
   
   .category-items {
-    grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+    gap: 8px;
+    padding: 10px;
+  }
+}
+
+/* Tablet Portrait (768px+) - Restore Desktop Behaviors */
+@media (min-width: 768px) {
+  .music-theory-controls {
+    position: sticky;
+    top: 20px;
+  }
+  
+  .theory-header {
+    padding: 16px 20px 12px 20px;
+  }
+  
+  .theory-content {
+    padding: 12px;
+    gap: 10px;
+  }
+  
+  /* Re-enable hover effects on desktop */
+  .theory-header:hover {
+    background: linear-gradient(135deg, #e9ecef 0%, #dee2e6 100%);
+  }
+  
+  .collapse-button:hover {
+    background: rgba(0, 0, 0, 0.1);
+  }
+  
+  .dropdown-toggle:hover {
+    border-color: #4CAF50;
+    background: #f8f9fa;
+  }
+  
+  .category-items button:hover {
+    background: #e8f5e8;
+    border-color: #4CAF50;
+  }
+  
+  /* Smaller touch targets acceptable on desktop */
+  .category-items button {
+    min-height: auto;
+    min-width: auto;
+    padding: 6px 8px;
+    font-size: 12px;
+  }
+  
+  .dropdown-toggle {
+    min-height: auto;
+    padding: 6px 8px;
+    font-size: 12px;
   }
 }
