@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import type { InstrumentConfig, Note } from '../types/music';
 import { getNoteAtFret } from '../types/music';
 import { FretboardNote } from './FretboardNote';
@@ -8,8 +8,6 @@ import './Fretboard.css';
 
 interface FretboardProps {
   instrument: InstrumentConfig;
-  numFrets: number;
-  minFret: number;
   fretMarkerMode: 'dots' | 'numbers';
   selectedChordScale?: ChordScale;
   selectedNotes?: Note[];
@@ -17,23 +15,53 @@ interface FretboardProps {
   onNoteSelect?: (note: Note, stringIndex: number, fretNumber: number) => void;
 }
 
+const INITIAL_FRETS = 15;
+const FRETS_TO_LOAD = 12;
+const MAX_FRETS = 100; // Reasonable maximum
+
 export const Fretboard: React.FC<FretboardProps> = ({
   instrument,
-  numFrets,
-  minFret,
   fretMarkerMode,
   selectedChordScale,
   selectedNotes = [],
   mirrorStrings = false,
   onNoteSelect,
 }) => {
+  const [numFrets, setNumFrets] = useState(INITIAL_FRETS);
+  const fretboardRef = useRef<HTMLDivElement>(null);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleScroll = useCallback(() => {
+    if (!fretboardRef.current || isLoading || numFrets >= MAX_FRETS) return;
+
+    const { scrollLeft, scrollWidth, clientWidth } = fretboardRef.current;
+    const scrollPercentage = (scrollLeft + clientWidth) / scrollWidth;
+
+    // Load more frets when user scrolls to 80% of the content
+    if (scrollPercentage > 0.8) {
+      setIsLoading(true);
+      // Small delay to simulate loading and prevent rapid firing
+      setTimeout(() => {
+        setNumFrets(prev => Math.min(prev + FRETS_TO_LOAD, MAX_FRETS));
+        setIsLoading(false);
+      }, 100);
+    }
+  }, [numFrets, isLoading]);
+
+  useEffect(() => {
+    const fretboard = fretboardRef.current;
+    if (!fretboard) return;
+
+    fretboard.addEventListener('scroll', handleScroll);
+    return () => fretboard.removeEventListener('scroll', handleScroll);
+  }, [handleScroll]);
   const renderFretboard = () => {
     const stringsToRender = mirrorStrings ? [...instrument.strings].reverse() : instrument.strings;
     const strings = stringsToRender.map((stringConfig, stringIndex) => {
       const frets = [];
       
-      // Add frets in the specified range
-      for (let fret = minFret; fret <= numFrets; fret++) {
+      // Add frets from 0 to numFrets (infinite scroll loads more)
+      for (let fret = 0; fret <= numFrets; fret++) {
         const note = getNoteAtFret(stringConfig.openNote, stringConfig.octave, fret);
         const isHighlighted = selectedChordScale
           ? isNoteInChord(note.name, selectedChordScale)
@@ -91,10 +119,13 @@ export const Fretboard: React.FC<FretboardProps> = ({
   };
 
   return (
-    <div className="fretboard">
+    <div className="fretboard" ref={fretboardRef}>
       <div className="fretboard-grid">
         {renderFretboard()}
       </div>
+      {isLoading && numFrets < MAX_FRETS && (
+        <div className="fretboard-loading">Loading more frets...</div>
+      )}
     </div>
   );
 };

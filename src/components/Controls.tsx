@@ -10,8 +10,6 @@ import './Controls.css';
 interface ControlsProps {
   instrument: InstrumentConfig;
   onInstrumentChange: (instrument: InstrumentConfig) => void;
-  numFrets: number;
-  onNumFretsChange: (numFrets: number) => void;
   fretMarkerMode: 'dots' | 'numbers';
   onFretMarkerModeChange: (mode: 'dots' | 'numbers') => void;
   mirrorStrings: boolean;
@@ -20,8 +18,6 @@ interface ControlsProps {
 
 export const Controls: React.FC<ControlsProps> = ({
   onInstrumentChange,
-  numFrets,
-  onNumFretsChange,
   fretMarkerMode,
   onFretMarkerModeChange,
   mirrorStrings,
@@ -154,24 +150,6 @@ export const Controls: React.FC<ControlsProps> = ({
                 </option>
               ))}
             </select>
-          </div>
-        </div>
-
-        {/* Fretboard Size Section */}
-        <div className="control-group">
-          <h4>Fretboard</h4>
-          <div className="range-controls">
-            <div className="range-item">
-              <label>Number of Frets:</label>
-              <input
-                type="number"
-                min="1"
-                max="36"
-                value={numFrets}
-                onChange={(e) => onNumFretsChange(parseInt(e.target.value) || 12)}
-                className="number-input"
-              />
-            </div>
           </div>
         </div>
 

@@ -5,6 +5,7 @@
   overflow-x: auto;
   box-shadow: none;
   border: none;
+  position: relative;
 }
 
 .fretboard-grid {
@@ -16,6 +17,20 @@
   border-radius: 0;
   border: none;
   position: relative;
+}
+
+.fretboard-loading {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(0, 0, 0, 0.7);
+  color: white;
+  padding: 8px 12px;
+  border-radius: 4px;
+  font-size: 0.85em;
+  pointer-events: none;
+  z-index: 100;
 }
 
 /* String styling */

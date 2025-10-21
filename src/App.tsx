@@ -12,7 +12,6 @@ function App() {
   const [instrument, setInstrument] = useState<InstrumentConfig>(
     createInstrumentFromTuning(GUITAR_TUNINGS.find(t => t.id === 'standard')!)
   );
-  const [numFrets, setNumFrets] = useState(15);
   const [fretMarkerMode, setFretMarkerMode] = useState<'dots' | 'numbers'>('numbers');
   const [mirrorStrings, setMirrorStrings] = useState(false);
   const [selectedChordScale, setSelectedChordScale] = useState<ChordScale | undefined>(undefined);
@@ -45,13 +44,6 @@ function App() {
     setSelectedNotes([]);
   };
 
-  const handleNumFretsChange = (newNumFrets: number) => {
-    // Allow any positive number of frets
-    if (newNumFrets >= 0) {
-      setNumFrets(newNumFrets);
-    }
-  };
-
   return (
     <div className="app">
       <main className="app-main">
@@ -62,8 +54,6 @@ function App() {
             <Controls
               instrument={instrument}
               onInstrumentChange={setInstrument}
-              numFrets={numFrets}
-              onNumFretsChange={handleNumFretsChange}
               fretMarkerMode={fretMarkerMode}
               onFretMarkerModeChange={setFretMarkerMode}
               mirrorStrings={mirrorStrings}
@@ -84,8 +74,6 @@ function App() {
               <Controls
                 instrument={instrument}
                 onInstrumentChange={setInstrument}
-                numFrets={numFrets}
-                onNumFretsChange={handleNumFretsChange}
                 fretMarkerMode={fretMarkerMode}
                 onFretMarkerModeChange={setFretMarkerMode}
                 mirrorStrings={mirrorStrings}
@@ -97,8 +85,6 @@ function App() {
               <div className="fretboard-panel">
                 <Fretboard
                   instrument={instrument}
-                  numFrets={numFrets}
-                  minFret={0}
                   fretMarkerMode={fretMarkerMode}
                   selectedChordScale={selectedChordScale}
                   selectedNotes={selectedNotes}
@@ -111,7 +97,6 @@ function App() {
             <div className="fretboard-playback">
               <PlaybackControls
                 instrument={instrument}
-                numFrets={numFrets}
                 selectedChordScale={selectedChordScale}
                 selectedNotes={selectedNotes}
                 onClearSelection={handleClearSelection}
