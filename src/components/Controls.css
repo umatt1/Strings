@@ -1,0 +1,129 @@
+.controls {
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  margin-bottom: 20px;
+}
+
+.control-section {
+  margin-bottom: 20px;
+}
+
+.control-section:last-child {
+  margin-bottom: 0;
+}
+
+.control-section h3 {
+  margin: 0 0 10px 0;
+  font-size: 16px;
+  color: #333;
+  font-weight: 600;
+}
+
+.button-group {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.button-group button,
+.view-selector button {
+  padding: 8px 16px;
+  background: #f0f0f0;
+  border: 2px solid #ddd;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  color: #333;
+}
+
+.button-group button:hover,
+.view-selector button:hover {
+  background: #e0e0e0;
+  border-color: #ccc;
+}
+
+.button-group button.active,
+.view-selector button.active {
+  background: #4CAF50;
+  border-color: #2e7d32;
+  color: white;
+}
+
+.button-group button.active:hover,
+.view-selector button.active:hover {
+  background: #45a049;
+}
+
+input[type="range"] {
+  width: 200px;
+  margin-right: 10px;
+  cursor: pointer;
+}
+
+.value-display {
+  font-weight: 600;
+  color: #4CAF50;
+  font-size: 16px;
+}
+
+.view-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.root-note-selector {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.root-note-selector label {
+  font-weight: 500;
+  color: #555;
+}
+
+.root-note-selector select {
+  padding: 6px 12px;
+  border: 2px solid #ddd;
+  border-radius: 6px;
+  font-size: 14px;
+  cursor: pointer;
+  background: white;
+}
+
+.root-note-selector select:focus {
+  outline: none;
+  border-color: #4CAF50;
+}
+
+.view-selector {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .controls {
+    padding: 15px;
+  }
+
+  .control-section h3 {
+    font-size: 14px;
+  }
+
+  .button-group button,
+  .view-selector button {
+    padding: 6px 12px;
+    font-size: 13px;
+  }
+
+  input[type="range"] {
+    width: 150px;
+  }
+}
