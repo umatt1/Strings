@@ -1,137 +1,241 @@
+/* Mobile-First Approach - Base styles for mobile (320px+) */
 .app {
-  max-width: 1400px;
   margin: 0 auto;
-  padding: 10px;
+  padding: 8px;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .app-header {
   text-align: center;
-  margin-bottom: 30px;
-  padding: 20px;
+  margin-bottom: 12px;
+  padding: 12px 16px;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  border-radius: 12px;
+  border-radius: 8px;
   color: white;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .app-header h1 {
-  margin: 0 0 10px 0;
-  font-size: 2.5em;
+  margin: 0 0 4px 0;
+  font-size: 1.5em;
   font-weight: 700;
 }
 
 .app-header p {
   margin: 0;
-  font-size: 1.1em;
+  font-size: 0.85em;
   opacity: 0.95;
 }
 
 .app-main {
   flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
 
-/* Top Settings Layout */
-.top-settings {
-  margin-bottom: 15px;
-  z-index: 5;
-  transition: all 0.3s ease;
-}
-
-/* When settings are collapsed, reduce the space they take */
-.top-settings:has(.controls.collapsed) {
-  margin-bottom: 8px;
-}
-
+/* Mobile: Vertical stacking layout */
 .main-content {
   display: flex;
-  gap: 20px;
-  align-items: flex-start;
+  flex-direction: column;
+  gap: 12px;
   position: relative;
-  min-height: 70vh;
+  width: 100%;
 }
 
 .theory-panel {
-  flex: 0 0 260px;
+  width: 100%;
+  order: 1;
   z-index: 10;
   transition: all 0.3s ease;
 }
 
-.theory-panel:has(.music-theory-controls.collapsed) {
-  flex: 0 0 50px;
-}
-
 .right-content {
-  flex: 1;
+  width: 100%;
+  order: 2;
   display: flex;
   flex-direction: column;
-  gap: 15px;
-  min-width: 0;
+  gap: 12px;
+}
+
+.top-settings {
+  order: 1;
+  margin-bottom: 0;
+  z-index: 5;
+  transition: all 0.3s ease;
 }
 
 .fretboard-area {
+  order: 2;
   flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
 
 .fretboard-panel {
   flex: 1;
+  min-height: 400px;
+}
+
+.fretboard-playback {
+  order: 3;
 }
 
 .app-footer {
-  margin-top: 40px;
-  padding: 20px;
+  margin-top: 20px;
+  padding: 12px;
   text-align: center;
   color: #666;
   border-top: 1px solid #eee;
+  font-size: 0.8em;
 }
 
 .app-footer p {
   margin: 0;
-  font-size: 0.9em;
 }
 
-/* Responsive design */
-@media (max-width: 768px) {
+/* ============================================
+   RESPONSIVE BREAKPOINTS - Progressive Enhancement
+   ============================================ */
+
+/* Large Mobile (480px+) */
+@media (min-width: 480px) {
   .app {
-    padding: 10px;
+    padding: 12px;
+  }
+
+  .app-header {
+    margin-bottom: 16px;
+    padding: 16px 20px;
+  }
+
+  .app-header h1 {
+    font-size: 1.75em;
+    margin-bottom: 6px;
+  }
+
+  .app-header p {
+    font-size: 0.95em;
   }
 
   .main-content {
-    grid-template-columns: 1fr;
-    gap: 15px;
+    gap: 16px;
+  }
+
+  .right-content {
+    gap: 16px;
+  }
+
+  .fretboard-area {
+    gap: 16px;
+  }
+}
+
+/* Tablet Portrait (768px+) - Hybrid Layout */
+@media (min-width: 768px) {
+  .app {
+    padding: 16px;
+  }
+
+  .app-header {
+    margin-bottom: 20px;
+    padding: 20px;
+  }
+
+  .app-header h1 {
+    font-size: 2em;
+    margin-bottom: 8px;
+  }
+
+  .app-header p {
+    font-size: 1em;
+  }
+
+  .main-content {
+    flex-direction: row;
+    gap: 20px;
+    align-items: flex-start;
   }
 
   .theory-panel {
-    order: 2;
-    width: 100% !important;
-  }
-
-  .fretboard-area {
+    flex: 0 0 260px;
+    width: 260px;
     order: 1;
   }
-  
-  .top-settings {
-    margin-bottom: 15px;
+
+  .theory-panel:has(.music-theory-controls.collapsed) {
+    flex: 0 0 50px;
+    width: 50px;
+  }
+
+  .right-content {
+    flex: 1;
+    order: 2;
+    min-width: 0;
+  }
+
+  .fretboard-panel {
+    min-height: 500px;
   }
 }
 
-@media (max-width: 480px) {
+/* Desktop (1024px+) - Full Desktop Layout */
+@media (min-width: 1024px) {
   .app {
-    padding: 5px;
+    max-width: 1400px;
+    padding: 20px;
   }
-  
-  .main-content {
-    gap: 8px;
+
+  .app-header {
+    margin-bottom: 30px;
+    padding: 24px;
+    border-radius: 12px;
   }
-  
-  .fretboard-area {
-    gap: 8px;
-  }
-  
-  .top-settings {
+
+  .app-header h1 {
+    font-size: 2.5em;
     margin-bottom: 10px;
+  }
+
+  .app-header p {
+    font-size: 1.1em;
+  }
+
+  .main-content {
+    gap: 24px;
+    min-height: 70vh;
+  }
+
+  .right-content {
+    gap: 20px;
+  }
+
+  .app-footer {
+    margin-top: 40px;
+    padding: 20px;
+    font-size: 0.9em;
+  }
+}
+
+/* Large Desktop (1200px+) - Maximum Width Optimization */
+@media (min-width: 1200px) {
+  .app {
+    max-width: 1600px;
+  }
+
+  .theory-panel {
+    flex: 0 0 300px;
+    width: 300px;
+  }
+
+  .theory-panel:has(.music-theory-controls.collapsed) {
+    flex: 0 0 60px;
+    width: 60px;
   }
 }
 

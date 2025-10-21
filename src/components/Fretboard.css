@@ -81,20 +81,71 @@
   border-color: #FFD700;
 }
 
-/* Responsive design */
-@media (max-width: 768px) {
+/* ============================================
+   MOBILE-FIRST TOUCH OPTIMIZATIONS - Phase 3
+   ============================================ */
+
+/* Base Mobile Styles (320px+) - Touch-First Fretboard */
+.fretboard {
+  padding: 8px;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch; /* Smooth momentum scrolling on iOS */
+  scroll-behavior: smooth;
+  border-radius: 8px;
+}
+
+.fretboard-grid {
+  padding: 8px;
+  gap: 3px;
+}
+
+.string-row {
+  padding: 3px;
+  margin-bottom: 4px;
+}
+
+.fret-cell {
+  min-width: 55px; /* Wider for touch targets */
+  min-height: 50px;
+  padding: 4px;
+}
+
+/* Large Mobile (480px+) */
+@media (min-width: 480px) {
   .fretboard {
     padding: 10px;
   }
 
+  .fretboard-grid {
+    padding: 10px;
+  }
+
   .fret-cell {
-    min-width: 40px;
+    min-width: 60px;
+    min-height: 55px;
   }
 }
 
-/* Mobile portrait - extra compact */
-@media (max-width: 480px) {
+/* Tablet Portrait (768px+) - Restore Desktop Fretboard */
+@media (min-width: 768px) {
+  .fretboard {
+    padding: 15px;
+    border-radius: 12px;
+  }
+
+  .fretboard-grid {
+    padding: 10px;
+    gap: 2px;
+  }
+
+  .string-row {
+    padding: 2px;
+    margin-bottom: 3px;
+  }
+
   .fret-cell {
-    min-width: 32px;
+    min-width: 70px;
+    min-height: auto;
+    padding: 2px;
   }
 }
