@@ -69,7 +69,7 @@ export const Controls: React.FC<ControlsProps> = ({
       }
 
       // Import html2canvas dynamically
-      const { default: html2canvas } = await import('html2canvas');
+      const html2canvas = (await import('html2canvas')).default;
       
       // Create canvas from fretboard
       const canvas = await html2canvas(fretboardElement as HTMLElement, {
@@ -87,24 +87,33 @@ export const Controls: React.FC<ControlsProps> = ({
         link.click();
       } else if (format === 'pdf') {
         // Convert to PDF using jsPDF
-        const { default: jsPDF } = await import('jspdf');
-        
-        const pdf = new jsPDF({
-          orientation: 'landscape',
-          unit: 'mm',
-          format: 'a4'
-        });
+        try {
+          // Import jsPDF - handle both default and named exports
+          const jsPDFModule = await import('jspdf');
+          // @ts-ignore - jsPDF v3 export handling
+          const { jsPDF } = jsPDFModule.default ? jsPDFModule.default : jsPDFModule;
+          
+          const pdf = new jsPDF({
+            orientation: 'landscape',
+            unit: 'mm',
+            format: 'a4'
+          });
 
-        const imgData = canvas.toDataURL('image/png');
-        const imgWidth = 297; // A4 landscape width in mm
-        const imgHeight = (canvas.height * imgWidth) / canvas.width;
+          const imgData = canvas.toDataURL('image/png');
+          const imgWidth = 297; // A4 landscape width in mm
+          const imgHeight = (canvas.height * imgWidth) / canvas.width;
 
-        pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
-        pdf.save(`fretboard-${new Date().toISOString().slice(0, 10)}.pdf`);
+          pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
+          pdf.save(`fretboard-${new Date().toISOString().slice(0, 10)}.pdf`);
+        } catch (pdfError) {
+          console.error('PDF generation error:', pdfError);
+          alert(`Failed to generate PDF: ${pdfError instanceof Error ? pdfError.message : 'Unknown error'}`);
+          return;
+        }
       }
     } catch (error) {
       console.error('Export failed:', error);
-      alert('Export failed. Please try again.');
+      alert(`Export failed: ${error instanceof Error ? error.message : 'Please try again.'}`);
     }
   };
 
