@@ -2,9 +2,10 @@
   background: linear-gradient(135deg, #f5f5f5 0%, #e0e0e0 100%);
   border: 2px solid #888;
   border-radius: 50%;
-  width: 40px;
-  height: 40px;
+  width: 45px;
+  height: 45px;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
   cursor: pointer;
@@ -13,13 +14,14 @@
   color: #333;
   font-size: 12px;
   margin: 2px;
+  position: relative;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .fretboard-note:hover {
-  background: linear-gradient(135deg, #fff 0%, #f0f0f0 100%);
   transform: scale(1.1);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-  border-color: #666;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  z-index: 10;
 }
 
 .fretboard-note:active {
@@ -27,17 +29,51 @@
 }
 
 .fretboard-note.highlighted {
-  background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
-  border-color: #2e7d32;
   color: white;
-  box-shadow: 0 2px 8px rgba(76, 175, 80, 0.4);
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+  border-width: 3px;
 }
 
-.fretboard-note.highlighted:hover {
-  background: linear-gradient(135deg, #66BB6A 0%, #4CAF50 100%);
-  border-color: #1b5e20;
+.fretboard-note.highlighted.important {
+  border-width: 4px;
+  width: 50px;
+  height: 50px;
+  font-weight: 900;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% { box-shadow: 0 0 0 0 currentColor; }
+  70% { box-shadow: 0 0 0 10px transparent; }
+  100% { box-shadow: 0 0 0 0 transparent; }
 }
 
 .note-name {
   user-select: none;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.scale-degree {
+  user-select: none;
+  font-size: 8px;
+  font-weight: 500;
+  position: absolute;
+  bottom: 2px;
+  right: 2px;
+  background: rgba(0, 0, 0, 0.7);
+  color: white;
+  border-radius: 50%;
+  width: 14px;
+  height: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+
+.fretboard-note.highlighted .scale-degree {
+  background: rgba(255, 255, 255, 0.9);
+  color: #333;
+  font-weight: 700;
 }

@@ -10,8 +10,23 @@ import './App.css';
 function App() {
   const [instrument, setInstrument] = useState<InstrumentConfig>(STANDARD_GUITAR);
   const [numFrets, setNumFrets] = useState(15);
+  const [minFret, setMinFret] = useState(0);
   const [orientation, setOrientation] = useState<'horizontal' | 'vertical'>('horizontal');
   const [selectedChordScale, setSelectedChordScale] = useState<ChordScale | undefined>(undefined);
+
+  const handleMinFretChange = (newMinFret: number) => {
+    // Ensure min fret doesn't exceed max fret
+    if (newMinFret <= numFrets) {
+      setMinFret(newMinFret);
+    }
+  };
+
+  const handleMaxFretChange = (newMaxFret: number) => {
+    // Ensure max fret is at least the min fret
+    if (newMaxFret >= minFret) {
+      setNumFrets(newMaxFret);
+    }
+  };
 
   return (
     <div className="app">
@@ -25,7 +40,9 @@ function App() {
           instrument={instrument}
           onInstrumentChange={setInstrument}
           numFrets={numFrets}
-          onNumFretsChange={setNumFrets}
+          onNumFretsChange={handleMaxFretChange}
+          minFret={minFret}
+          onMinFretChange={handleMinFretChange}
           orientation={orientation}
           onOrientationChange={setOrientation}
           selectedChordScale={selectedChordScale}
@@ -35,12 +52,14 @@ function App() {
         <PlaybackControls
           instrument={instrument}
           numFrets={numFrets}
+          minFret={minFret}
           selectedChordScale={selectedChordScale}
         />
 
         <Fretboard
           instrument={instrument}
           numFrets={numFrets}
+          minFret={minFret}
           orientation={orientation}
           selectedChordScale={selectedChordScale}
         />

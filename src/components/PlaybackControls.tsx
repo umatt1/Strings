@@ -9,12 +9,14 @@ import './PlaybackControls.css';
 interface PlaybackControlsProps {
   instrument: InstrumentConfig;
   numFrets: number;
+  minFret: number;
   selectedChordScale?: ChordScale;
 }
 
 export const PlaybackControls: React.FC<PlaybackControlsProps> = ({
   instrument,
   numFrets,
+  minFret,
   selectedChordScale,
 }) => {
   const [isPlaying, setIsPlaying] = React.useState(false);
@@ -26,10 +28,10 @@ export const PlaybackControls: React.FC<PlaybackControlsProps> = ({
 
     const frequencies: number[] = [];
 
-    // Collect all highlighted notes from the fretboard
+    // Collect ALL highlighted notes from the fretboard (every instance)
     for (let stringIndex = 0; stringIndex < instrument.strings.length; stringIndex++) {
       const stringConfig = instrument.strings[stringIndex];
-      for (let fret = 0; fret <= numFrets; fret++) {
+      for (let fret = minFret; fret <= numFrets; fret++) {
         const note = getNoteAtFret(stringConfig.openNote, stringConfig.octave, fret);
         if (isNoteInChord(note.name, selectedChordScale)) {
           frequencies.push(note.frequency);
@@ -37,10 +39,10 @@ export const PlaybackControls: React.FC<PlaybackControlsProps> = ({
       }
     }
 
-    // Remove duplicates and sort by frequency
-    const uniqueFrequencies = Array.from(new Set(frequencies)).sort((a, b) => a - b);
+    // Sort by frequency but keep all instances (no deduplication)
+    frequencies.sort((a, b) => a - b);
 
-    await audioPlayer.playSequence(uniqueFrequencies, 0.3, 0.05);
+    await audioPlayer.playSequence(frequencies, 0.2, 0.05);
     setIsPlaying(false);
   };
 
@@ -49,19 +51,26 @@ export const PlaybackControls: React.FC<PlaybackControlsProps> = ({
 
     setIsPlaying(true);
 
-    // Play notes in the first octave they appear
+    // Play the scale pattern in order, using the lowest octave notes
+    const scaleNotes = selectedChordScale.notes;
     const frequencies: number[] = [];
-    const seenNotes = new Set<string>();
 
-    for (let fret = 0; fret <= numFrets; fret++) {
+    // Find the lowest occurrence of each scale note
+    for (const scaleName of scaleNotes) {
+      let lowestFreq = Infinity;
+      
       for (let stringIndex = 0; stringIndex < instrument.strings.length; stringIndex++) {
         const stringConfig = instrument.strings[stringIndex];
-        const note = getNoteAtFret(stringConfig.openNote, stringConfig.octave, fret);
-        
-        if (isNoteInChord(note.name, selectedChordScale) && !seenNotes.has(note.name)) {
-          frequencies.push(note.frequency);
-          seenNotes.add(note.name);
+        for (let fret = minFret; fret <= numFrets; fret++) {
+          const note = getNoteAtFret(stringConfig.openNote, stringConfig.octave, fret);
+          if (note.name === scaleName && note.frequency < lowestFreq) {
+            lowestFreq = note.frequency;
+          }
         }
+      }
+      
+      if (lowestFreq !== Infinity) {
+        frequencies.push(lowestFreq);
       }
     }
 

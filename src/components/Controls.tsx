@@ -19,6 +19,8 @@ interface ControlsProps {
   onInstrumentChange: (instrument: InstrumentConfig) => void;
   numFrets: number;
   onNumFretsChange: (numFrets: number) => void;
+  minFret: number;
+  onMinFretChange: (minFret: number) => void;
   orientation: 'horizontal' | 'vertical';
   onOrientationChange: (orientation: 'horizontal' | 'vertical') => void;
   selectedChordScale?: ChordScale;
@@ -30,6 +32,8 @@ export const Controls: React.FC<ControlsProps> = ({
   onInstrumentChange,
   numFrets,
   onNumFretsChange,
+  minFret,
+  onMinFretChange,
   orientation,
   onOrientationChange,
   selectedChordScale,
@@ -108,15 +112,31 @@ export const Controls: React.FC<ControlsProps> = ({
       </div>
 
       <div className="control-section">
-        <h3>Number of Frets</h3>
-        <input
-          type="range"
-          min="12"
-          max="24"
-          value={numFrets}
-          onChange={(e) => onNumFretsChange(parseInt(e.target.value))}
-        />
-        <span className="value-display">{numFrets}</span>
+        <h3>Fret Range</h3>
+        <div className="fret-range-controls">
+          <div className="fret-control">
+            <label>Minimum Fret:</label>
+            <input
+              type="range"
+              min="0"
+              max={numFrets}
+              value={minFret}
+              onChange={(e) => onMinFretChange(parseInt(e.target.value))}
+            />
+            <span className="value-display">{minFret}</span>
+          </div>
+          <div className="fret-control">
+            <label>Maximum Frets:</label>
+            <input
+              type="range"
+              min={minFret}
+              max="24"
+              value={numFrets}
+              onChange={(e) => onNumFretsChange(parseInt(e.target.value))}
+            />
+            <span className="value-display">{numFrets}</span>
+          </div>
+        </div>
       </div>
 
       <div className="control-section">

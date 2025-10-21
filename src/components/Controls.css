@@ -58,6 +58,25 @@
   background: #45a049;
 }
 
+.fret-range-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.fret-control {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.fret-control label {
+  min-width: 120px;
+  font-weight: 500;
+  color: #555;
+  font-size: 14px;
+}
+
 input[type="range"] {
   width: 200px;
   margin-right: 10px;

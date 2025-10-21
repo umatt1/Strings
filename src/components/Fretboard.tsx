@@ -3,12 +3,13 @@ import type { InstrumentConfig, Note } from '../types/music';
 import { getNoteAtFret } from '../types/music';
 import { FretboardNote } from './FretboardNote';
 import type { ChordScale } from '../utils/musicTheory';
-import { isNoteInChord } from '../utils/musicTheory';
+import { isNoteInChord, getScaleDegreeInfo } from '../utils/musicTheory';
 import './Fretboard.css';
 
 interface FretboardProps {
   instrument: InstrumentConfig;
   numFrets: number;
+  minFret: number;
   orientation: 'horizontal' | 'vertical';
   selectedChordScale?: ChordScale;
   onNoteSelect?: (note: Note, stringIndex: number, fretNumber: number) => void;
@@ -17,6 +18,7 @@ interface FretboardProps {
 export const Fretboard: React.FC<FretboardProps> = ({
   instrument,
   numFrets,
+  minFret,
   orientation,
   selectedChordScale,
   onNoteSelect,
@@ -25,12 +27,15 @@ export const Fretboard: React.FC<FretboardProps> = ({
     const strings = instrument.strings.map((stringConfig, stringIndex) => {
       const frets = [];
       
-      // Add open string (fret 0)
-      for (let fret = 0; fret <= numFrets; fret++) {
+      // Add frets in the specified range
+      for (let fret = minFret; fret <= numFrets; fret++) {
         const note = getNoteAtFret(stringConfig.openNote, stringConfig.octave, fret);
         const isHighlighted = selectedChordScale
           ? isNoteInChord(note.name, selectedChordScale)
           : false;
+        const scaleDegreeInfo = selectedChordScale 
+          ? getScaleDegreeInfo(note.name, selectedChordScale)
+          : null;
 
         frets.push(
           <div key={`${stringIndex}-${fret}`} className="fret-cell">
@@ -41,6 +46,7 @@ export const Fretboard: React.FC<FretboardProps> = ({
               stringIndex={stringIndex}
               fretNumber={fret}
               isHighlighted={isHighlighted}
+              scaleDegreeInfo={scaleDegreeInfo}
               onSelect={onNoteSelect}
             />
           </div>

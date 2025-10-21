@@ -1,57 +1,137 @@
 .fretboard {
   padding: 20px;
-  background: #f9f9f9;
-  border-radius: 8px;
+  background: linear-gradient(135deg, #8B4513 0%, #A0522D 50%, #8B4513 100%);
+  border-radius: 12px;
   overflow-x: auto;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+  border: 3px solid #654321;
 }
 
 .fretboard-grid {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 2px;
+  background: #2C1810;
+  padding: 15px;
+  border-radius: 8px;
+  border: 2px solid #654321;
 }
 
 .string-row {
   display: flex;
   align-items: center;
-  gap: 10px;
-  background: white;
-  padding: 8px;
-  border-radius: 6px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  gap: 0;
+  background: linear-gradient(90deg, #C0C0C0 0%, #E5E5E5 50%, #C0C0C0 100%);
+  padding: 2px 8px;
+  border-radius: 20px;
+  box-shadow: 
+    inset 0 1px 0 rgba(255, 255, 255, 0.5),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.3),
+    0 2px 4px rgba(0, 0, 0, 0.2);
+  border: 1px solid #999;
+  position: relative;
+  height: 60px;
 }
 
 .string-label {
   min-width: 120px;
-  font-weight: 600;
-  color: #555;
-  font-size: 14px;
+  font-weight: 700;
+  color: #2C1810;
+  font-size: 12px;
+  background: rgba(255, 255, 255, 0.9);
+  padding: 4px 8px;
+  border-radius: 15px;
+  text-align: center;
+  border: 1px solid #999;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
 }
 
 .frets {
   display: flex;
-  gap: 4px;
+  gap: 0;
   flex-wrap: nowrap;
+  flex: 1;
+  position: relative;
 }
 
 .fret-cell {
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
   position: relative;
-  min-width: 50px;
+  min-width: 80px;
+  height: 100%;
+  border-right: 4px solid #8B4513;
+  background: linear-gradient(90deg, 
+    rgba(255, 255, 255, 0.1) 0%, 
+    rgba(255, 255, 255, 0.05) 50%, 
+    rgba(0, 0, 0, 0.1) 100%);
+}
+
+.fret-cell:first-child {
+  border-left: 6px solid #654321;
+}
+
+.fret-cell:nth-child(3),
+.fret-cell:nth-child(5),
+.fret-cell:nth-child(7),
+.fret-cell:nth-child(9),
+.fret-cell:nth-child(12),
+.fret-cell:nth-child(15),
+.fret-cell:nth-child(17),
+.fret-cell:nth-child(19),
+.fret-cell:nth-child(21),
+.fret-cell:nth-child(24) {
+  background: linear-gradient(90deg, 
+    rgba(255, 255, 255, 0.15) 0%, 
+    rgba(255, 255, 255, 0.1) 50%, 
+    rgba(0, 0, 0, 0.05) 100%);
+}
+
+.fret-cell:nth-child(12)::before,
+.fret-cell:nth-child(24)::before {
+  content: '••';
+  position: absolute;
+  top: -10px;
+  font-size: 20px;
+  color: #DAA520;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+.fret-cell:nth-child(3)::before,
+.fret-cell:nth-child(5)::before,
+.fret-cell:nth-child(7)::before,
+.fret-cell:nth-child(9)::before,
+.fret-cell:nth-child(15)::before,
+.fret-cell:nth-child(17)::before,
+.fret-cell:nth-child(19)::before,
+.fret-cell:nth-child(21)::before {
+  content: '•';
+  position: absolute;
+  top: -8px;
+  font-size: 16px;
+  color: #DAA520;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
 }
 
 .fret-marker {
   font-size: 10px;
-  color: #999;
-  margin-bottom: 2px;
-  font-weight: 500;
+  color: #DAA520;
+  margin-bottom: 4px;
+  font-weight: 700;
+  background: rgba(0, 0, 0, 0.8);
+  padding: 2px 6px;
+  border-radius: 10px;
+  text-shadow: none;
+  border: 1px solid #DAA520;
 }
 
 .fret-marker.open {
-  font-weight: 700;
-  color: #4CAF50;
+  font-weight: 900;
+  color: #32CD32;
+  background: rgba(0, 100, 0, 0.8);
+  border-color: #32CD32;
 }
 
 /* Vertical orientation */

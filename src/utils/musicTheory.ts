@@ -23,6 +23,45 @@ export interface ChordScale {
   notes: NoteName[];
 }
 
+export interface ScaleDegreeInfo {
+  note: NoteName;
+  degree: number;
+  isImportant: boolean; // 1st, 3rd, 5th are usually important
+}
+
+export function getScaleDegreeInfo(note: NoteName, chord: ChordScale): ScaleDegreeInfo | null {
+  const noteIndex = chord.notes.indexOf(note);
+  if (noteIndex === -1) return null;
+
+  const degree = noteIndex + 1;
+  const isImportant = degree === 1 || degree === 3 || degree === 5;
+
+  return {
+    note,
+    degree,
+    isImportant
+  };
+}
+
+export function getScaleDegreeColor(degree: number, isImportant: boolean): string {
+  if (isImportant) {
+    switch (degree) {
+      case 1: return '#FF4444'; // Root - Red
+      case 3: return '#4444FF'; // Third - Blue  
+      case 5: return '#44FF44'; // Fifth - Green
+      default: return '#FF8800'; // Other important - Orange
+    }
+  } else {
+    switch (degree) {
+      case 2: return '#FFAA44'; // Second - Light Orange
+      case 4: return '#AA44FF'; // Fourth - Purple
+      case 6: return '#44AAFF'; // Sixth - Light Blue
+      case 7: return '#FFAA88'; // Seventh - Pink
+      default: return '#888888'; // Others - Gray
+    }
+  }
+}
+
 export function getChordNotes(rootNote: NoteName, chordType: ChordType): NoteName[] {
   const rootIndex = NOTES.indexOf(rootNote);
   const intervals = CHORD_INTERVALS[chordType];
