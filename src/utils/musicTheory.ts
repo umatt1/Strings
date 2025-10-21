@@ -204,13 +204,13 @@ export const SCALE_LABELS: Record<ScaleType, string> = {
   'pentatonic-minor': 'Minor Pentatonic',
   
   // Major Modes
-  'ionian': 'Ionian (Major)',
-  'dorian': 'Dorian',
-  'phrygian': 'Phrygian',
-  'lydian': 'Lydian',
-  'mixolydian': 'Mixolydian',
-  'aeolian': 'Aeolian (Natural Minor)',
-  'locrian': 'Locrian',
+  'ionian': 'Ionian (Mode 1)',
+  'dorian': 'Dorian (Mode 2)',
+  'phrygian': 'Phrygian (Mode 3)',
+  'lydian': 'Lydian (Mode 4)',
+  'mixolydian': 'Mixolydian (Mode 5)',
+  'aeolian': 'Aeolian (Mode 6)',
+  'locrian': 'Locrian (Mode 7)',
   
   // Minor Scale Variations
   'natural-minor': 'Natural Minor',
