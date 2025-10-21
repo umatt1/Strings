@@ -1,6 +1,11 @@
 import React from 'react';
-import type { InstrumentConfig, NoteName } from '../types/music';
-import { STANDARD_GUITAR, STANDARD_BASS, NOTES } from '../types/music';
+import type { InstrumentConfig, NoteName, TuningPreset } from '../types/music';
+import { 
+  NOTES, 
+  GUITAR_TUNINGS, 
+  BASS_TUNINGS, 
+  createInstrumentFromTuning 
+} from '../types/music';
 import type { 
   ChordType, 
   ScaleType,
@@ -28,7 +33,6 @@ interface ControlsProps {
 }
 
 export const Controls: React.FC<ControlsProps> = ({
-  instrument,
   onInstrumentChange,
   numFrets,
   onNumFretsChange,
@@ -43,6 +47,29 @@ export const Controls: React.FC<ControlsProps> = ({
   const [viewType, setViewType] = React.useState<'chord' | 'scale'>('chord');
   const [chordType, setChordType] = React.useState<ChordType>('major');
   const [scaleType, setScaleType] = React.useState<ScaleType>('pentatonic-major');
+  const [selectedTuning, setSelectedTuning] = React.useState<TuningPreset>(
+    GUITAR_TUNINGS.find(t => t.id === 'standard')!
+  );
+  
+  const isGuitarSelected = selectedTuning.category === 'guitar';
+  const availableTunings = isGuitarSelected ? GUITAR_TUNINGS : BASS_TUNINGS;
+
+  const handleInstrumentCategoryChange = (category: 'guitar' | 'bass') => {
+    const defaultTuning = category === 'guitar' 
+      ? GUITAR_TUNINGS.find(t => t.id === 'standard')!
+      : BASS_TUNINGS.find(t => t.id === 'bass-standard')!;
+    
+    setSelectedTuning(defaultTuning);
+    onInstrumentChange(createInstrumentFromTuning(defaultTuning));
+  };
+
+  const handleTuningChange = (tuningId: string) => {
+    const tuning = availableTunings.find(t => t.id === tuningId);
+    if (tuning) {
+      setSelectedTuning(tuning);
+      onInstrumentChange(createInstrumentFromTuning(tuning));
+    }
+  };
 
   const handleViewChange = (type: 'none' | ChordType | ScaleType) => {
     if (type === 'none') {
@@ -94,20 +121,36 @@ export const Controls: React.FC<ControlsProps> = ({
   return (
     <div className="controls">
       <div className="control-section">
-        <h3>Instrument</h3>
-        <div className="button-group">
-          <button
-            className={instrument.name === STANDARD_GUITAR.name ? 'active' : ''}
-            onClick={() => onInstrumentChange(STANDARD_GUITAR)}
-          >
-            Guitar
-          </button>
-          <button
-            className={instrument.name === STANDARD_BASS.name ? 'active' : ''}
-            onClick={() => onInstrumentChange(STANDARD_BASS)}
-          >
-            Bass
-          </button>
+        <h3>Instrument & Tuning</h3>
+        <div className="instrument-controls">
+          <div className="button-group">
+            <button
+              className={isGuitarSelected ? 'active' : ''}
+              onClick={() => handleInstrumentCategoryChange('guitar')}
+            >
+              Guitar
+            </button>
+            <button
+              className={!isGuitarSelected ? 'active' : ''}
+              onClick={() => handleInstrumentCategoryChange('bass')}
+            >
+              Bass
+            </button>
+          </div>
+          
+          <div className="tuning-selector">
+            <label>Tuning:</label>
+            <select 
+              value={selectedTuning.id} 
+              onChange={(e) => handleTuningChange(e.target.value)}
+            >
+              {availableTunings.map((tuning) => (
+                <option key={tuning.id} value={tuning.id}>
+                  {tuning.name}
+                </option>
+              ))}
+            </select>
+          </div>
         </div>
       </div>
 

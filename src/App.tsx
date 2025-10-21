@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import type { InstrumentConfig } from './types/music';
-import { STANDARD_GUITAR } from './types/music';
+import { GUITAR_TUNINGS, createInstrumentFromTuning } from './types/music';
 import type { ChordScale } from './utils/musicTheory';
 import { Controls } from './components/Controls';
 import { Fretboard } from './components/Fretboard';
@@ -8,7 +8,9 @@ import { PlaybackControls } from './components/PlaybackControls';
 import './App.css';
 
 function App() {
-  const [instrument, setInstrument] = useState<InstrumentConfig>(STANDARD_GUITAR);
+  const [instrument, setInstrument] = useState<InstrumentConfig>(
+    createInstrumentFromTuning(GUITAR_TUNINGS.find(t => t.id === 'standard')!)
+  );
   const [numFrets, setNumFrets] = useState(15);
   const [minFret, setMinFret] = useState(0);
   const [orientation, setOrientation] = useState<'horizontal' | 'vertical'>('horizontal');

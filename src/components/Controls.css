@@ -58,6 +58,41 @@
   background: #45a049;
 }
 
+.instrument-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.tuning-selector {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.tuning-selector label {
+  min-width: 80px;
+  font-weight: 500;
+  color: #555;
+  font-size: 14px;
+}
+
+.tuning-selector select {
+  padding: 8px 12px;
+  border: 2px solid #ddd;
+  border-radius: 6px;
+  font-size: 14px;
+  cursor: pointer;
+  background: white;
+  flex: 1;
+  min-width: 200px;
+}
+
+.tuning-selector select:focus {
+  outline: none;
+  border-color: #4CAF50;
+}
+
 .fret-range-controls {
   display: flex;
   flex-direction: column;
