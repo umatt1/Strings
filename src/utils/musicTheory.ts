@@ -91,21 +91,21 @@ export function getScaleDegreeInfo(note: NoteName, chord: ChordScale): ScaleDegr
 }
 
 export function getScaleDegreeColor(degree: number, isImportant: boolean): string {
-  // Colorblind-friendly gradient: Red (most important) -> Orange -> Yellow -> Blue (least important)
+  // Clean blue/purple gradient matching the screenshot aesthetic
   if (isImportant) {
     switch (degree) {
-      case 1: return '#D73027'; // Root - Deep Red (most important)
-      case 3: return '#FC8D59'; // Third - Orange-Red
-      case 5: return '#FEE08B'; // Fifth - Yellow-Orange
-      default: return '#E0F3F8'; // Other important - Light Blue
+      case 1: return '#1a237e'; // Root - Dark Indigo (most important)
+      case 3: return '#3f51b5'; // Third - Indigo
+      case 5: return '#5c6bc0'; // Fifth - Light Indigo
+      default: return '#7986cb'; // Other important - Lighter Indigo
     }
   } else {
     switch (degree) {
-      case 2: return '#FDAE61'; // Second - Light Orange
-      case 4: return '#FFFFBF'; // Fourth - Light Yellow
-      case 6: return '#ABD9E9'; // Sixth - Light Blue
-      case 7: return '#74ADD1'; // Seventh - Medium Blue
-      default: return '#4575B4'; // Others - Blue (least important)
+      case 2: return '#9fa8da'; // Second - Very Light Indigo
+      case 4: return '#c5cae9'; // Fourth - Pale Indigo
+      case 6: return '#e8eaf6'; // Sixth - Very Pale Indigo
+      case 7: return '#b39ddb'; // Seventh - Light Purple
+      default: return '#d1c4e9'; // Others - Pale Purple
     }
   }
 }
