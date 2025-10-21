@@ -37,14 +37,12 @@ export const MusicTheoryControls: React.FC<MusicTheoryControlsProps> = ({
       rootNote,
       notes,
     });
-    setShowChordDropdown(false);
-    setShowScaleDropdown(false);
+    // Keep dropdowns open for easier selection
   };
 
   const handleClearSelection = () => {
     onChordScaleChange(undefined);
-    setShowChordDropdown(false);
-    setShowScaleDropdown(false);
+    // Keep dropdowns open when clearing selection
   };
 
   const toggleCollapse = () => {
@@ -115,7 +113,6 @@ export const MusicTheoryControls: React.FC<MusicTheoryControlsProps> = ({
                 className="dropdown-toggle"
                 onClick={() => {
                   setShowChordDropdown(!showChordDropdown);
-                  setShowScaleDropdown(false);
                 }}
               >
                 All Chords {showChordDropdown ? '▲' : '▼'}
@@ -149,7 +146,6 @@ export const MusicTheoryControls: React.FC<MusicTheoryControlsProps> = ({
                 className="dropdown-toggle"
                 onClick={() => {
                   setShowScaleDropdown(!showScaleDropdown);
-                  setShowChordDropdown(false);
                 }}
               >
                 All Scales {showScaleDropdown ? '▲' : '▼'}
