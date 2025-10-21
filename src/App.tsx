@@ -13,7 +13,6 @@ function App() {
     createInstrumentFromTuning(GUITAR_TUNINGS.find(t => t.id === 'standard')!)
   );
   const [numFrets, setNumFrets] = useState(15);
-  const [minFret, setMinFret] = useState(0);
   const [fretMarkerMode, setFretMarkerMode] = useState<'dots' | 'numbers'>('numbers');
   const [mirrorStrings, setMirrorStrings] = useState(false);
   const [selectedChordScale, setSelectedChordScale] = useState<ChordScale | undefined>(undefined);
@@ -46,17 +45,10 @@ function App() {
     setSelectedNotes([]);
   };
 
-  const handleMinFretChange = (newMinFret: number) => {
-    // Ensure min fret doesn't exceed max fret
-    if (newMinFret <= numFrets) {
-      setMinFret(newMinFret);
-    }
-  };
-
-  const handleMaxFretChange = (newMaxFret: number) => {
-    // Ensure max fret is at least the min fret
-    if (newMaxFret >= minFret) {
-      setNumFrets(newMaxFret);
+  const handleNumFretsChange = (newNumFrets: number) => {
+    // Allow any positive number of frets
+    if (newNumFrets >= 0) {
+      setNumFrets(newNumFrets);
     }
   };
 
@@ -71,9 +63,7 @@ function App() {
               instrument={instrument}
               onInstrumentChange={setInstrument}
               numFrets={numFrets}
-              onNumFretsChange={handleMaxFretChange}
-              minFret={minFret}
-              onMinFretChange={handleMinFretChange}
+              onNumFretsChange={handleNumFretsChange}
               fretMarkerMode={fretMarkerMode}
               onFretMarkerModeChange={setFretMarkerMode}
               mirrorStrings={mirrorStrings}
@@ -95,9 +85,7 @@ function App() {
                 instrument={instrument}
                 onInstrumentChange={setInstrument}
                 numFrets={numFrets}
-                onNumFretsChange={handleMaxFretChange}
-                minFret={minFret}
-                onMinFretChange={handleMinFretChange}
+                onNumFretsChange={handleNumFretsChange}
                 fretMarkerMode={fretMarkerMode}
                 onFretMarkerModeChange={setFretMarkerMode}
                 mirrorStrings={mirrorStrings}
@@ -110,7 +98,7 @@ function App() {
                 <Fretboard
                   instrument={instrument}
                   numFrets={numFrets}
-                  minFret={minFret}
+                  minFret={0}
                   fretMarkerMode={fretMarkerMode}
                   selectedChordScale={selectedChordScale}
                   selectedNotes={selectedNotes}
@@ -124,7 +112,6 @@ function App() {
               <PlaybackControls
                 instrument={instrument}
                 numFrets={numFrets}
-                minFret={minFret}
                 selectedChordScale={selectedChordScale}
                 selectedNotes={selectedNotes}
                 onClearSelection={handleClearSelection}

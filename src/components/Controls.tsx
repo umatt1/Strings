@@ -12,8 +12,6 @@ interface ControlsProps {
   onInstrumentChange: (instrument: InstrumentConfig) => void;
   numFrets: number;
   onNumFretsChange: (numFrets: number) => void;
-  minFret: number;
-  onMinFretChange: (minFret: number) => void;
   fretMarkerMode: 'dots' | 'numbers';
   onFretMarkerModeChange: (mode: 'dots' | 'numbers') => void;
   mirrorStrings: boolean;
@@ -24,8 +22,6 @@ export const Controls: React.FC<ControlsProps> = ({
   onInstrumentChange,
   numFrets,
   onNumFretsChange,
-  minFret,
-  onMinFretChange,
   fretMarkerMode,
   onFretMarkerModeChange,
   mirrorStrings,
@@ -161,27 +157,16 @@ export const Controls: React.FC<ControlsProps> = ({
           </div>
         </div>
 
-        {/* Fret Range Section */}
+        {/* Fretboard Size Section */}
         <div className="control-group">
-          <h4>Fret Range</h4>
+          <h4>Fretboard</h4>
           <div className="range-controls">
             <div className="range-item">
-              <label>Min:</label>
+              <label>Number of Frets:</label>
               <input
                 type="number"
-                min="0"
-                max={numFrets}
-                value={minFret}
-                onChange={(e) => onMinFretChange(parseInt(e.target.value) || 0)}
-                className="number-input"
-              />
-            </div>
-            <div className="range-item">
-              <label>Max:</label>
-              <input
-                type="number"
-                min={minFret}
-                max="24"
+                min="1"
+                max="36"
                 value={numFrets}
                 onChange={(e) => onNumFretsChange(parseInt(e.target.value) || 12)}
                 className="number-input"

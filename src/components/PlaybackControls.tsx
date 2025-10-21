@@ -9,7 +9,6 @@ import './PlaybackControls.css';
 interface PlaybackControlsProps {
   instrument: InstrumentConfig;
   numFrets: number;
-  minFret: number;
   selectedChordScale?: ChordScale;
   selectedNotes: Note[];
   onClearSelection: () => void;
@@ -18,7 +17,6 @@ interface PlaybackControlsProps {
 export const PlaybackControls: React.FC<PlaybackControlsProps> = ({
   instrument,
   numFrets,
-  minFret,
   selectedChordScale,
   selectedNotes,
   onClearSelection,
@@ -44,7 +42,7 @@ export const PlaybackControls: React.FC<PlaybackControlsProps> = ({
     // Collect all highlighted notes between the selected frequencies
     for (let stringIndex = 0; stringIndex < instrument.strings.length; stringIndex++) {
       const stringConfig = instrument.strings[stringIndex];
-      for (let fret = minFret; fret <= numFrets; fret++) {
+      for (let fret = 0; fret <= numFrets; fret++) {
         const note = getNoteAtFret(stringConfig.openNote, stringConfig.octave, fret);
         
         // Include note if it's highlighted and within the frequency range
