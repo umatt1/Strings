@@ -15,6 +15,52 @@
   padding: 15px;
   border-radius: 8px;
   border: 2px solid #654321;
+  position: relative;
+}
+
+/* Fret markers at the top of the fretboard */
+.fret-markers-row {
+  display: flex;
+  gap: 0;
+  margin-bottom: 10px;
+  height: 30px;
+  align-items: center;
+}
+
+.fret-marker-cell {
+  min-width: 80px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  position: relative;
+}
+
+.fret-marker-cell:first-child {
+  min-width: 120px; /* Account for string labels */
+}
+
+.fret-position-marker {
+  font-size: 18px;
+  color: #DAA520;
+  font-weight: 900;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.7);
+}
+
+.fret-position-marker.double {
+  font-size: 20px;
+  letter-spacing: 2px;
+}
+
+.fret-position-number {
+  font-size: 12px;
+  color: #FFD700;
+  font-weight: 600;
+  margin-top: 2px;
+  background: rgba(0, 0, 0, 0.6);
+  padding: 2px 6px;
+  border-radius: 4px;
+  border: 1px solid #DAA520;
 }
 
 .string-row {
@@ -87,52 +133,6 @@
     rgba(255, 255, 255, 0.15) 0%, 
     rgba(255, 255, 255, 0.1) 50%, 
     rgba(0, 0, 0, 0.05) 100%);
-}
-
-.fret-cell:nth-child(12)::before,
-.fret-cell:nth-child(24)::before {
-  content: '••';
-  position: absolute;
-  top: -15px;
-  font-size: 24px;
-  color: #FFD700;
-  text-shadow: 
-    0 0 3px rgba(255, 215, 0, 0.8),
-    2px 2px 4px rgba(0, 0, 0, 0.7);
-  font-weight: 900;
-  z-index: 1;
-}
-
-.fret-cell:nth-child(3)::before,
-.fret-cell:nth-child(5)::before,
-.fret-cell:nth-child(7)::before,
-.fret-cell:nth-child(9)::before,
-.fret-cell:nth-child(15)::before,
-.fret-cell:nth-child(17)::before,
-.fret-cell:nth-child(19)::before,
-.fret-cell:nth-child(21)::before {
-  content: '•';
-  position: absolute;
-  top: -12px;
-  font-size: 20px;
-  color: #FFD700;
-  text-shadow: 
-    0 0 2px rgba(255, 215, 0, 0.8),
-    1px 1px 3px rgba(0, 0, 0, 0.7);
-  font-weight: 900;
-  z-index: 1;
-}
-
-.fret-marker {
-  font-size: 10px;
-  color: #DAA520;
-  margin-bottom: 4px;
-  font-weight: 700;
-  background: rgba(0, 0, 0, 0.8);
-  padding: 2px 6px;
-  border-radius: 10px;
-  text-shadow: none;
-  border: 1px solid #DAA520;
 }
 
 .fret-marker.open {

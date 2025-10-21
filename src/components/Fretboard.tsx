@@ -23,6 +23,38 @@ export const Fretboard: React.FC<FretboardProps> = ({
   selectedChordScale,
   onNoteSelect,
 }) => {
+  const renderFretMarkers = () => {
+    const markers = [];
+    
+    // Empty space for string labels
+    markers.push(
+      <div key="label-space" className="fret-marker-cell">
+      </div>
+    );
+    
+    // Add markers for each fret
+    for (let fret = minFret; fret <= numFrets; fret++) {
+      const isMarkerFret = [3, 5, 7, 9, 15, 17, 19, 21].includes(fret);
+      const isDoubleMarker = [12, 24].includes(fret);
+      
+      markers.push(
+        <div key={`marker-${fret}`} className="fret-marker-cell">
+          {isDoubleMarker && (
+            <div className="fret-position-marker double">••</div>
+          )}
+          {isMarkerFret && !isDoubleMarker && (
+            <div className="fret-position-marker">•</div>
+          )}
+          {(isMarkerFret || isDoubleMarker) && (
+            <div className="fret-position-number">{fret}</div>
+          )}
+        </div>
+      );
+    }
+    
+    return <div className="fret-markers-row">{markers}</div>;
+  };
+
   const renderFretboard = () => {
     const strings = instrument.strings.map((stringConfig, stringIndex) => {
       const frets = [];
@@ -39,8 +71,6 @@ export const Fretboard: React.FC<FretboardProps> = ({
 
         frets.push(
           <div key={`${stringIndex}-${fret}`} className="fret-cell">
-            {fret === 0 && <div className="fret-marker open">0</div>}
-            {fret > 0 && <div className="fret-marker">{fret}</div>}
             <FretboardNote
               note={note}
               stringIndex={stringIndex}
@@ -68,7 +98,10 @@ export const Fretboard: React.FC<FretboardProps> = ({
 
   return (
     <div className={`fretboard ${orientation}`}>
-      <div className="fretboard-grid">{renderFretboard()}</div>
+      <div className="fretboard-grid">
+        {renderFretMarkers()}
+        {renderFretboard()}
+      </div>
     </div>
   );
 };
