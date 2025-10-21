@@ -3,9 +3,13 @@
   background: #8B4513;
   border-radius: 0;
   overflow-x: auto;
+  overflow-y: hidden;
   box-shadow: none;
   border: none;
   position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: 400px;
 }
 
 .fretboard-grid {
@@ -17,6 +21,9 @@
   border-radius: 0;
   border: none;
   position: relative;
+  height: 100%;
+  min-width: 100%;
+  width: fit-content;
 }
 
 .fretboard-loading {
@@ -43,6 +50,8 @@
   margin-bottom: 3px;
   border: 1px solid #8B4513;
   position: relative;
+  flex: 1;
+  min-height: 60px;
 }
 
 .frets {
@@ -51,6 +60,7 @@
   flex-wrap: nowrap;
   flex: 1;
   position: relative;
+  height: 100%;
 }
 
 .fret-cell {
@@ -104,19 +114,28 @@
 .fretboard {
   padding: 0;
   overflow-x: auto;
+  overflow-y: hidden;
   -webkit-overflow-scrolling: touch; /* Smooth momentum scrolling on iOS */
   scroll-behavior: smooth;
   border-radius: 0;
+  width: 100%;
+  height: 100%;
+  min-height: 400px;
 }
 
 .fretboard-grid {
   padding: 0;
   gap: 3px;
+  height: 100%;
+  min-width: 100%;
+  width: fit-content;
 }
 
 .string-row {
   padding: 3px;
   margin-bottom: 4px;
+  flex: 1;
+  min-height: 50px;
 }
 
 .fret-cell {
@@ -129,10 +148,15 @@
 @media (min-width: 480px) {
   .fretboard {
     padding: 0;
+    min-height: 450px;
   }
 
   .fretboard-grid {
     padding: 0;
+  }
+
+  .string-row {
+    min-height: 55px;
   }
 
   .fret-cell {
@@ -148,6 +172,7 @@
     border-radius: 12px;
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
     border: 3px solid #654321;
+    min-height: 500px;
   }
 
   .fretboard-grid {
@@ -160,6 +185,7 @@
   .string-row {
     padding: 2px;
     margin-bottom: 3px;
+    min-height: 60px;
   }
 
   .fret-cell {
