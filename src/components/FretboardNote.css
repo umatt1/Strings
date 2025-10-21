@@ -19,9 +19,20 @@
 }
 
 .fretboard-note:hover {
-  transform: scale(1.1);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  transform: scale(1.2);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
   z-index: 10;
+}
+
+.fretboard-note.highlighted:hover {
+  transform: scale(1.25);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.6);
+  z-index: 15;
+}
+
+.fretboard-note.highlighted.important:hover {
+  transform: scale(1.3);
+  animation-play-state: paused;
 }
 
 .fretboard-note:active {
@@ -30,22 +41,35 @@
 
 .fretboard-note.highlighted {
   color: white;
-  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
-  border-width: 3px;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.9);
+  border-width: 4px;
+  font-weight: 900;
+  transform: scale(1.05);
 }
 
 .fretboard-note.highlighted.important {
-  border-width: 4px;
-  width: 50px;
-  height: 50px;
+  border-width: 5px;
+  width: 55px;
+  height: 55px;
   font-weight: 900;
   animation: pulse 2s infinite;
+  transform: scale(1.1);
+  z-index: 5;
 }
 
 @keyframes pulse {
-  0% { box-shadow: 0 0 0 0 currentColor; }
-  70% { box-shadow: 0 0 0 10px transparent; }
-  100% { box-shadow: 0 0 0 0 transparent; }
+  0% { 
+    box-shadow: 0 0 0 0 currentColor; 
+    transform: scale(1.1);
+  }
+  50% { 
+    box-shadow: 0 0 0 8px rgba(255, 255, 255, 0.3); 
+    transform: scale(1.15);
+  }
+  100% { 
+    box-shadow: 0 0 0 15px transparent; 
+    transform: scale(1.1);
+  }
 }
 
 .note-name {
@@ -56,24 +80,27 @@
 
 .scale-degree {
   user-select: none;
-  font-size: 8px;
-  font-weight: 500;
+  font-size: 9px;
+  font-weight: 700;
   position: absolute;
-  bottom: 2px;
-  right: 2px;
-  background: rgba(0, 0, 0, 0.7);
+  bottom: 1px;
+  right: 1px;
+  background: rgba(0, 0, 0, 0.9);
   color: white;
   border-radius: 50%;
-  width: 14px;
-  height: 14px;
+  width: 16px;
+  height: 16px;
   display: flex;
   align-items: center;
   justify-content: center;
   line-height: 1;
+  border: 2px solid white;
 }
 
 .fretboard-note.highlighted .scale-degree {
-  background: rgba(255, 255, 255, 0.9);
-  color: #333;
-  font-weight: 700;
+  background: rgba(255, 255, 255, 0.95);
+  color: #000;
+  font-weight: 900;
+  border: 2px solid #000;
+  font-size: 10px;
 }

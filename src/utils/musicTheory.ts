@@ -46,18 +46,18 @@ export function getScaleDegreeInfo(note: NoteName, chord: ChordScale): ScaleDegr
 export function getScaleDegreeColor(degree: number, isImportant: boolean): string {
   if (isImportant) {
     switch (degree) {
-      case 1: return '#FF4444'; // Root - Red
-      case 3: return '#4444FF'; // Third - Blue  
-      case 5: return '#44FF44'; // Fifth - Green
-      default: return '#FF8800'; // Other important - Orange
+      case 1: return '#FF3333'; // Root - Bright Red
+      case 3: return '#3333FF'; // Third - Bright Blue  
+      case 5: return '#33FF33'; // Fifth - Bright Green
+      default: return '#FF8800'; // Other important - Bright Orange
     }
   } else {
     switch (degree) {
-      case 2: return '#FFAA44'; // Second - Light Orange
-      case 4: return '#AA44FF'; // Fourth - Purple
-      case 6: return '#44AAFF'; // Sixth - Light Blue
-      case 7: return '#FFAA88'; // Seventh - Pink
-      default: return '#888888'; // Others - Gray
+      case 2: return '#FF9933'; // Second - Bright Orange
+      case 4: return '#9933FF'; // Fourth - Bright Purple
+      case 6: return '#33AAFF'; // Sixth - Bright Light Blue
+      case 7: return '#FF3399'; // Seventh - Bright Pink
+      default: return '#999999'; // Others - Gray
     }
   }
 }
