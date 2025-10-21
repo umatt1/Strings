@@ -62,7 +62,7 @@ export const Controls: React.FC<ControlsProps> = ({
 
   const handleExportFretboard = async (format: 'png' | 'pdf') => {
     try {
-      const fretboardElement = document.querySelector('.fretboard-container');
+      const fretboardElement = document.querySelector('.fretboard');
       if (!fretboardElement) {
         alert('Fretboard not found for export');
         return;
