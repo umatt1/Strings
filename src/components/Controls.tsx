@@ -12,10 +12,14 @@ import type {
   ChordScale
 } from '../utils/musicTheory';
 import { 
+  CHORD_CATEGORIES,
+  SCALE_CATEGORIES,
+  COMMON_CHORDS,
+  COMMON_SCALES,
   CHORD_LABELS, 
   SCALE_LABELS,
-  getChordNotes,
-  getScaleNotes,
+  getMusicTheoryNotes,
+  getMusicTheoryLabel,
 } from '../utils/musicTheory';
 import './Controls.css';
 
@@ -48,12 +52,11 @@ export const Controls: React.FC<ControlsProps> = ({
   onChordScaleChange,
 }) => {
   const [rootNote, setRootNote] = React.useState<NoteName>('C');
-  const [viewType, setViewType] = React.useState<'chord' | 'scale'>('chord');
-  const [chordType, setChordType] = React.useState<ChordType>('major');
-  const [scaleType, setScaleType] = React.useState<ScaleType>('pentatonic-major');
   const [selectedTuning, setSelectedTuning] = React.useState<TuningPreset>(
     GUITAR_TUNINGS.find(t => t.id === 'standard')!
   );
+  const [showChordDropdown, setShowChordDropdown] = React.useState(false);
+  const [showScaleDropdown, setShowScaleDropdown] = React.useState(false);
   
   const isGuitarSelected = selectedTuning.category === 'guitar';
   const availableTunings = isGuitarSelected ? GUITAR_TUNINGS : BASS_TUNINGS;
@@ -75,50 +78,32 @@ export const Controls: React.FC<ControlsProps> = ({
     }
   };
 
-  const handleViewChange = (type: 'none' | ChordType | ScaleType) => {
-    if (type === 'none') {
-      onChordScaleChange(undefined);
-    } else if (['major', 'minor', 'major-triad', 'minor-triad'].includes(type)) {
-      const chordT = type as ChordType;
-      setViewType('chord');
-      setChordType(chordT);
-      const notes = getChordNotes(rootNote, chordT);
-      onChordScaleChange({
-        type: chordT,
-        rootNote,
-        notes,
-      });
-    } else {
-      const scaleT = type as ScaleType;
-      setViewType('scale');
-      setScaleType(scaleT);
-      const notes = getScaleNotes(rootNote, scaleT);
-      onChordScaleChange({
-        type: scaleT,
-        rootNote,
-        notes,
-      });
-    }
+  const handleMusicTheorySelection = (type: ChordType | ScaleType) => {
+    const notes = getMusicTheoryNotes(rootNote, type);
+    onChordScaleChange({
+      type,
+      rootNote,
+      notes,
+    });
+    setShowChordDropdown(false);
+    setShowScaleDropdown(false);
+  };
+
+  const handleClearSelection = () => {
+    onChordScaleChange(undefined);
+    setShowChordDropdown(false);
+    setShowScaleDropdown(false);
   };
 
   const handleRootNoteChange = (note: NoteName) => {
     setRootNote(note);
     if (selectedChordScale) {
-      if (viewType === 'chord') {
-        const notes = getChordNotes(note, chordType);
-        onChordScaleChange({
-          type: chordType,
-          rootNote: note,
-          notes,
-        });
-      } else {
-        const notes = getScaleNotes(note, scaleType);
-        onChordScaleChange({
-          type: scaleType,
-          rootNote: note,
-          notes,
-        });
-      }
+      const notes = getMusicTheoryNotes(note, selectedChordScale.type);
+      onChordScaleChange({
+        type: selectedChordScale.type,
+        rootNote: note,
+        notes,
+      });
     }
   };
 
@@ -223,8 +208,8 @@ export const Controls: React.FC<ControlsProps> = ({
       </div>
 
       <div className="control-section">
-        <h3>View</h3>
-        <div className="view-controls">
+        <h3>Music Theory</h3>
+        <div className="music-theory-controls">
           <div className="root-note-selector">
             <label>Root Note:</label>
             <select value={rootNote} onChange={(e) => handleRootNoteChange(e.target.value as NoteName)}>
@@ -235,50 +220,125 @@ export const Controls: React.FC<ControlsProps> = ({
               ))}
             </select>
           </div>
-          
-          <div className="view-selector">
-            <button
-              className={!selectedChordScale ? 'active' : ''}
-              onClick={() => handleViewChange('none')}
-            >
-              None
-            </button>
-            <button
-              className={selectedChordScale?.type === 'major' ? 'active' : ''}
-              onClick={() => handleViewChange('major')}
-            >
-              {CHORD_LABELS.major}
-            </button>
-            <button
-              className={selectedChordScale?.type === 'minor' ? 'active' : ''}
-              onClick={() => handleViewChange('minor')}
-            >
-              {CHORD_LABELS.minor}
-            </button>
-            <button
-              className={selectedChordScale?.type === 'major-triad' ? 'active' : ''}
-              onClick={() => handleViewChange('major-triad')}
-            >
-              {CHORD_LABELS['major-triad']}
-            </button>
-            <button
-              className={selectedChordScale?.type === 'minor-triad' ? 'active' : ''}
-              onClick={() => handleViewChange('minor-triad')}
-            >
-              {CHORD_LABELS['minor-triad']}
-            </button>
-            <button
-              className={selectedChordScale?.type === 'pentatonic-major' ? 'active' : ''}
-              onClick={() => handleViewChange('pentatonic-major')}
-            >
-              {SCALE_LABELS['pentatonic-major']}
-            </button>
-            <button
-              className={selectedChordScale?.type === 'pentatonic-minor' ? 'active' : ''}
-              onClick={() => handleViewChange('pentatonic-minor')}
-            >
-              {SCALE_LABELS['pentatonic-minor']}
-            </button>
+
+          {/* Current Selection Display */}
+          <div className="current-selection">
+            {selectedChordScale ? (
+              <div className="selection-display">
+                <span className="selection-text">
+                  {rootNote} {getMusicTheoryLabel(selectedChordScale.type)}
+                </span>
+                <button 
+                  className="clear-button"
+                  onClick={handleClearSelection}
+                  title="Clear selection"
+                >
+                  ✕
+                </button>
+              </div>
+            ) : (
+              <span className="no-selection">No chord or scale selected</span>
+            )}
+          </div>
+
+          {/* Quick Access - Most Common */}
+          <div className="quick-access">
+            <h4>Quick Access</h4>
+            <div className="quick-buttons">
+              {COMMON_CHORDS.map((chord) => (
+                <button
+                  key={chord}
+                  className={selectedChordScale?.type === chord ? 'active' : ''}
+                  onClick={() => handleMusicTheorySelection(chord)}
+                >
+                  {CHORD_LABELS[chord]}
+                </button>
+              ))}
+            </div>
+            <div className="quick-buttons">
+              {COMMON_SCALES.map((scale) => (
+                <button
+                  key={scale}
+                  className={selectedChordScale?.type === scale ? 'active' : ''}
+                  onClick={() => handleMusicTheorySelection(scale)}
+                >
+                  {SCALE_LABELS[scale]}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Comprehensive Dropdowns */}
+          <div className="comprehensive-selectors">
+            <div className="dropdown-section">
+              <h4>All Chords</h4>
+              <div className="dropdown-container">
+                <button 
+                  className="dropdown-toggle"
+                  onClick={() => {
+                    setShowChordDropdown(!showChordDropdown);
+                    setShowScaleDropdown(false);
+                  }}
+                >
+                  Browse Chords {showChordDropdown ? '▲' : '▼'}
+                </button>
+                {showChordDropdown && (
+                  <div className="dropdown-content">
+                    {Object.entries(CHORD_CATEGORIES).map(([category, chords]) => (
+                      <div key={category} className="chord-category">
+                        <div className="category-label">{category}</div>
+                        <div className="category-items">
+                          {chords.map((chord) => (
+                            <button
+                              key={chord}
+                              className={selectedChordScale?.type === chord ? 'active' : ''}
+                              onClick={() => handleMusicTheorySelection(chord)}
+                            >
+                              {CHORD_LABELS[chord]}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+
+            <div className="dropdown-section">
+              <h4>All Scales & Modes</h4>
+              <div className="dropdown-container">
+                <button 
+                  className="dropdown-toggle"
+                  onClick={() => {
+                    setShowScaleDropdown(!showScaleDropdown);
+                    setShowChordDropdown(false);
+                  }}
+                >
+                  Browse Scales {showScaleDropdown ? '▲' : '▼'}
+                </button>
+                {showScaleDropdown && (
+                  <div className="dropdown-content">
+                    {Object.entries(SCALE_CATEGORIES).map(([category, scales]) => (
+                      <div key={category} className="scale-category">
+                        <div className="category-label">{category}</div>
+                        <div className="category-items">
+                          {scales.map((scale) => (
+                            <button
+                              key={scale}
+                              className={selectedChordScale?.type === scale ? 'active' : ''}
+                              onClick={() => handleMusicTheorySelection(scale)}
+                            >
+                              {SCALE_LABELS[scale]}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
           </div>
         </div>
       </div>
