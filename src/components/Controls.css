@@ -597,3 +597,22 @@ input[type="range"] {
     font-size: 10px;
   }
 }
+
+.export-button {
+  font-size: 11px;
+  padding: 4px 6px;
+  background: #2196F3;
+  color: white;
+  border: none;
+  border-radius: 3px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.export-button:hover {
+  background: #1976D2;
+}
+
+.export-button:active {
+  transform: scale(0.95);
+}

@@ -1,5 +1,5 @@
 .fretboard {
-  padding: 20px;
+  padding: 15px;
   background: #8B4513;
   border-radius: 12px;
   overflow-x: auto;
@@ -12,7 +12,7 @@
   flex-direction: column;
   gap: 2px;
   background: #2C1810;
-  padding: 15px;
+  padding: 10px;
   border-radius: 8px;
   border: 2px solid #654321;
   position: relative;

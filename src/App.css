@@ -1,7 +1,7 @@
 .app {
   max-width: 1400px;
   margin: 0 auto;
-  padding: 20px;
+  padding: 10px;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
@@ -35,41 +35,36 @@
 
 /* Top Settings Layout */
 .top-settings {
-  margin-bottom: 20px;
+  margin-bottom: 15px;
   position: relative;
-  z-index: 10;
+  z-index: 5;
   transition: all 0.3s ease;
 }
 
 /* When settings are collapsed, reduce the space they take */
 .top-settings:has(.controls.collapsed) {
-  margin-bottom: 10px;
-}
-
-/* Allow music theory to extend into left side when settings collapsed */
-.top-settings:has(.controls.collapsed) + .main-content .theory-panel {
-  margin-top: -60px;
-  padding-top: 60px;
-  z-index: 8;
+  margin-bottom: 8px;
 }
 
 .main-content {
   display: grid;
-  grid-template-columns: auto 1fr;
-  gap: 20px;
+  grid-template-columns: 1fr;
+  gap: 15px;
   align-items: start;
+  position: relative;
 }
 
 .theory-panel {
-  min-width: 0;
-  width: 280px;
-  transition: width 0.3s ease;
-  position: relative;
-  z-index: 5;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 260px;
+  z-index: 10;
+  transition: all 0.3s ease;
 }
 
 .theory-panel:has(.music-theory-controls.collapsed) {
-  width: 60px;
+  width: 50px;
 }
 
 .fretboard-area {
@@ -78,6 +73,12 @@
   gap: 15px;
   min-width: 0;
   flex: 1;
+  margin-left: 280px;
+  transition: margin-left 0.3s ease;
+}
+
+.theory-panel:has(.music-theory-controls.collapsed) + .fretboard-area {
+  margin-left: 70px;
 }
 
 .fretboard-panel {

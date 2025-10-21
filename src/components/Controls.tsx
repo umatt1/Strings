@@ -60,6 +60,54 @@ export const Controls: React.FC<ControlsProps> = ({
     }
   };
 
+  const handleExportFretboard = async (format: 'png' | 'pdf') => {
+    try {
+      const fretboardElement = document.querySelector('.fretboard-container');
+      if (!fretboardElement) {
+        alert('Fretboard not found for export');
+        return;
+      }
+
+      // Import html2canvas dynamically
+      const { default: html2canvas } = await import('html2canvas');
+      
+      // Create canvas from fretboard
+      const canvas = await html2canvas(fretboardElement as HTMLElement, {
+        backgroundColor: '#ffffff',
+        scale: 2, // Higher resolution
+        logging: false,
+        useCORS: true,
+      });
+
+      if (format === 'png') {
+        // Download as PNG
+        const link = document.createElement('a');
+        link.download = `fretboard-${new Date().toISOString().slice(0, 10)}.png`;
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+      } else if (format === 'pdf') {
+        // Convert to PDF using jsPDF
+        const { default: jsPDF } = await import('jspdf');
+        
+        const pdf = new jsPDF({
+          orientation: 'landscape',
+          unit: 'mm',
+          format: 'a4'
+        });
+
+        const imgData = canvas.toDataURL('image/png');
+        const imgWidth = 297; // A4 landscape width in mm
+        const imgHeight = (canvas.height * imgWidth) / canvas.width;
+
+        pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
+        pdf.save(`fretboard-${new Date().toISOString().slice(0, 10)}.pdf`);
+      }
+    } catch (error) {
+      console.error('Export failed:', error);
+      alert('Export failed. Please try again.');
+    }
+  };
+
   return (
     <div className={`controls ${isCollapsed ? 'collapsed' : ''}`}>
       <div className="controls-header" onClick={toggleCollapse}>
@@ -169,6 +217,24 @@ export const Controls: React.FC<ControlsProps> = ({
                   onClick={() => onMirrorStringsChange(true)}
                 >
                   Mirror
+                </button>
+              </div>
+            </div>
+
+            <div className="option-subgroup">
+              <label>Export:</label>
+              <div className="button-group compact">
+                <button
+                  onClick={() => handleExportFretboard('png')}
+                  className="export-button"
+                >
+                  📷 PNG
+                </button>
+                <button
+                  onClick={() => handleExportFretboard('pdf')}
+                  className="export-button"
+                >
+                  📄 PDF
                 </button>
               </div>
             </div>
