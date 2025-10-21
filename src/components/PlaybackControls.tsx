@@ -119,8 +119,8 @@ export const PlaybackControls: React.FC<PlaybackControlsProps> = ({
           
           {selectedNotes.length === 0 && selectedChordScale && (
             <div className="chord-info compact">
-              <span className="chord-name">
-                {selectedChordScale.rootNote} {selectedChordScale.type}
+              <span className="instruction-text">
+                Select two notes to play {selectedChordScale.rootNote} {selectedChordScale.type}
               </span>
             </div>
           )}
