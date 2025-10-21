@@ -203,6 +203,11 @@
 }
 
 /* Vertical orientation */
+.fretboard.vertical {
+  width: fit-content;
+  max-width: 100%;
+}
+
 .fretboard.vertical .fretboard-grid {
   flex-direction: row;
 }
