@@ -88,10 +88,10 @@ export const Controls: React.FC<ControlsProps> = ({
       } else if (format === 'pdf') {
         // Convert to PDF using jsPDF
         try {
-          // Import jsPDF - handle both default and named exports
+          // Import jsPDF v3 - it exports jsPDF as a named export
           const jsPDFModule = await import('jspdf');
-          // @ts-ignore - jsPDF v3 export handling
-          const { jsPDF } = jsPDFModule.default ? jsPDFModule.default : jsPDFModule;
+          // @ts-ignore - jsPDF v3 uses named export
+          const jsPDF = jsPDFModule.jsPDF;
           
           const pdf = new jsPDF({
             orientation: 'landscape',
