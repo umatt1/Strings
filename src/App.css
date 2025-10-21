@@ -94,17 +94,15 @@
     padding: 10px;
   }
 
-  .app-header h1 {
-    font-size: 1.8em;
+  .top-controls {
+    flex-direction: column;
+    gap: 10px;
   }
 
-  .app-header p {
-    font-size: 1em;
-  }
-
-  .basic-controls-layout {
-    grid-template-columns: 1fr;
-    gap: 15px;
+  .top-controls .controls,
+  .top-controls .playback-controls {
+    min-width: 0;
+    flex: none;
   }
 
   .main-content {
@@ -114,15 +112,25 @@
 
   .theory-panel {
     order: 2;
+    width: 100% !important;
   }
 
   .fretboard-panel {
     order: 1;
   }
+}
 
-  .display-options {
-    flex-direction: column;
-    gap: 15px;
+@media (max-width: 480px) {
+  .app {
+    padding: 5px;
+  }
+  
+  .top-controls {
+    gap: 5px;
+  }
+  
+  .main-content {
+    gap: 10px;
   }
 }
 

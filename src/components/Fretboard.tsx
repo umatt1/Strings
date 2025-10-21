@@ -37,9 +37,12 @@ export const Fretboard: React.FC<FretboardProps> = ({
       const isProminentFret = isMarkerFret || isDoubleMarker;
       
       if (isProminentFret) {
-        const fretPosition = fret - minFret; // Position relative to displayed frets
-        const totalFrets = numFrets - minFret + 1;
-        const percentage = (fretPosition / totalFrets) * 100;
+        // Calculate position: fret N wire is between cell (N-1) and cell N
+        // For fret 3, it's between cell 2 and cell 3
+        const cellIndex = fret - minFret; // Index of the cell that fret N ends
+        const totalCells = numFrets - minFret + 1;
+        // Position at the left edge of cell cellIndex (which is the right edge of previous cell)
+        const percentage = (cellIndex / totalCells) * 100;
         
         markers.push(
           <div 

@@ -446,6 +446,25 @@ input[type="range"] {
 
 /* Responsive adjustments */
 @media (max-width: 768px) {
+  .controls-content {
+    padding: 15px;
+  }
+  
+  .controls-header {
+    padding: 12px 15px;
+  }
+  
+  .controls-content.basic-controls-layout {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
+  
+  .display-options {
+    flex-direction: column;
+    gap: 12px;
+  }
+  
   .comprehensive-selectors {
     flex-direction: column;
   }
@@ -460,5 +479,20 @@ input[type="range"] {
   
   .quick-buttons {
     justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .controls-header h3 {
+    font-size: 14px;
+  }
+  
+  .button-group {
+    gap: 4px;
+  }
+  
+  .button-group button {
+    padding: 6px 10px;
+    font-size: 12px;
   }
 }
