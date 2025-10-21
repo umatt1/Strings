@@ -63,8 +63,24 @@ function App() {
   return (
     <div className="app">
       <main className="app-main">
-        {/* Main Content Area - Music Theory + Right Column */}
+        {/* Main Content Area - Responsive Layout: Mobile = Settings First, Desktop = Old Layout */}
         <div className="main-content">
+          {/* Settings shown on top for mobile only */}
+          <div className="top-settings">
+            <Controls
+              instrument={instrument}
+              onInstrumentChange={setInstrument}
+              numFrets={numFrets}
+              onNumFretsChange={handleMaxFretChange}
+              minFret={minFret}
+              onMinFretChange={handleMinFretChange}
+              fretMarkerMode={fretMarkerMode}
+              onFretMarkerModeChange={setFretMarkerMode}
+              mirrorStrings={mirrorStrings}
+              onMirrorStringsChange={setMirrorStrings}
+            />
+          </div>
+
           <div className="theory-panel">
             <MusicTheoryControls
               selectedChordScale={selectedChordScale}
@@ -73,7 +89,8 @@ function App() {
           </div>
 
           <div className="right-content">
-            <div className="top-settings">
+            {/* Settings shown here for desktop */}
+            <div className="desktop-settings">
               <Controls
                 instrument={instrument}
                 onInstrumentChange={setInstrument}

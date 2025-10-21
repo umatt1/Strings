@@ -1,10 +1,10 @@
 .fretboard {
-  padding: 15px;
+  padding: 0;
   background: #8B4513;
-  border-radius: 12px;
+  border-radius: 0;
   overflow-x: auto;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
-  border: 3px solid #654321;
+  box-shadow: none;
+  border: none;
 }
 
 .fretboard-grid {
@@ -12,9 +12,9 @@
   flex-direction: column;
   gap: 2px;
   background: #2C1810;
-  padding: 10px;
-  border-radius: 8px;
-  border: 2px solid #654321;
+  padding: 0;
+  border-radius: 0;
+  border: none;
   position: relative;
 }
 
@@ -87,15 +87,15 @@
 
 /* Base Mobile Styles (320px+) - Touch-First Fretboard */
 .fretboard {
-  padding: 8px;
+  padding: 0;
   overflow-x: auto;
   -webkit-overflow-scrolling: touch; /* Smooth momentum scrolling on iOS */
   scroll-behavior: smooth;
-  border-radius: 8px;
+  border-radius: 0;
 }
 
 .fretboard-grid {
-  padding: 8px;
+  padding: 0;
   gap: 3px;
 }
 
@@ -113,11 +113,11 @@
 /* Large Mobile (480px+) */
 @media (min-width: 480px) {
   .fretboard {
-    padding: 10px;
+    padding: 0;
   }
 
   .fretboard-grid {
-    padding: 10px;
+    padding: 0;
   }
 
   .fret-cell {
@@ -126,16 +126,20 @@
   }
 }
 
-/* Tablet Portrait (768px+) - Restore Desktop Fretboard */
+/* Tablet Portrait (768px+) - Restore Desktop Fretboard Styling */
 @media (min-width: 768px) {
   .fretboard {
     padding: 15px;
     border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+    border: 3px solid #654321;
   }
 
   .fretboard-grid {
     padding: 10px;
     gap: 2px;
+    border-radius: 8px;
+    border: 2px solid #654321;
   }
 
   .string-row {
