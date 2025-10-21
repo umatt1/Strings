@@ -37,11 +37,8 @@ export const FretboardNote: React.FC<FretboardNoteProps> = ({
     
     const backgroundColor = getScaleDegreeColor(scaleDegreeInfo.degree, scaleDegreeInfo.isImportant);
     return {
-      backgroundColor,
-      borderColor: scaleDegreeInfo.isImportant ? '#000' : '#666',
-      boxShadow: scaleDegreeInfo.isImportant 
-        ? `0 0 10px ${backgroundColor}` 
-        : `0 2px 4px rgba(0, 0, 0, 0.3)`
+      background: backgroundColor,
+      borderColor: scaleDegreeInfo.isImportant ? '#333' : '#666'
     };
   };
 
