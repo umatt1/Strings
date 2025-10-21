@@ -145,3 +145,89 @@
     font-size: 13px;
   }
 }
+
+/* Compact Layout Styles */
+.playback-controls.compact {
+  background: #f8f9fa;
+  border: 2px solid #e9ecef;
+  border-radius: 6px;
+  padding: 12px;
+  margin: 0;
+}
+
+.selection-info.compact {
+  background: rgba(76, 175, 80, 0.08);
+  border: 1px solid #4CAF50;
+  border-radius: 4px;
+  padding: 8px 12px;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+}
+
+.selection-count {
+  color: #2e7d32;
+  font-weight: 500;
+  flex: 1;
+}
+
+.play-button.compact {
+  background: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 28px;
+  height: 28px;
+  cursor: pointer;
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.play-button.compact:hover {
+  background: #45a049;
+  transform: scale(1.05);
+}
+
+.play-button.compact:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.clear-button.compact {
+  background: #f44336;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  cursor: pointer;
+  font-size: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+}
+
+.clear-button.compact:hover {
+  background: #d32f2f;
+}
+
+.chord-info.compact {
+  background: rgba(103, 58, 183, 0.08);
+  border: 1px solid #673ab7;
+  border-radius: 4px;
+  padding: 8px 12px;
+  text-align: center;
+}
+
+.chord-name {
+  color: #4527a0;
+  font-weight: 600;
+  font-size: 14px;
+}

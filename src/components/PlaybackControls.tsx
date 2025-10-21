@@ -1,6 +1,6 @@
 import React from 'react';
 import type { InstrumentConfig, Note } from '../types/music';
-import { getNoteAtFret, getNoteName } from '../types/music';
+import { getNoteAtFret } from '../types/music';
 import type { ChordScale } from '../utils/musicTheory';
 import { isNoteInChord } from '../utils/musicTheory';
 import { audioPlayer } from '../utils/audio';
@@ -59,85 +59,40 @@ export const PlaybackControls: React.FC<PlaybackControlsProps> = ({
     setIsPlaying(false);
   };
 
-  const playAllHighlighted = async () => {
-    if (!selectedChordScale || isPlaying) return;
-
-    setIsPlaying(true);
-
-    const frequencies: number[] = [];
-
-    // Collect ALL highlighted notes from the fretboard
-    for (let stringIndex = 0; stringIndex < instrument.strings.length; stringIndex++) {
-      const stringConfig = instrument.strings[stringIndex];
-      for (let fret = minFret; fret <= numFrets; fret++) {
-        const note = getNoteAtFret(stringConfig.openNote, stringConfig.octave, fret);
-        if (isNoteInChord(note.name, selectedChordScale)) {
-          frequencies.push(note.frequency);
-        }
-      }
-    }
-
-    // Sort by frequency and remove duplicates
-    const uniqueFrequencies = Array.from(new Set(frequencies)).sort((a, b) => a - b);
-
-    await audioPlayer.playSequence(uniqueFrequencies, 0.2, 0.05);
-    setIsPlaying(false);
-  };
-
-  if (!selectedChordScale) {
-    return (
-      <div className="playback-controls disabled">
-        <p>Select a chord or scale to enable playback</p>
-      </div>
-    );
-  }
-
   return (
-    <div className="playback-controls">
-      <h3>Playback</h3>
-      
+    <div className="playback-controls compact">
+      {/* Two-Note Selection Info */}
       {selectedNotes.length > 0 && (
-        <div className="selection-info">
-          <p>Selected Notes: {selectedNotes.map(note => getNoteName(note)).join(' → ')}</p>
-          <button
+        <div className="selection-info compact">
+          <span className="selection-count">
+            {selectedNotes.length === 1 ? '1 note selected' : `${selectedNotes.length} notes selected`}
+          </span>
+          {selectedNotes.length === 2 && (
+            <button 
+              className="play-button compact"
+              onClick={playBetweenSelectedNotes}
+              disabled={isPlaying}
+            >
+              {isPlaying ? '♪' : '▶'}
+            </button>
+          )}
+          <button 
+            className="clear-button compact"
             onClick={onClearSelection}
-            className="clear-button"
+            title="Clear note selection"
           >
-            Clear Selection
+            ✕
           </button>
         </div>
       )}
       
-      <div className="playback-buttons">
-        {selectedNotes.length === 2 ? (
-          <button
-            onClick={playBetweenSelectedNotes}
-            disabled={isPlaying}
-            className="play-button primary"
-          >
-            {isPlaying ? '🎵 Playing...' : '▶️ Play Between Selected Notes'}
-          </button>
-        ) : (
-          <p className="instruction">
-            {selectedNotes.length === 0 
-              ? "Click two highlighted notes to play the pattern between them"
-              : "Click one more highlighted note to enable playback"
-            }
-          </p>
-        )}
-        
-        <button
-          onClick={playAllHighlighted}
-          disabled={isPlaying}
-          className="play-button secondary"
-        >
-          {isPlaying ? '🎵 Playing...' : '▶️ Play All Highlighted'}
-        </button>
-      </div>
-      
-      <p className="playback-info">
-        Pattern: <strong>{selectedChordScale.rootNote} {selectedChordScale.type}</strong>
-      </p>
+      {selectedNotes.length === 0 && selectedChordScale && (
+        <div className="chord-info compact">
+          <span className="chord-name">
+            {selectedChordScale.rootNote} {selectedChordScale.type}
+          </span>
+        </div>
+      )}
     </div>
   );
 };

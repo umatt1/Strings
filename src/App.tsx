@@ -3,6 +3,7 @@ import type { InstrumentConfig, Note } from './types/music';
 import { GUITAR_TUNINGS, createInstrumentFromTuning } from './types/music';
 import type { ChordScale } from './utils/musicTheory';
 import { Controls } from './components/Controls';
+import { MusicTheoryControls } from './components/MusicTheoryControls';
 import { Fretboard } from './components/Fretboard';
 import { PlaybackControls } from './components/PlaybackControls';
 import './App.css';
@@ -67,39 +68,57 @@ function App() {
       </header>
 
       <main className="app-main">
-        <Controls
-          instrument={instrument}
-          onInstrumentChange={setInstrument}
-          numFrets={numFrets}
-          onNumFretsChange={handleMaxFretChange}
-          minFret={minFret}
-          onMinFretChange={handleMinFretChange}
-          orientation={orientation}
-          onOrientationChange={setOrientation}
-          fretMarkerMode={fretMarkerMode}
-          onFretMarkerModeChange={setFretMarkerMode}
-          selectedChordScale={selectedChordScale}
-          onChordScaleChange={setSelectedChordScale}
-        />
+        {/* Basic Controls - Always at top */}
+        <div className="basic-controls">
+          <Controls
+            instrument={instrument}
+            onInstrumentChange={setInstrument}
+            numFrets={numFrets}
+            onNumFretsChange={handleMaxFretChange}
+            minFret={minFret}
+            onMinFretChange={handleMinFretChange}
+            orientation={orientation}
+            onOrientationChange={setOrientation}
+            fretMarkerMode={fretMarkerMode}
+            onFretMarkerModeChange={setFretMarkerMode}
+          />
+        </div>
 
-        <PlaybackControls
-          instrument={instrument}
-          numFrets={numFrets}
-          minFret={minFret}
-          selectedChordScale={selectedChordScale}
-          selectedNotes={selectedNotes}
-          onClearSelection={handleClearSelection}
-        />
+        {/* Main Content Area - Music Theory + Fretboard */}
+        <div className="main-content">
+          <div className="theory-panel">
+            <div className="music-theory-section">
+              <MusicTheoryControls
+                selectedChordScale={selectedChordScale}
+                onChordScaleChange={setSelectedChordScale}
+              />
+            </div>
+            
+            {/* Compact Playback Controls */}
+            <div className="compact-playback">
+              <PlaybackControls
+                instrument={instrument}
+                numFrets={numFrets}
+                minFret={minFret}
+                selectedChordScale={selectedChordScale}
+                selectedNotes={selectedNotes}
+                onClearSelection={handleClearSelection}
+              />
+            </div>
+          </div>
 
-        <Fretboard
-          instrument={instrument}
-          numFrets={numFrets}
-          minFret={minFret}
-          orientation={orientation}
-          fretMarkerMode={fretMarkerMode}
-          selectedChordScale={selectedChordScale}
-          onNoteSelect={handleNoteSelect}
-        />
+          <div className="fretboard-panel">
+            <Fretboard
+              instrument={instrument}
+              numFrets={numFrets}
+              minFret={minFret}
+              orientation={orientation}
+              fretMarkerMode={fretMarkerMode}
+              selectedChordScale={selectedChordScale}
+              onNoteSelect={handleNoteSelect}
+            />
+          </div>
+        </div>
       </main>
 
       <footer className="app-footer">
