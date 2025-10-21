@@ -14,8 +14,6 @@ interface ControlsProps {
   onNumFretsChange: (numFrets: number) => void;
   minFret: number;
   onMinFretChange: (minFret: number) => void;
-  orientation: 'horizontal' | 'vertical';
-  onOrientationChange: (orientation: 'horizontal' | 'vertical') => void;
   fretMarkerMode: 'dots' | 'numbers';
   onFretMarkerModeChange: (mode: 'dots' | 'numbers') => void;
   mirrorStrings: boolean;
@@ -28,8 +26,6 @@ export const Controls: React.FC<ControlsProps> = ({
   onNumFretsChange,
   minFret,
   onMinFretChange,
-  orientation,
-  onOrientationChange,
   fretMarkerMode,
   onFretMarkerModeChange,
   mirrorStrings,
@@ -141,24 +137,6 @@ export const Controls: React.FC<ControlsProps> = ({
         <div className="control-group">
           <h4>Display</h4>
           <div className="display-grid">
-            <div className="option-subgroup">
-              <label>Orientation:</label>
-              <div className="button-group compact">
-                <button
-                  className={orientation === 'horizontal' ? 'active' : ''}
-                  onClick={() => onOrientationChange('horizontal')}
-                >
-                  H
-                </button>
-                <button
-                  className={orientation === 'vertical' ? 'active' : ''}
-                  onClick={() => onOrientationChange('vertical')}
-                >
-                  V
-                </button>
-              </div>
-            </div>
-
             <div className="option-subgroup">
               <label>Markers:</label>
               <div className="button-group compact">

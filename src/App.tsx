@@ -14,7 +14,6 @@ function App() {
   );
   const [numFrets, setNumFrets] = useState(15);
   const [minFret, setMinFret] = useState(0);
-  const [orientation, setOrientation] = useState<'horizontal' | 'vertical'>('horizontal');
   const [fretMarkerMode, setFretMarkerMode] = useState<'dots' | 'numbers'>('numbers');
   const [mirrorStrings, setMirrorStrings] = useState(false);
   const [selectedChordScale, setSelectedChordScale] = useState<ChordScale | undefined>(undefined);
@@ -73,8 +72,6 @@ function App() {
             onNumFretsChange={handleMaxFretChange}
             minFret={minFret}
             onMinFretChange={handleMinFretChange}
-            orientation={orientation}
-            onOrientationChange={setOrientation}
             fretMarkerMode={fretMarkerMode}
             onFretMarkerModeChange={setFretMarkerMode}
             mirrorStrings={mirrorStrings}
@@ -96,7 +93,6 @@ function App() {
               instrument={instrument}
               numFrets={numFrets}
               minFret={minFret}
-              orientation={orientation}
               fretMarkerMode={fretMarkerMode}
               selectedChordScale={selectedChordScale}
               mirrorStrings={mirrorStrings}

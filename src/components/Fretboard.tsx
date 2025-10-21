@@ -10,7 +10,6 @@ interface FretboardProps {
   instrument: InstrumentConfig;
   numFrets: number;
   minFret: number;
-  orientation: 'horizontal' | 'vertical';
   fretMarkerMode: 'dots' | 'numbers';
   selectedChordScale?: ChordScale;
   mirrorStrings?: boolean;
@@ -21,58 +20,11 @@ export const Fretboard: React.FC<FretboardProps> = ({
   instrument,
   numFrets,
   minFret,
-  orientation,
   fretMarkerMode,
   selectedChordScale,
   mirrorStrings = false,
   onNoteSelect,
 }) => {
-  const renderFretMarkers = () => {
-    const markers = [];
-    
-    // Add markers for each fret node/wire
-    for (let fret = minFret + 1; fret <= numFrets; fret++) {
-      const isMarkerFret = [3, 5, 7, 9, 15, 17, 19, 21].includes(fret);
-      const isDoubleMarker = [12, 24].includes(fret);
-      const isProminentFret = isMarkerFret || isDoubleMarker;
-      
-      if (isProminentFret) {
-        // Calculate position: fret N wire is between cell (N-1) and cell N
-        // For fret 3, it's between cell 2 and cell 3
-        const cellIndex = fret - minFret; // Index of the cell that fret N ends
-        const totalCells = numFrets - minFret + 1;
-        // Position at the left edge of cell cellIndex (which is the right edge of previous cell)
-        const percentage = (cellIndex / totalCells) * 100;
-        
-        markers.push(
-          <div 
-            key={`marker-${fret}`} 
-            className={`fret-marker-node ${orientation}`}
-            style={{
-              [orientation === 'horizontal' ? 'left' : 'top']: `${percentage}%`
-            }}
-          >
-            <div className="fret-marker-content">
-              {fretMarkerMode === 'dots' && isDoubleMarker && (
-                <div className="fret-position-marker double">••</div>
-              )}
-              {fretMarkerMode === 'dots' && isMarkerFret && !isDoubleMarker && (
-                <div className="fret-position-marker">•</div>
-              )}
-              {fretMarkerMode === 'numbers' && (
-                <div className={`fret-position-number ${isProminentFret ? 'prominent' : 'subtle'}`}>
-                  {fret}
-                </div>
-              )}
-            </div>
-          </div>
-        );
-      }
-    }
-    
-    return <div className={`fret-markers-overlay ${orientation}`}>{markers}</div>;
-  };
-
   const renderFretboard = () => {
     const stringsToRender = mirrorStrings ? [...instrument.strings].reverse() : instrument.strings;
     const strings = stringsToRender.map((stringConfig, stringIndex) => {
@@ -88,6 +40,12 @@ export const Fretboard: React.FC<FretboardProps> = ({
           ? getScaleDegreeInfo(note.name, selectedChordScale)
           : null;
 
+        // Determine if this fret should show a label
+        const isMarkerFret = [3, 5, 7, 9, 15, 17, 19, 21].includes(fret);
+        const isDoubleMarker = [12, 24].includes(fret);
+        const isProminentFret = isMarkerFret || isDoubleMarker;
+        const showFretLabel = isProminentFret && stringIndex === 0; // Only show on first string to avoid duplication
+
         frets.push(
           <div key={`${stringIndex}-${fret}`} className="fret-cell">
             <FretboardNote
@@ -97,6 +55,8 @@ export const Fretboard: React.FC<FretboardProps> = ({
               isHighlighted={isHighlighted}
               scaleDegreeInfo={scaleDegreeInfo}
               onSelect={onNoteSelect}
+              showFretLabel={showFretLabel}
+              fretMarkerMode={fretMarkerMode}
             />
           </div>
         );
@@ -113,10 +73,9 @@ export const Fretboard: React.FC<FretboardProps> = ({
   };
 
   return (
-    <div className={`fretboard ${orientation}`}>
+    <div className="fretboard">
       <div className="fretboard-grid">
         {renderFretboard()}
-        {renderFretMarkers()}
       </div>
     </div>
   );
