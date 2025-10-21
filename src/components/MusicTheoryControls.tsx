@@ -30,6 +30,7 @@ export const MusicTheoryControls: React.FC<MusicTheoryControlsProps> = ({
   const [rootNote, setRootNote] = React.useState<NoteName>('C');
   const [showChordDropdown, setShowChordDropdown] = React.useState(false);
   const [showScaleDropdown, setShowScaleDropdown] = React.useState(false);
+  const [isCollapsed, setIsCollapsed] = React.useState(false);
 
   const handleMusicTheorySelection = (type: ChordType | ScaleType) => {
     const notes = getMusicTheoryNotes(rootNote, type);
@@ -48,6 +49,12 @@ export const MusicTheoryControls: React.FC<MusicTheoryControlsProps> = ({
     setShowScaleDropdown(false);
   };
 
+  const toggleCollapse = () => {
+    setIsCollapsed(!isCollapsed);
+    setShowChordDropdown(false);
+    setShowScaleDropdown(false);
+  };
+
   const handleRootNoteChange = (note: NoteName) => {
     setRootNote(note);
     if (selectedChordScale) {
@@ -61,20 +68,26 @@ export const MusicTheoryControls: React.FC<MusicTheoryControlsProps> = ({
   };
 
   return (
-    <div className="music-theory-controls">
-      <h3>🎼 Music Theory</h3>
+    <div className={`music-theory-controls ${isCollapsed ? 'collapsed' : ''}`}>
+      <div className="theory-header" onClick={toggleCollapse}>
+        <h3>🎼 Music Theory</h3>
+        <button className="collapse-button">
+          {isCollapsed ? '▶' : '▼'}
+        </button>
+      </div>
       
-      <div className="theory-content">
-        <div className="root-note-selector">
-          <label>Root Note:</label>
-          <select value={rootNote} onChange={(e) => handleRootNoteChange(e.target.value as NoteName)}>
-            {NOTES.map((note) => (
-              <option key={note} value={note}>
-                {note}
-              </option>
-            ))}
-          </select>
-        </div>
+      {!isCollapsed && (
+        <div className="theory-content">
+          <div className="root-note-selector">
+            <label>Root Note:</label>
+            <select value={rootNote} onChange={(e) => handleRootNoteChange(e.target.value as NoteName)}>
+              {NOTES.map((note) => (
+                <option key={note} value={note}>
+                  {note}
+                </option>
+              ))}
+            </select>
+          </div>
 
         {/* Current Selection Display */}
         <div className="current-selection">
@@ -191,9 +204,10 @@ export const MusicTheoryControls: React.FC<MusicTheoryControlsProps> = ({
                 </div>
               )}
             </div>
+            </div>
           </div>
         </div>
-      </div>
+        )}
     </div>
   );
 };

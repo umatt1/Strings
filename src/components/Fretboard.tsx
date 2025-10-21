@@ -28,12 +28,6 @@ export const Fretboard: React.FC<FretboardProps> = ({
   const renderFretMarkers = () => {
     const markers = [];
     
-    // Empty space for string labels
-    markers.push(
-      <div key="label-space" className="fret-marker-cell">
-      </div>
-    );
-    
     // Add markers for each fret
     for (let fret = minFret; fret <= numFrets; fret++) {
       const isMarkerFret = [3, 5, 7, 9, 15, 17, 19, 21].includes(fret);
@@ -92,9 +86,6 @@ export const Fretboard: React.FC<FretboardProps> = ({
 
       return (
         <div key={stringIndex} className="string-row">
-          <div className="string-label">
-            String {stringIndex + 1} ({stringConfig.openNote}{stringConfig.octave})
-          </div>
           <div className="frets">{frets}</div>
         </div>
       );

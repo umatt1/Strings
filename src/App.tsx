@@ -62,11 +62,6 @@ function App() {
 
   return (
     <div className="app">
-      <header className="app-header">
-        <h1>🎸 Interactive Fretboard</h1>
-        <p>Click on notes to play them. Select a chord or scale to highlight patterns.</p>
-      </header>
-
       <main className="app-main">
         {/* Basic Controls - Always at top */}
         <div className="basic-controls">
