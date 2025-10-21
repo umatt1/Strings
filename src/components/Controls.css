@@ -82,14 +82,14 @@
 
 .range-controls {
   display: flex;
-  gap: 15px;
+  flex-direction: column;
+  gap: 8px;
 }
 
 .range-item {
   display: flex;
   align-items: center;
   gap: 8px;
-  flex: 1;
 }
 
 .range-item label {
@@ -100,7 +100,7 @@
 
 .range-item input[type="range"] {
   flex: 1;
-  min-width: 80px;
+  min-width: 100px;
 }
 
 .range-item .value-display {
@@ -567,8 +567,7 @@ input[type="range"] {
   }
   
   .range-controls {
-    flex-direction: column;
-    gap: 10px;
+    gap: 6px;
   }
   
   .display-grid {
