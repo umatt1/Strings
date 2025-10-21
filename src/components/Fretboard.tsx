@@ -11,6 +11,7 @@ interface FretboardProps {
   numFrets: number;
   minFret: number;
   orientation: 'horizontal' | 'vertical';
+  fretMarkerMode: 'dots' | 'numbers';
   selectedChordScale?: ChordScale;
   onNoteSelect?: (note: Note, stringIndex: number, fretNumber: number) => void;
 }
@@ -20,6 +21,7 @@ export const Fretboard: React.FC<FretboardProps> = ({
   numFrets,
   minFret,
   orientation,
+  fretMarkerMode,
   selectedChordScale,
   onNoteSelect,
 }) => {
@@ -41,15 +43,17 @@ export const Fretboard: React.FC<FretboardProps> = ({
       markers.push(
         <div key={`marker-${fret}`} className={`fret-marker-cell ${orientation}`}>
           <div className="fret-marker-content">
-            {isDoubleMarker && (
+            {fretMarkerMode === 'dots' && isDoubleMarker && (
               <div className="fret-position-marker double">••</div>
             )}
-            {isMarkerFret && !isDoubleMarker && (
+            {fretMarkerMode === 'dots' && isMarkerFret && !isDoubleMarker && (
               <div className="fret-position-marker">•</div>
             )}
-            <div className={`fret-position-number ${isProminentFret ? 'prominent' : 'subtle'}`}>
-              {fret}
-            </div>
+            {fretMarkerMode === 'numbers' && (
+              <div className={`fret-position-number ${isProminentFret ? 'prominent' : 'subtle'}`}>
+                {fret}
+              </div>
+            )}
           </div>
         </div>
       );

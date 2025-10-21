@@ -14,6 +14,7 @@ function App() {
   const [numFrets, setNumFrets] = useState(15);
   const [minFret, setMinFret] = useState(0);
   const [orientation, setOrientation] = useState<'horizontal' | 'vertical'>('horizontal');
+  const [fretMarkerMode, setFretMarkerMode] = useState<'dots' | 'numbers'>('dots');
   const [selectedChordScale, setSelectedChordScale] = useState<ChordScale | undefined>(undefined);
   const [selectedNotes, setSelectedNotes] = useState<Note[]>([]);
 
@@ -75,6 +76,8 @@ function App() {
           onMinFretChange={handleMinFretChange}
           orientation={orientation}
           onOrientationChange={setOrientation}
+          fretMarkerMode={fretMarkerMode}
+          onFretMarkerModeChange={setFretMarkerMode}
           selectedChordScale={selectedChordScale}
           onChordScaleChange={setSelectedChordScale}
         />
@@ -93,6 +96,7 @@ function App() {
           numFrets={numFrets}
           minFret={minFret}
           orientation={orientation}
+          fretMarkerMode={fretMarkerMode}
           selectedChordScale={selectedChordScale}
           onNoteSelect={handleNoteSelect}
         />

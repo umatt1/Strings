@@ -28,6 +28,8 @@ interface ControlsProps {
   onMinFretChange: (minFret: number) => void;
   orientation: 'horizontal' | 'vertical';
   onOrientationChange: (orientation: 'horizontal' | 'vertical') => void;
+  fretMarkerMode: 'dots' | 'numbers';
+  onFretMarkerModeChange: (mode: 'dots' | 'numbers') => void;
   selectedChordScale?: ChordScale;
   onChordScaleChange: (chordScale: ChordScale | undefined) => void;
 }
@@ -40,6 +42,8 @@ export const Controls: React.FC<ControlsProps> = ({
   onMinFretChange,
   orientation,
   onOrientationChange,
+  fretMarkerMode,
+  onFretMarkerModeChange,
   selectedChordScale,
   onChordScaleChange,
 }) => {
@@ -196,6 +200,24 @@ export const Controls: React.FC<ControlsProps> = ({
             onClick={() => onOrientationChange('vertical')}
           >
             Vertical
+          </button>
+        </div>
+      </div>
+
+      <div className="control-section">
+        <h3>Fret Markers</h3>
+        <div className="button-group">
+          <button
+            className={fretMarkerMode === 'dots' ? 'active' : ''}
+            onClick={() => onFretMarkerModeChange('dots')}
+          >
+            Dots
+          </button>
+          <button
+            className={fretMarkerMode === 'numbers' ? 'active' : ''}
+            onClick={() => onFretMarkerModeChange('numbers')}
+          >
+            Numbers
           </button>
         </div>
       </div>

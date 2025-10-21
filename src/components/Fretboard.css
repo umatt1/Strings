@@ -63,12 +63,16 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
   gap: 2px;
+  min-height: 30px;
 }
 
 .fret-marker-cell.vertical .fret-marker-content {
   flex-direction: row;
   gap: 4px;
+  min-width: 30px;
+  min-height: auto;
 }
 
 .fret-position-marker {
@@ -76,6 +80,7 @@
   color: #DAA520;
   font-weight: 900;
   text-shadow: 0 1px 3px rgba(0, 0, 0, 0.7);
+  line-height: 1;
 }
 
 .fret-position-marker.double {
@@ -84,12 +89,16 @@
 }
 
 .fret-position-number {
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 600;
-  padding: 2px 6px;
+  padding: 3px 7px;
   border-radius: 4px;
   text-align: center;
-  min-width: 16px;
+  min-width: 20px;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .fret-position-number.prominent {
@@ -97,6 +106,14 @@
   background: rgba(0, 0, 0, 0.8);
   border: 1px solid #DAA520;
   font-weight: 700;
+  font-size: 14px;
+}
+
+.fret-position-number.subtle {
+  color: #888;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  font-size: 12px;
 }
 
 .fret-position-number.subtle {
