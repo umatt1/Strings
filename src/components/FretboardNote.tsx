@@ -16,6 +16,7 @@ interface FretboardNoteProps {
   onSelect?: (note: Note, stringIndex: number, fretNumber: number) => void;
   showFretLabel?: boolean;
   fretMarkerMode?: 'dots' | 'numbers';
+  showLabelOnly?: boolean;
 }
 
 export const FretboardNote: React.FC<FretboardNoteProps> = ({
@@ -28,6 +29,7 @@ export const FretboardNote: React.FC<FretboardNoteProps> = ({
   onSelect,
   showFretLabel = false,
   fretMarkerMode = 'numbers',
+  showLabelOnly = false,
 }) => {
   const handleClick = () => {
     audioPlayer.playNote(note.frequency);
@@ -68,6 +70,19 @@ export const FretboardNote: React.FC<FretboardNoteProps> = ({
     
     return null;
   };
+
+  // If we're only showing the label (note is not in scale), just render the fret marker
+  if (showLabelOnly) {
+    return (
+      <div className="fret-cell-container">
+        {showFretLabel && getFretLabelContent() && (
+          <div className="fret-label-above">
+            {getFretLabelContent()}
+          </div>
+        )}
+      </div>
+    );
+  }
 
   return (
     <div className="fret-cell-container">

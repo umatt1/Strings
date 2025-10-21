@@ -115,25 +115,23 @@ export const Fretboard: React.FC<FretboardProps> = ({
           selectedNote.octave === note.octave
         );
 
-        // Only show notes that are in the selected scale, or all notes if no scale is selected
-        // BUT: always show the note if it has a fret label (to keep fret markers visible)
-        const shouldShowNote = !selectedChordScale || isHighlighted || showFretLabel;
+        // If a scale is selected and this note is not in it, show only the fret label
+        const showLabelOnly = selectedChordScale && !isHighlighted;
 
         frets.push(
           <div key={`${stringIndex}-${fret}`} className="fret-cell">
-            {shouldShowNote && (
-              <FretboardNote
-                note={note}
-                stringIndex={stringIndex}
-                fretNumber={fret}
-                isHighlighted={isHighlighted}
-                isSelected={isSelected}
-                scaleDegreeInfo={scaleDegreeInfo}
-                onSelect={onNoteSelect}
-                showFretLabel={showFretLabel}
-                fretMarkerMode={fretMarkerMode}
-              />
-            )}
+            <FretboardNote
+              note={note}
+              stringIndex={stringIndex}
+              fretNumber={fret}
+              isHighlighted={isHighlighted}
+              isSelected={isSelected}
+              scaleDegreeInfo={scaleDegreeInfo}
+              onSelect={onNoteSelect}
+              showFretLabel={showFretLabel}
+              fretMarkerMode={fretMarkerMode}
+              showLabelOnly={showLabelOnly}
+            />
           </div>
         );
       }
