@@ -13,6 +13,7 @@ interface FretboardProps {
   orientation: 'horizontal' | 'vertical';
   fretMarkerMode: 'dots' | 'numbers';
   selectedChordScale?: ChordScale;
+  mirrorStrings?: boolean;
   onNoteSelect?: (note: Note, stringIndex: number, fretNumber: number) => void;
 }
 
@@ -23,6 +24,7 @@ export const Fretboard: React.FC<FretboardProps> = ({
   orientation,
   fretMarkerMode,
   selectedChordScale,
+  mirrorStrings = false,
   onNoteSelect,
 }) => {
   const renderFretMarkers = () => {
@@ -57,7 +59,8 @@ export const Fretboard: React.FC<FretboardProps> = ({
   };
 
   const renderFretboard = () => {
-    const strings = instrument.strings.map((stringConfig, stringIndex) => {
+    const stringsToRender = mirrorStrings ? [...instrument.strings].reverse() : instrument.strings;
+    const strings = stringsToRender.map((stringConfig, stringIndex) => {
       const frets = [];
       
       // Add frets in the specified range

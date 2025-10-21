@@ -18,6 +18,8 @@ interface ControlsProps {
   onOrientationChange: (orientation: 'horizontal' | 'vertical') => void;
   fretMarkerMode: 'dots' | 'numbers';
   onFretMarkerModeChange: (mode: 'dots' | 'numbers') => void;
+  mirrorStrings: boolean;
+  onMirrorStringsChange: (mirror: boolean) => void;
 }
 
 export const Controls: React.FC<ControlsProps> = ({
@@ -30,6 +32,8 @@ export const Controls: React.FC<ControlsProps> = ({
   onOrientationChange,
   fretMarkerMode,
   onFretMarkerModeChange,
+  mirrorStrings,
+  onMirrorStringsChange,
 }) => {
   const [selectedTuning, setSelectedTuning] = React.useState<TuningPreset>(
     GUITAR_TUNINGS.find(t => t.id === 'standard')!
@@ -154,6 +158,24 @@ export const Controls: React.FC<ControlsProps> = ({
                 onClick={() => onFretMarkerModeChange('numbers')}
               >
                 Numbers
+              </button>
+            </div>
+          </div>
+
+          <div className="option-group">
+            <h4>String Order</h4>
+            <div className="button-group">
+              <button
+                className={!mirrorStrings ? 'active' : ''}
+                onClick={() => onMirrorStringsChange(false)}
+              >
+                Normal
+              </button>
+              <button
+                className={mirrorStrings ? 'active' : ''}
+                onClick={() => onMirrorStringsChange(true)}
+              >
+                Mirrored
               </button>
             </div>
           </div>

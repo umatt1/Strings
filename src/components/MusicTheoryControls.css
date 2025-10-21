@@ -8,10 +8,11 @@
   position: sticky;
   top: 20px;
   transition: all 0.3s ease;
+  overflow: hidden;
 }
 
 .music-theory-controls.collapsed {
-  height: auto;
+  width: auto;
 }
 
 .theory-header {
@@ -26,6 +27,10 @@
   transition: background 0.2s ease;
 }
 
+.music-theory-controls.collapsed .theory-header {
+  padding: 16px 12px 12px 12px;
+}
+
 .theory-header:hover {
   background: linear-gradient(135deg, #e9ecef 0%, #dee2e6 100%);
 }
@@ -35,6 +40,13 @@
   font-size: 18px;
   color: #333;
   font-weight: 600;
+  white-space: nowrap;
+}
+
+.music-theory-controls.collapsed h3 {
+  font-size: 14px;
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
 }
 
 .collapse-button {
@@ -48,6 +60,10 @@
   transition: all 0.2s ease;
 }
 
+.music-theory-controls.collapsed .collapse-button {
+  transform: rotate(90deg);
+}
+
 .collapse-button:hover {
   background: rgba(0, 0, 0, 0.1);
   color: #333;
@@ -58,6 +74,12 @@
   display: flex;
   flex-direction: column;
   gap: 16px;
+  opacity: 1;
+  transition: opacity 0.3s ease;
+}
+
+.music-theory-controls.collapsed .theory-content {
+  display: none;
 }
 
 .root-note-selector {

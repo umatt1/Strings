@@ -138,7 +138,7 @@
 .string-row {
   display: flex;
   align-items: center;
-  background: linear-gradient(90deg, #B8860B 0%, #CD853F 20%, #F4A460 80%, #D2691E 100%);
+  background: #CD853F;
   border-radius: 6px;
   padding: 2px;
   margin-bottom: 3px;
@@ -163,10 +163,7 @@
   min-width: 80px;
   height: 100%;
   border-right: 4px solid #8B4513;
-  background: linear-gradient(90deg, 
-    rgba(255, 255, 255, 0.1) 0%, 
-    rgba(255, 255, 255, 0.05) 50%, 
-    rgba(0, 0, 0, 0.1) 100%);
+  background: rgba(255, 255, 255, 0.05);
 }
 
 .fret-cell:first-child {
@@ -189,10 +186,7 @@
 .fret-cell:nth-child(19),
 .fret-cell:nth-child(21),
 .fret-cell:nth-child(24) {
-  background: linear-gradient(90deg, 
-    rgba(255, 255, 255, 0.15) 0%, 
-    rgba(255, 255, 255, 0.1) 50%, 
-    rgba(0, 0, 0, 0.05) 100%);
+  background: rgba(255, 255, 255, 0.1);
 }
 
 .fret-marker.open {

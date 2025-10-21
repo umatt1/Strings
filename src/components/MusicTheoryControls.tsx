@@ -72,7 +72,7 @@ export const MusicTheoryControls: React.FC<MusicTheoryControlsProps> = ({
       <div className="theory-header" onClick={toggleCollapse}>
         <h3>🎼 Music Theory</h3>
         <button className="collapse-button">
-          {isCollapsed ? '▶' : '▼'}
+          {isCollapsed ? '▶' : '◀'}
         </button>
       </div>
       
