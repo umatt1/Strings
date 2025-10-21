@@ -36,23 +36,26 @@ export const Fretboard: React.FC<FretboardProps> = ({
     for (let fret = minFret; fret <= numFrets; fret++) {
       const isMarkerFret = [3, 5, 7, 9, 15, 17, 19, 21].includes(fret);
       const isDoubleMarker = [12, 24].includes(fret);
+      const isProminentFret = isMarkerFret || isDoubleMarker;
       
       markers.push(
-        <div key={`marker-${fret}`} className="fret-marker-cell">
-          {isDoubleMarker && (
-            <div className="fret-position-marker double">••</div>
-          )}
-          {isMarkerFret && !isDoubleMarker && (
-            <div className="fret-position-marker">•</div>
-          )}
-          {(isMarkerFret || isDoubleMarker) && (
-            <div className="fret-position-number">{fret}</div>
-          )}
+        <div key={`marker-${fret}`} className={`fret-marker-cell ${orientation}`}>
+          <div className="fret-marker-content">
+            {isDoubleMarker && (
+              <div className="fret-position-marker double">••</div>
+            )}
+            {isMarkerFret && !isDoubleMarker && (
+              <div className="fret-position-marker">•</div>
+            )}
+            <div className={`fret-position-number ${isProminentFret ? 'prominent' : 'subtle'}`}>
+              {fret}
+            </div>
+          </div>
         </div>
       );
     }
     
-    return <div className="fret-markers-row">{markers}</div>;
+    return <div className={`fret-markers-row ${orientation}`}>{markers}</div>;
   };
 
   const renderFretboard = () => {

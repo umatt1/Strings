@@ -27,6 +27,14 @@
   align-items: center;
 }
 
+.fret-markers-row.vertical {
+  flex-direction: column;
+  height: auto;
+  width: 30px;
+  margin-bottom: 0;
+  margin-right: 10px;
+}
+
 .fret-marker-cell {
   min-width: 80px;
   display: flex;
@@ -36,8 +44,31 @@
   position: relative;
 }
 
+.fret-marker-cell.vertical {
+  min-width: 30px;
+  min-height: 80px;
+  width: 100%;
+}
+
 .fret-marker-cell:first-child {
-  min-width: 120px; /* Account for string labels */
+  min-width: 120px;
+}
+
+.fret-marker-cell.vertical:first-child {
+  min-width: 30px;
+  min-height: 120px;
+}
+
+.fret-marker-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.fret-marker-cell.vertical .fret-marker-content {
+  flex-direction: row;
+  gap: 4px;
 }
 
 .fret-position-marker {
@@ -54,13 +85,26 @@
 
 .fret-position-number {
   font-size: 12px;
-  color: #FFD700;
   font-weight: 600;
-  margin-top: 2px;
-  background: rgba(0, 0, 0, 0.6);
   padding: 2px 6px;
   border-radius: 4px;
+  text-align: center;
+  min-width: 16px;
+}
+
+.fret-position-number.prominent {
+  color: #FFD700;
+  background: rgba(0, 0, 0, 0.8);
   border: 1px solid #DAA520;
+  font-weight: 700;
+}
+
+.fret-position-number.subtle {
+  color: #CCC;
+  background: rgba(0, 0, 0, 0.5);
+  border: 1px solid #666;
+  font-size: 10px;
+  font-weight: 500;
 }
 
 .string-row {
@@ -147,19 +191,46 @@
   flex-direction: row;
 }
 
+.fretboard.vertical .fret-markers-row {
+  flex-direction: column;
+  height: auto;
+  width: 30px;
+  margin-bottom: 0;
+  margin-right: 10px;
+}
+
 .fretboard.vertical .string-row {
   flex-direction: column;
   width: auto;
+  height: auto;
+  min-height: 80px;
+  padding: 8px 2px;
 }
 
 .fretboard.vertical .string-label {
   min-width: auto;
   writing-mode: vertical-rl;
   text-orientation: mixed;
+  min-height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .fretboard.vertical .frets {
   flex-direction: column;
+}
+
+.fretboard.vertical .fret-cell {
+  min-width: auto;
+  min-height: 80px;
+  border-right: none;
+  border-bottom: 4px solid #8B4513;
+}
+
+.fretboard.vertical .fret-cell:first-child {
+  border-left: none;
+  border-top: 6px solid #654321;
 }
 
 /* Responsive design */
