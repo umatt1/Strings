@@ -9,7 +9,6 @@ import './Fretboard.css';
 
 interface FretboardProps {
   instrument: InstrumentConfig;
-  fretMarkerMode: 'dots' | 'numbers';
   selectedChordScale?: ChordScale;
   selectedNotes?: Note[];
   mirrorStrings?: boolean;
@@ -23,7 +22,6 @@ const MAX_FRETS = 500; // Reasonable maximum
 
 export const Fretboard: React.FC<FretboardProps> = ({
   instrument,
-  fretMarkerMode,
   selectedChordScale,
   selectedNotes = [],
   mirrorStrings = false,
@@ -100,15 +98,8 @@ export const Fretboard: React.FC<FretboardProps> = ({
         // Determine if this fret should show a label based on mode
         let showFretLabel = false;
         if (stringIndex === 0) { // Only show on first string to avoid duplication
-          if (fretMarkerMode === 'numbers') {
-            // Numbers mode: show all fret numbers (except fret 0/open)
-            showFretLabel = fret > 0;
-          } else if (fretMarkerMode === 'dots') {
-            // Dots mode: only standard marker positions
-            const isStandardMarker = [3, 5, 7, 9, 15, 17, 19, 21].includes(fret);
-            const isOctaveMarker = [12, 24].includes(fret);
-            showFretLabel = isStandardMarker || isOctaveMarker;
-          }
+          // Always show numbers mode: show all fret numbers (except fret 0/open)
+          showFretLabel = fret > 0;
         }
 
         // Check if this note is currently selected by the user
@@ -132,7 +123,6 @@ export const Fretboard: React.FC<FretboardProps> = ({
               scaleDegreeInfo={scaleDegreeInfo}
               onSelect={onNoteSelect}
               showFretLabel={showFretLabel}
-              fretMarkerMode={fretMarkerMode}
               showLabelOnly={showLabelOnly}
               colorTheme={colorTheme}
             />

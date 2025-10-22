@@ -14,7 +14,6 @@ function App() {
   const [instrument, setInstrument] = useState<InstrumentConfig>(
     createInstrumentFromTuning(GUITAR_TUNINGS.find(t => t.id === 'standard')!)
   );
-  const [fretMarkerMode, setFretMarkerMode] = useState<'dots' | 'numbers'>('numbers');
   const [mirrorStrings, setMirrorStrings] = useState(false);
   const [selectedChordScale, setSelectedChordScale] = useState<ChordScale | undefined>(undefined);
   const [selectedNotes, setSelectedNotes] = useState<Note[]>([]);
@@ -57,8 +56,6 @@ function App() {
             <Controls
               instrument={instrument}
               onInstrumentChange={setInstrument}
-              fretMarkerMode={fretMarkerMode}
-              onFretMarkerModeChange={setFretMarkerMode}
               mirrorStrings={mirrorStrings}
               onMirrorStringsChange={setMirrorStrings}
               colorTheme={colorTheme}
@@ -79,8 +76,6 @@ function App() {
               <Controls
                 instrument={instrument}
                 onInstrumentChange={setInstrument}
-                fretMarkerMode={fretMarkerMode}
-                onFretMarkerModeChange={setFretMarkerMode}
                 mirrorStrings={mirrorStrings}
                 onMirrorStringsChange={setMirrorStrings}
                 colorTheme={colorTheme}
@@ -92,7 +87,6 @@ function App() {
               <div className="fretboard-panel">
                 <Fretboard
                   instrument={instrument}
-                  fretMarkerMode={fretMarkerMode}
                   selectedChordScale={selectedChordScale}
                   selectedNotes={selectedNotes}
                   mirrorStrings={mirrorStrings}

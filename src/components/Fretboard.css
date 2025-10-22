@@ -150,6 +150,47 @@
   border-left: 3px solid #666 !important;
 }
 
+/* Fret marker dots - like on a real guitar/bass */
+/* Single dots at frets 3, 5, 7, 9, 15, 17, 19, 21 */
+.string-row:nth-child(3) .fret-cell:nth-child(4)::after,
+.string-row:nth-child(3) .fret-cell:nth-child(6)::after,
+.string-row:nth-child(3) .fret-cell:nth-child(8)::after,
+.string-row:nth-child(3) .fret-cell:nth-child(10)::after,
+.string-row:nth-child(3) .fret-cell:nth-child(16)::after,
+.string-row:nth-child(3) .fret-cell:nth-child(18)::after,
+.string-row:nth-child(3) .fret-cell:nth-child(20)::after,
+.string-row:nth-child(3) .fret-cell:nth-child(22)::after {
+  content: '';
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  background: rgba(200, 200, 200, 0.4);
+  border-radius: 50%;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* Double dots at frets 12 and 24 (octaves) */
+.string-row:nth-child(2) .fret-cell:nth-child(13)::after,
+.string-row:nth-child(4) .fret-cell:nth-child(13)::after,
+.string-row:nth-child(2) .fret-cell:nth-child(25)::after,
+.string-row:nth-child(4) .fret-cell:nth-child(25)::after {
+  content: '';
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  background: rgba(200, 200, 200, 0.4);
+  border-radius: 50%;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 0;
+  pointer-events: none;
+}
+
 /* Nut representation - thicker line between open strings (0) and first fret (1) */
 .fret-cell:nth-child(2) {
   border-left: 3px solid var(--nut-border, #666);

@@ -80,7 +80,27 @@ export function getScaleDegreeInfo(note: NoteName, chord: ChordScale): ScaleDegr
   const noteIndex = chord.notes.indexOf(note);
   if (noteIndex === -1) return null;
 
-  const degree = noteIndex + 1;
+  // Get the intervals for this chord/scale type
+  let intervals: number[];
+  if (isChordType(chord.type)) {
+    intervals = CHORD_INTERVALS[chord.type];
+  } else {
+    intervals = SCALE_INTERVALS[chord.type];
+  }
+
+  // Calculate the semitone distance from root to this note
+  const rootIndex = NOTES.indexOf(chord.rootNote);
+  const currentNoteIndex = NOTES.indexOf(note);
+  const semitoneDistance = (currentNoteIndex - rootIndex + 12) % 12;
+
+  // Find which degree this semitone distance corresponds to
+  const degreeIndex = intervals.indexOf(semitoneDistance);
+  if (degreeIndex === -1) return null;
+
+  // Degree is 1-indexed (1st, 2nd, 3rd, etc.)
+  const degree = degreeIndex + 1;
+  
+  // 1st (root), 3rd, and 5th are considered important
   const isImportant = degree === 1 || degree === 3 || degree === 5;
 
   return {

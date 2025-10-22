@@ -15,7 +15,6 @@ interface FretboardNoteProps {
   scaleDegreeInfo?: ScaleDegreeInfo | null;
   onSelect?: (note: Note, stringIndex: number, fretNumber: number) => void;
   showFretLabel?: boolean;
-  fretMarkerMode?: 'dots' | 'numbers';
   showLabelOnly?: boolean;
   colorTheme: ColorTheme;
 }
@@ -29,7 +28,6 @@ export const FretboardNote: React.FC<FretboardNoteProps> = ({
   scaleDegreeInfo,
   onSelect,
   showFretLabel = false,
-  fretMarkerMode = 'numbers',
   showLabelOnly = false,
   colorTheme,
 }) => {
@@ -87,22 +85,8 @@ export const FretboardNote: React.FC<FretboardNoteProps> = ({
   const getFretLabelContent = () => {
     if (!showFretLabel) return null;
     
-    if (fretMarkerMode === 'numbers') {
-      // Numbers mode: show the fret number for all frets (except open)
-      return fretNumber > 0 ? fretNumber.toString() : null;
-    } else if (fretMarkerMode === 'dots') {
-      // Dots mode: show dots only at standard marker positions
-      const isOctaveMarker = [12, 24].includes(fretNumber);
-      const isStandardMarker = [3, 5, 7, 9, 15, 17, 19, 21].includes(fretNumber);
-      
-      if (isOctaveMarker) {
-        return '••'; // Double dots for octave positions
-      } else if (isStandardMarker) {
-        return '•'; // Single dot for standard positions
-      }
-    }
-    
-    return null;
+    // Always show numbers mode: show the fret number for all frets (except open)
+    return fretNumber > 0 ? fretNumber.toString() : null;
   };
 
   // Always render the full structure, but make invisible if not in scale

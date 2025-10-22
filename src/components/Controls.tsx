@@ -12,8 +12,6 @@ import './Controls.css';
 interface ControlsProps {
   instrument: InstrumentConfig;
   onInstrumentChange: (instrument: InstrumentConfig) => void;
-  fretMarkerMode: 'dots' | 'numbers';
-  onFretMarkerModeChange: (mode: 'dots' | 'numbers') => void;
   mirrorStrings: boolean;
   onMirrorStringsChange: (mirror: boolean) => void;
   colorTheme: ColorTheme;
@@ -22,8 +20,6 @@ interface ControlsProps {
 
 export const Controls: React.FC<ControlsProps> = ({
   onInstrumentChange,
-  fretMarkerMode,
-  onFretMarkerModeChange,
   mirrorStrings,
   onMirrorStringsChange,
   colorTheme,
@@ -163,24 +159,6 @@ export const Controls: React.FC<ControlsProps> = ({
         <div className="control-group">
           <h4>Display</h4>
           <div className="display-grid">
-            <div className="option-subgroup">
-              <label>Markers:</label>
-              <div className="button-group compact">
-                <button
-                  className={fretMarkerMode === 'dots' ? 'active' : ''}
-                  onClick={() => onFretMarkerModeChange('dots')}
-                >
-                  Dots
-                </button>
-                <button
-                  className={fretMarkerMode === 'numbers' ? 'active' : ''}
-                  onClick={() => onFretMarkerModeChange('numbers')}
-                >
-                  Numbers
-                </button>
-              </div>
-            </div>
-
             <div className="option-subgroup">
               <label>Strings:</label>
               <div className="button-group compact">
