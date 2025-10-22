@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
-import type { InstrumentConfig, Note } from '../types/music';
+import type { InstrumentConfig, Note, EnharmonicPreference } from '../types/music';
 import { getNoteAtFret } from '../types/music';
 import { FretboardNote } from './FretboardNote';
 import type { ChordScale } from '../utils/musicTheory';
@@ -14,6 +14,7 @@ interface FretboardProps {
   mirrorStrings?: boolean;
   onNoteSelect?: (note: Note, stringIndex: number, fretNumber: number) => void;
   colorTheme: ColorTheme;
+  enharmonicPreference: EnharmonicPreference;
 }
 
 const INITIAL_FRETS = 24;
@@ -27,6 +28,7 @@ export const Fretboard: React.FC<FretboardProps> = ({
   mirrorStrings = false,
   onNoteSelect,
   colorTheme,
+  enharmonicPreference,
 }) => {
   const [numFrets, setNumFrets] = useState(INITIAL_FRETS);
   const fretboardRef = useRef<HTMLDivElement>(null);
@@ -125,6 +127,8 @@ export const Fretboard: React.FC<FretboardProps> = ({
               showFretLabel={showFretLabel}
               showLabelOnly={showLabelOnly}
               colorTheme={colorTheme}
+              enharmonicPreference={enharmonicPreference}
+              rootNote={selectedChordScale?.rootNote}
             />
           </div>
         );

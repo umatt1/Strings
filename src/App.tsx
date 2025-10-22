@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import type { InstrumentConfig, Note } from './types/music';
+import type { InstrumentConfig, Note, EnharmonicPreference } from './types/music';
 import { GUITAR_TUNINGS, createInstrumentFromTuning } from './types/music';
 import type { ChordScale } from './utils/musicTheory';
 import type { ColorTheme } from './types/theme';
@@ -18,6 +18,7 @@ function App() {
   const [selectedChordScale, setSelectedChordScale] = useState<ChordScale | undefined>(undefined);
   const [selectedNotes, setSelectedNotes] = useState<Note[]>([]);
   const [colorTheme, setColorTheme] = useState<ColorTheme>(COLOR_THEMES.indigo);
+  const [enharmonicPreference, setEnharmonicPreference] = useState<EnharmonicPreference>('auto');
 
   const handleNoteSelect = (note: Note, _stringIndex: number, _fretNumber: number) => {
     setSelectedNotes(prev => {
@@ -60,6 +61,8 @@ function App() {
               onMirrorStringsChange={setMirrorStrings}
               colorTheme={colorTheme}
               onColorThemeChange={setColorTheme}
+              enharmonicPreference={enharmonicPreference}
+              onEnharmonicPreferenceChange={setEnharmonicPreference}
             />
           </div>
 
@@ -80,6 +83,8 @@ function App() {
                 onMirrorStringsChange={setMirrorStrings}
                 colorTheme={colorTheme}
                 onColorThemeChange={setColorTheme}
+                enharmonicPreference={enharmonicPreference}
+                onEnharmonicPreferenceChange={setEnharmonicPreference}
               />
             </div>
 
@@ -92,6 +97,7 @@ function App() {
                   mirrorStrings={mirrorStrings}
                   onNoteSelect={handleNoteSelect}
                   colorTheme={colorTheme}
+                  enharmonicPreference={enharmonicPreference}
                 />
               </div>
             </div>

@@ -1,6 +1,6 @@
 import React from 'react';
-import type { Note } from '../types/music';
-import { getNoteName } from '../types/music';
+import type { Note, NoteName, EnharmonicPreference } from '../types/music';
+import { getNoteName, getDisplayNoteName } from '../types/music';
 import type { ScaleDegreeInfo } from '../utils/musicTheory';
 import type { ColorTheme } from '../types/theme';
 import { audioPlayer } from '../utils/audio';
@@ -17,6 +17,8 @@ interface FretboardNoteProps {
   showFretLabel?: boolean;
   showLabelOnly?: boolean;
   colorTheme: ColorTheme;
+  enharmonicPreference: EnharmonicPreference;
+  rootNote?: NoteName;
 }
 
 export const FretboardNote: React.FC<FretboardNoteProps> = ({
@@ -30,6 +32,8 @@ export const FretboardNote: React.FC<FretboardNoteProps> = ({
   showFretLabel = false,
   showLabelOnly = false,
   colorTheme,
+  enharmonicPreference,
+  rootNote,
 }) => {
   const handleClick = () => {
     audioPlayer.playNote(note.frequency);
@@ -37,6 +41,9 @@ export const FretboardNote: React.FC<FretboardNoteProps> = ({
       onSelect(note, stringIndex, fretNumber);
     }
   };
+
+  // Get the display name based on preference
+  const displayNoteName = getDisplayNoteName(note.name, enharmonicPreference, rootNote);
 
   const getButtonStyle = () => {
     // If showLabelOnly is true (scale is selected but note is not in it), make it invisible
@@ -103,7 +110,7 @@ export const FretboardNote: React.FC<FretboardNoteProps> = ({
         onClick={handleClick}
         title={`${getNoteName(note)} - ${note.frequency.toFixed(2)} Hz${scaleDegreeInfo ? ` (${scaleDegreeInfo.degree}${scaleDegreeInfo.degree === 1 ? 'st' : scaleDegreeInfo.degree === 2 ? 'nd' : scaleDegreeInfo.degree === 3 ? 'rd' : 'th'})` : ''}${isSelected ? ' - SELECTED' : ''}`}
       >
-        <span className="note-name">{showLabelOnly ? '' : note.name}</span>
+        <span className="note-name">{showLabelOnly ? '' : displayNoteName}</span>
         {scaleDegreeInfo && isHighlighted && (
           <span className="scale-degree">{scaleDegreeInfo.degree}</span>
         )}

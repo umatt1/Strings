@@ -1,6 +1,6 @@
 // Musical note types and utilities
 
-export type NoteName = 'C' | 'C#' | 'D' | 'D#' | 'E' | 'F' | 'F#' | 'G' | 'G#' | 'A' | 'A#' | 'B';
+export type NoteName = 'C' | 'C#' | 'Db' | 'D' | 'D#' | 'Eb' | 'E' | 'F' | 'F#' | 'Gb' | 'G' | 'G#' | 'Ab' | 'A' | 'A#' | 'Bb' | 'B' | 'Cb';
 
 export interface Note {
   name: NoteName;
@@ -25,7 +25,11 @@ export interface InstrumentConfig {
   strings: StringConfig[];
 }
 
+// Default chromatic scale with sharps (for internal calculations)
 export const NOTES: NoteName[] = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
+
+// Chromatic scale with flats (alternative)
+export const NOTES_FLAT: NoteName[] = ['C', 'Db', 'D', 'Eb', 'E', 'F', 'Gb', 'G', 'Ab', 'A', 'Bb', 'B'];
 
 // Guitar tuning presets (high to low string order)
 export const GUITAR_TUNINGS: TuningPreset[] = [
@@ -228,4 +232,74 @@ export function calculateFrequency(note: NoteName, octave: number): number {
 
 export function getNoteName(note: Note): string {
   return `${note.name}${note.octave}`;
+}
+
+// Enharmonic equivalents (sharps to flats and vice versa)
+export const ENHARMONIC_MAP: Record<string, string> = {
+  'C#': 'Db',
+  'Db': 'C#',
+  'D#': 'Eb',
+  'Eb': 'D#',
+  'F#': 'Gb',
+  'Gb': 'F#',
+  'G#': 'Ab',
+  'Ab': 'G#',
+  'A#': 'Bb',
+  'Bb': 'A#',
+};
+
+// Keys that traditionally use sharps
+export const SHARP_KEYS = ['C', 'G', 'D', 'A', 'E', 'B', 'F#', 'C#'];
+
+// Keys that traditionally use flats
+export const FLAT_KEYS = ['F', 'Bb', 'Eb', 'Ab', 'Db', 'Gb', 'Cb'];
+
+export type EnharmonicPreference = 'auto' | 'sharps' | 'flats';
+
+/**
+ * Determines if a key should use sharps or flats based on music theory
+ */
+export function shouldUseSharp(rootNote: NoteName): boolean {
+  return SHARP_KEYS.includes(rootNote);
+}
+
+/**
+ * Converts a note name to its enharmonic equivalent
+ */
+export function toEnharmonic(note: NoteName): NoteName {
+  return (ENHARMONIC_MAP[note] || note) as NoteName;
+}
+
+/**
+ * Gets the appropriate note name based on preference and key
+ */
+export function getDisplayNoteName(
+  note: NoteName, 
+  preference: EnharmonicPreference,
+  rootNote?: NoteName
+): NoteName {
+  // If it's a natural note, no conversion needed
+  if (!note.includes('#') && !note.includes('b')) {
+    return note;
+  }
+
+  // Determine which to use
+  let useSharp: boolean;
+  
+  if (preference === 'sharps') {
+    useSharp = true;
+  } else if (preference === 'flats') {
+    useSharp = false;
+  } else { // 'auto' mode
+    useSharp = rootNote ? shouldUseSharp(rootNote) : note.includes('#');
+  }
+
+  // Convert if necessary
+  if (useSharp && note.includes('b')) {
+    return toEnharmonic(note);
+  } else if (!useSharp && note.includes('#')) {
+    return toEnharmonic(note);
+  }
+
+  return note;
 }

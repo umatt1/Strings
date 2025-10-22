@@ -1,5 +1,5 @@
 import React from 'react';
-import type { InstrumentConfig, TuningPreset } from '../types/music';
+import type { InstrumentConfig, TuningPreset, EnharmonicPreference } from '../types/music';
 import { 
   GUITAR_TUNINGS, 
   BASS_TUNINGS, 
@@ -16,6 +16,8 @@ interface ControlsProps {
   onMirrorStringsChange: (mirror: boolean) => void;
   colorTheme: ColorTheme;
   onColorThemeChange: (theme: ColorTheme) => void;
+  enharmonicPreference: EnharmonicPreference;
+  onEnharmonicPreferenceChange: (preference: EnharmonicPreference) => void;
 }
 
 export const Controls: React.FC<ControlsProps> = ({
@@ -24,6 +26,8 @@ export const Controls: React.FC<ControlsProps> = ({
   onMirrorStringsChange,
   colorTheme,
   onColorThemeChange,
+  enharmonicPreference,
+  onEnharmonicPreferenceChange,
 }) => {
   const [selectedTuning, setSelectedTuning] = React.useState<TuningPreset>(
     GUITAR_TUNINGS.find(t => t.id === 'standard')!
@@ -159,6 +163,33 @@ export const Controls: React.FC<ControlsProps> = ({
         <div className="control-group">
           <h4>Display</h4>
           <div className="display-grid">
+            <div className="option-subgroup">
+              <label>Accidentals:</label>
+              <div className="button-group compact">
+                <button
+                  className={enharmonicPreference === 'auto' ? 'active' : ''}
+                  onClick={() => onEnharmonicPreferenceChange('auto')}
+                  title="Automatically use sharps or flats based on key signature"
+                >
+                  Auto
+                </button>
+                <button
+                  className={enharmonicPreference === 'sharps' ? 'active' : ''}
+                  onClick={() => onEnharmonicPreferenceChange('sharps')}
+                  title="Always display sharps (C#, D#, F#, G#, A#)"
+                >
+                  ♯
+                </button>
+                <button
+                  className={enharmonicPreference === 'flats' ? 'active' : ''}
+                  onClick={() => onEnharmonicPreferenceChange('flats')}
+                  title="Always display flats (Db, Eb, Gb, Ab, Bb)"
+                >
+                  ♭
+                </button>
+              </div>
+            </div>
+            
             <div className="option-subgroup">
               <label>Strings:</label>
               <div className="button-group compact">
