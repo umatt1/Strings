@@ -77,6 +77,7 @@ export interface ScaleDegreeInfo {
 }
 
 export function getScaleDegreeInfo(note: NoteName, chord: ChordScale): ScaleDegreeInfo | null {
+  // Check if this note is in the chord/scale
   const noteIndex = chord.notes.indexOf(note);
   if (noteIndex === -1) return null;
 
@@ -93,12 +94,28 @@ export function getScaleDegreeInfo(note: NoteName, chord: ChordScale): ScaleDegr
   const currentNoteIndex = NOTES.indexOf(note);
   const semitoneDistance = (currentNoteIndex - rootIndex + 12) % 12;
 
-  // Find which degree this semitone distance corresponds to
-  const degreeIndex = intervals.indexOf(semitoneDistance);
-  if (degreeIndex === -1) return null;
+  // Find which position in the intervals array this semitone distance is at
+  const intervalPosition = intervals.indexOf(semitoneDistance);
+  if (intervalPosition === -1) return null;
 
-  // Degree is 1-indexed (1st, 2nd, 3rd, etc.)
-  const degree = degreeIndex + 1;
+  // Map interval position to scale degree based on semitone distance
+  // In traditional music theory: 0=1, 2=2, 4=3, 5=4, 7=5, 9=6, 11=7
+  const scaleDegreeBySemitones: { [key: number]: number } = {
+    0: 1,   // Root
+    2: 2,   // Major 2nd
+    3: 3,   // Minor 3rd (for minor scales)
+    4: 3,   // Major 3rd
+    5: 4,   // Perfect 4th
+    6: 4,   // Augmented 4th / Diminished 5th (tritone)
+    7: 5,   // Perfect 5th
+    8: 6,   // Minor 6th
+    9: 6,   // Major 6th
+    10: 7,  // Minor 7th
+    11: 7,  // Major 7th
+    1: 2,   // Minor 2nd (phrygian, etc)
+  };
+
+  const degree = scaleDegreeBySemitones[semitoneDistance] || intervalPosition + 1;
   
   // 1st (root), 3rd, and 5th are considered important
   const isImportant = degree === 1 || degree === 3 || degree === 5;
