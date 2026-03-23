@@ -4,6 +4,8 @@ import { getNoteAtFret } from '../types/music';
 import { FretboardNote } from './FretboardNote';
 import type { ChordScale } from '../utils/musicTheory';
 import { isNoteInChord, getScaleDegreeInfo } from '../utils/musicTheory';
+import type { DisplayMode } from '../utils/positions';
+import { isAllowedByDisplayMode } from '../utils/positions';
 import type { ColorTheme } from '../types/theme';
 import './Fretboard.css';
 
@@ -15,6 +17,9 @@ interface FretboardProps {
   onNoteSelect?: (note: Note, stringIndex: number, fretNumber: number) => void;
   colorTheme: ColorTheme;
   enharmonicPreference: EnharmonicPreference;
+  positionHighlights?: Set<string> | null;
+  displayMode?: DisplayMode;
+  scrollToFret?: number | null;
 }
 
 const INITIAL_FRETS = 24;
@@ -29,6 +34,9 @@ export const Fretboard: React.FC<FretboardProps> = ({
   onNoteSelect,
   colorTheme,
   enharmonicPreference,
+  positionHighlights = null,
+  displayMode = 'scales',
+  scrollToFret = null,
 }) => {
   const [numFrets, setNumFrets] = useState(INITIAL_FRETS);
   const fretboardRef = useRef<HTMLDivElement>(null);
@@ -69,6 +77,15 @@ export const Fretboard: React.FC<FretboardProps> = ({
     return () => document.removeEventListener('fullscreenchange', handleFullscreenChange);
   }, []);
 
+  // Auto-scroll to current position when it changes
+  useEffect(() => {
+    if (scrollToFret === null || scrollToFret === undefined || !fretboardRef.current) return;
+    const fretWidth = 55; // approximate px per fret cell
+    const container = fretboardRef.current;
+    const targetScroll = scrollToFret * fretWidth - container.clientWidth / 4;
+    container.scrollTo({ left: Math.max(0, targetScroll), behavior: 'smooth' });
+  }, [scrollToFret]);
+
   const toggleFullscreen = async () => {
     if (!fretboardRef.current) return;
 
@@ -85,17 +102,34 @@ export const Fretboard: React.FC<FretboardProps> = ({
   const renderFretboard = () => {
     const stringsToRender = mirrorStrings ? [...instrument.strings].reverse() : instrument.strings;
     const strings = stringsToRender.map((stringConfig, stringIndex) => {
+      // Map rendering index back to instrument index for position lookups
+      const instrumentStringIndex = mirrorStrings
+        ? instrument.strings.length - 1 - stringIndex
+        : stringIndex;
+
       const frets = [];
-      
+
       // Add frets from 0 to numFrets (infinite scroll loads more)
       for (let fret = 0; fret <= numFrets; fret++) {
         const note = getNoteAtFret(stringConfig.openNote, stringConfig.octave, fret);
-        const isHighlighted = selectedChordScale
+
+        // A note is "highlighted" if it is in the chord/scale AND passes the display-mode filter
+        const inScale = selectedChordScale
           ? isNoteInChord(note.name, selectedChordScale)
           : false;
-        const scaleDegreeInfo = selectedChordScale 
+        const passesDisplayFilter = selectedChordScale
+          ? isAllowedByDisplayMode(note.name, selectedChordScale, displayMode)
+          : true;
+        const isHighlighted = inScale && passesDisplayFilter;
+
+        const scaleDegreeInfo = selectedChordScale
           ? getScaleDegreeInfo(note.name, selectedChordScale)
           : null;
+
+        // Is this fret inside the active position?
+        const isInPosition =
+          !positionHighlights ||
+          positionHighlights.has(`${instrumentStringIndex}-${fret}`);
 
         // Determine if this fret should show a label based on mode
         let showFretLabel = false;
@@ -105,9 +139,9 @@ export const Fretboard: React.FC<FretboardProps> = ({
         }
 
         // Check if this note is currently selected by the user
-        const isSelected = selectedNotes.some(selectedNote => 
-          selectedNote.frequency === note.frequency && 
-          selectedNote.name === note.name && 
+        const isSelected = selectedNotes.some(selectedNote =>
+          selectedNote.frequency === note.frequency &&
+          selectedNote.name === note.name &&
           selectedNote.octave === note.octave
         );
 
@@ -122,6 +156,7 @@ export const Fretboard: React.FC<FretboardProps> = ({
               fretNumber={fret}
               isHighlighted={isHighlighted}
               isSelected={isSelected}
+              isInPosition={isInPosition}
               scaleDegreeInfo={scaleDegreeInfo}
               onSelect={onNoteSelect}
               showFretLabel={showFretLabel}

@@ -99,6 +99,11 @@
   pointer-events: none;
 }
 
+.fretboard-note.dimmed {
+  opacity: 0.15;
+  pointer-events: none;
+}
+
 .note-name {
   user-select: none;
   font-size: 12px;

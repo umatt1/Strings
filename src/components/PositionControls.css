@@ -1,0 +1,190 @@
+/* Position Toolbar — sits directly above the fretboard */
+.position-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  background: #f8f9fa;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+}
+
+/* ---- Display Mode Tabs ---- */
+.position-toolbar .display-mode-tabs {
+  display: flex;
+  gap: 0;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.position-toolbar .display-mode-tab {
+  padding: 5px 10px;
+  background: white;
+  border: none;
+  border-right: 1px solid #ccc;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 500;
+  color: #555;
+  transition: background 0.15s ease, color 0.15s ease;
+  white-space: nowrap;
+}
+
+.position-toolbar .display-mode-tab:last-child {
+  border-right: none;
+}
+
+.position-toolbar .display-mode-tab:hover {
+  background: #eee;
+}
+
+.position-toolbar .display-mode-tab.active {
+  background: #4CAF50;
+  color: white;
+  font-weight: 600;
+}
+
+/* ---- Position System Buttons ---- */
+.position-toolbar .system-buttons {
+  display: flex;
+  gap: 0;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.position-toolbar .system-button {
+  padding: 5px 10px;
+  background: white;
+  border: none;
+  border-right: 1px solid #ccc;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 500;
+  color: #555;
+  transition: background 0.15s ease, color 0.15s ease;
+  white-space: nowrap;
+}
+
+.position-toolbar .system-button:last-child {
+  border-right: none;
+}
+
+.position-toolbar .system-button:hover {
+  background: #eee;
+}
+
+.position-toolbar .system-button.active {
+  background: #2196F3;
+  color: white;
+  font-weight: 600;
+}
+
+/* ---- Position Navigator ---- */
+.position-toolbar .position-navigator {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-left: auto;
+}
+
+.position-toolbar .nav-button {
+  background: white;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 4px 10px;
+  cursor: pointer;
+  font-size: 13px;
+  transition: background 0.15s ease;
+  line-height: 1;
+}
+
+.position-toolbar .nav-button:hover {
+  background: #e3f2fd;
+  border-color: #2196F3;
+}
+
+.position-toolbar .position-label {
+  font-weight: 600;
+  font-size: 13px;
+  color: #333;
+  white-space: nowrap;
+  user-select: none;
+}
+
+.position-toolbar .position-count {
+  font-weight: 400;
+  color: #888;
+  font-size: 12px;
+}
+
+/* ============================================
+   MOBILE TOUCH OPTIMIZATIONS
+   ============================================ */
+.position-toolbar .display-mode-tab,
+.position-toolbar .system-button {
+  min-height: 36px;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.position-toolbar .nav-button {
+  min-width: 36px;
+  min-height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  touch-action: manipulation;
+}
+
+.position-toolbar .display-mode-tab:active,
+.position-toolbar .system-button:active {
+  transform: scale(0.96);
+}
+
+.position-toolbar .nav-button:active {
+  transform: scale(0.92);
+}
+
+@media (hover: none) and (pointer: coarse) {
+  .position-toolbar .display-mode-tab:hover,
+  .position-toolbar .system-button:hover,
+  .position-toolbar .nav-button:hover {
+    background: white;
+  }
+  .position-toolbar .display-mode-tab.active:hover {
+    background: #4CAF50;
+  }
+  .position-toolbar .system-button.active:hover {
+    background: #2196F3;
+  }
+}
+
+/* Stack on very narrow screens */
+@media (max-width: 479px) {
+  .position-toolbar {
+    gap: 6px;
+  }
+  .position-toolbar .position-navigator {
+    margin-left: 0;
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+/* Desktop — tighter sizing */
+@media (min-width: 768px) {
+  .position-toolbar .display-mode-tab,
+  .position-toolbar .system-button {
+    min-height: auto;
+    padding: 5px 12px;
+  }
+
+  .position-toolbar .nav-button {
+    min-width: auto;
+    min-height: auto;
+    padding: 4px 10px;
+  }
+}

@@ -12,6 +12,7 @@ interface FretboardNoteProps {
   fretNumber: number;
   isHighlighted: boolean;
   isSelected?: boolean;
+  isInPosition?: boolean;
   scaleDegreeInfo?: ScaleDegreeInfo | null;
   onSelect?: (note: Note, stringIndex: number, fretNumber: number) => void;
   showFretLabel?: boolean;
@@ -27,6 +28,7 @@ export const FretboardNote: React.FC<FretboardNoteProps> = ({
   fretNumber,
   isHighlighted,
   isSelected = false,
+  isInPosition = true,
   scaleDegreeInfo,
   onSelect,
   showFretLabel = false,
@@ -105,7 +107,7 @@ export const FretboardNote: React.FC<FretboardNoteProps> = ({
         </div>
       )}
       <button
-        className={`fretboard-note ${isHighlighted ? 'highlighted' : ''} ${scaleDegreeInfo?.isImportant ? 'important' : ''} ${isSelected ? 'selected' : ''} ${showLabelOnly ? 'hidden' : ''}`}
+        className={`fretboard-note ${isHighlighted ? 'highlighted' : ''} ${scaleDegreeInfo?.isImportant ? 'important' : ''} ${isSelected ? 'selected' : ''} ${showLabelOnly ? 'hidden' : ''} ${isHighlighted && !isInPosition ? 'dimmed' : ''}`}
         style={getButtonStyle()}
         onClick={handleClick}
         title={`${getNoteName(note)} - ${note.frequency.toFixed(2)} Hz${scaleDegreeInfo ? ` (${scaleDegreeInfo.degree}${scaleDegreeInfo.degree === 1 ? 'st' : scaleDegreeInfo.degree === 2 ? 'nd' : scaleDegreeInfo.degree === 3 ? 'rd' : 'th'})` : ''}${isSelected ? ' - SELECTED' : ''}`}
