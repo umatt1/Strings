@@ -185,7 +185,7 @@ const CAGED_TEMPLATES: CAGEDShapeTemplate[] = [
   {
     name: 'E Shape', baseOff: -1,
     stringRanges: [
-      [0, 1], // str 1 (high E)
+      [0, 3], // str 1 (high E)
       [1, 3], // str 2 (B)
       [0, 3], // str 3 (G)
       [0, 3], // str 4 (D)
@@ -198,9 +198,9 @@ const CAGED_TEMPLATES: CAGEDShapeTemplate[] = [
     stringRanges: [
       [0, 3], // str 1
       [0, 3], // str 2
-      [0, 2], // str 3
-      [0, 4], // str 4
-      [0, 4], // str 5
+      [-1, 2], // str 3 (G)
+      [0, 2],  // str 4 (D)
+      [0, 4],  // str 5
       [0, 3], // str 6
     ],
   },
@@ -218,7 +218,7 @@ const CAGED_TEMPLATES: CAGEDShapeTemplate[] = [
   {
     name: 'A Shape', baseOff: 5,
     stringRanges: [
-      [0, 2], // str 1
+      [2, 4], // str 1 (high E) — mirrors low E, sits at barre position and above
       [2, 4], // str 2
       [1, 4], // str 3
       [1, 4], // str 4
