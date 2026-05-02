@@ -20,8 +20,11 @@ export interface Position {
 
 const ROMAN = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII'] as const;
 
-// 3NPS is only meaningful for major (Ionian) and natural minor (Aeolian).
-const DIATONIC_3NPS_TYPES = new Set(['ionian', 'major', 'aeolian', 'natural-minor']);
+// All 7 major-system modes (and natural-minor alias) support 3NPS and flat positions.
+const DIATONIC_3NPS_TYPES = new Set([
+  'ionian', 'major', 'dorian', 'phrygian', 'lydian', 'mixolydian', 'aeolian', 'locrian',
+  'natural-minor',
+]);
 
 /**
  * Get the absolute semitone value of a string's open note

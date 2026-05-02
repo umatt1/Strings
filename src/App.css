@@ -79,8 +79,37 @@
   gap: 12px;
 }
 
-.fretboard-area {
+.practice-toggle-row {
   order: 2;
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: -6px;
+}
+
+.practice-toggle-btn {
+  padding: 5px 16px;
+  background: #e8eaf6;
+  border: 2px solid #c5cae9;
+  border-radius: 6px;
+  color: #3949ab;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+  transition: all 0.15s;
+}
+
+.practice-toggle-btn:hover {
+  background: #c5cae9;
+}
+
+.practice-toggle-btn.active {
+  background: #3949ab;
+  color: white;
+  border-color: #3949ab;
+}
+
+.fretboard-area {
+  order: 3;
   flex: 1;
   display: flex;
   flex-direction: column;

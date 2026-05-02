@@ -201,6 +201,49 @@ export const SCALE_CATEGORIES = {
 export const COMMON_CHORDS: ChordType[] = ['major', 'minor', 'maj7', 'min7', 'dom7'];
 export const COMMON_SCALES: ScaleType[] = ['ionian', 'aeolian', 'pentatonic-major', 'pentatonic-minor', 'dorian'];
 
+const MAJOR_MODES: MajorModeType[] = ['ionian', 'dorian', 'phrygian', 'lydian', 'mixolydian', 'aeolian', 'locrian'];
+const MAJOR_MODE_SEMITONES = [0, 2, 4, 5, 7, 9, 11];
+const DIATONIC_SEVENTH_TYPES: SeventhChordType[] = ['maj7', 'min7', 'min7', 'maj7', 'dom7', 'min7', 'half-dim7'];
+
+export function getModesForKey(
+  keyRoot: NoteName,
+  keyType: 'major' | 'minor'
+): { degree: number; modeRoot: NoteName; scaleType: MajorModeType }[] {
+  const relRootIdx = NOTES.indexOf(keyType === 'minor' ? NOTES[(NOTES.indexOf(keyRoot) + 3) % 12] : keyRoot);
+  return MAJOR_MODES.map((scaleType, i) => ({
+    degree: i + 1,
+    modeRoot: NOTES[(relRootIdx + MAJOR_MODE_SEMITONES[i]) % 12],
+    scaleType,
+  }));
+}
+
+export function getDiatonicChords(
+  keyRoot: NoteName,
+  keyType: 'major' | 'minor'
+): { degree: number; root: NoteName; chordType: SeventhChordType }[] {
+  const relRootIdx = NOTES.indexOf(keyType === 'minor' ? NOTES[(NOTES.indexOf(keyRoot) + 3) % 12] : keyRoot);
+  return DIATONIC_SEVENTH_TYPES.map((chordType, i) => ({
+    degree: i + 1,
+    root: NOTES[(relRootIdx + MAJOR_MODE_SEMITONES[i]) % 12],
+    chordType,
+  }));
+}
+
+export const CHORD_SCALE_MAP: Partial<Record<ChordType, ScaleType[]>> = {
+  'maj7':      ['ionian', 'lydian'],
+  'min7':      ['dorian', 'aeolian', 'phrygian'],
+  'dom7':      ['mixolydian'],
+  'half-dim7': ['locrian'],
+  'dim7':      ['locrian'],
+  'min-maj7':  ['harmonic-minor'],
+  'major':     ['ionian', 'lydian'],
+  'minor':     ['aeolian', 'dorian'],
+};
+
+export function suggestScale(chordType: ChordType): ScaleType | undefined {
+  return CHORD_SCALE_MAP[chordType]?.[0];
+}
+
 export function getMusicTheoryLabel(type: MusicTheoryType): string {
   if (isChordType(type)) {
     return CHORD_LABELS[type];

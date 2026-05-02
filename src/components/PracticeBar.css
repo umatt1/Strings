@@ -1,0 +1,155 @@
+.practice-bar {
+  background: #1a237e;
+  color: white;
+  border-radius: 0 0 8px 8px;
+  padding: 8px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.practice-bar-top {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.pb-nav-btn {
+  background: rgba(255,255,255,0.15);
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 6px 10px;
+  cursor: pointer;
+  font-size: 14px;
+  flex-shrink: 0;
+  transition: background 0.15s;
+}
+
+.pb-nav-btn:hover {
+  background: rgba(255,255,255,0.3);
+}
+
+.queue-strip {
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+  flex: 1;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255,255,255,0.3) transparent;
+  padding-bottom: 2px;
+}
+
+.queue-item {
+  flex-shrink: 0;
+  background: rgba(255,255,255,0.12);
+  border: 1px solid rgba(255,255,255,0.2);
+  border-radius: 6px;
+  padding: 4px 10px;
+  cursor: default;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 80px;
+  transition: background 0.15s;
+}
+
+.queue-item.active {
+  background: rgba(255,255,255,0.9);
+  color: #1a237e;
+  border-color: white;
+}
+
+.queue-item-label {
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.queue-item-mode {
+  font-size: 9px;
+  opacity: 0.7;
+  text-transform: uppercase;
+}
+
+.queue-item.active .queue-item-mode {
+  opacity: 0.6;
+}
+
+.practice-bar-bottom {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 12px;
+}
+
+.space-hint {
+  opacity: 0.6;
+  font-size: 11px;
+}
+
+.timer-control {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.timer-label {
+  opacity: 0.7;
+  font-size: 11px;
+}
+
+.timer-input {
+  width: 48px;
+  padding: 2px 4px;
+  background: rgba(255,255,255,0.15);
+  border: 1px solid rgba(255,255,255,0.3);
+  border-radius: 3px;
+  color: white;
+  font-size: 12px;
+  text-align: center;
+}
+
+.timer-input:focus {
+  outline: none;
+  border-color: rgba(255,255,255,0.7);
+}
+
+.timer-unit {
+  opacity: 0.7;
+  font-size: 11px;
+}
+
+.timer-clear {
+  background: none;
+  border: none;
+  color: rgba(255,255,255,0.6);
+  cursor: pointer;
+  font-size: 11px;
+  padding: 0 2px;
+}
+
+.timer-clear:hover {
+  color: white;
+}
+
+.queue-progress {
+  margin-left: auto;
+  opacity: 0.7;
+  font-size: 11px;
+}
+
+.edit-queue-btn {
+  background: rgba(255,255,255,0.15);
+  color: white;
+  border: 1px solid rgba(255,255,255,0.3);
+  border-radius: 4px;
+  padding: 3px 10px;
+  cursor: pointer;
+  font-size: 11px;
+  transition: background 0.15s;
+}
+
+.edit-queue-btn:hover {
+  background: rgba(255,255,255,0.3);
+}

@@ -12,7 +12,7 @@ interface PositionControlsProps {
   onDisplayModeChange: (mode: DisplayMode) => void;
   hasSelection: boolean;
   isScaleSelected: boolean;
-  scaleNoteCount: number;
+  scaleNoteCount?: number;
   is3npsEligible: boolean;
   isFlatEligible: boolean;
 }
@@ -35,7 +35,7 @@ export const PositionControls: React.FC<PositionControlsProps> = ({
   onDisplayModeChange,
   hasSelection,
   isScaleSelected,
-  scaleNoteCount,
+  scaleNoteCount: _scaleNoteCount,
   is3npsEligible,
   isFlatEligible,
 }) => {

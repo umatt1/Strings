@@ -302,9 +302,9 @@ describe('3NPS positions', () => {
     expect(positions.length).toBe(0);
   });
 
-  it('returns empty for non-diatonic 7-note scales (Dorian)', () => {
+  it('returns 7 positions for Dorian (all major modes now supported)', () => {
     const positions = calculatePositions(STANDARD_GUITAR, G_DORIAN, '3nps');
-    expect(positions.length).toBe(0);
+    expect(positions.length).toBe(7);
   });
 
   it('each position has exactly 3 notes per string (18 total for 6 strings)', () => {
