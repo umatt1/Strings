@@ -14,6 +14,7 @@ import {
   getMusicTheoryLabel,
   getModesForKey,
   getDiatonicChords,
+  getDiatonicPentatonics,
   degreeLabel,
   buildTensionedChord,
   tensionLabel,
@@ -87,8 +88,9 @@ export const MusicTheoryControls: React.FC<MusicTheoryControlsProps> = ({
     return (enharmonic !== note ? enharmonic : note) as string;
   }
 
-  const modeData = React.useMemo(() => getModesForKey(keyRoot, keyType), [keyRoot, keyType]);
+  const modeData  = React.useMemo(() => getModesForKey(keyRoot, keyType), [keyRoot, keyType]);
   const chordData = React.useMemo(() => getDiatonicChords(keyRoot, keyType), [keyRoot, keyType]);
+  const pentData  = React.useMemo(() => getDiatonicPentatonics(keyRoot, keyType), [keyRoot, keyType]);
 
   // Rebuild the tensioned chord and push to parent
   function applyTensionState(
@@ -158,11 +160,11 @@ export const MusicTheoryControls: React.FC<MusicTheoryControlsProps> = ({
     }
   };
 
-  const handleOtherSelect = (type: ChordType | ScaleType) => {
+  const handleOtherSelect = (type: ChordType | ScaleType, root: NoteName = keyRoot) => {
     setActiveDegree(null);
     setActiveTensions(new Set());
     setSevenOn(true);
-    onChordScaleChange({ type, rootNote: keyRoot, notes: getMusicTheoryNotes(keyRoot, type) });
+    onChordScaleChange({ type, rootNote: root, notes: getMusicTheoryNotes(root, type) });
   };
 
   const handleAddAllChordsToQueue = () => {
@@ -327,23 +329,41 @@ export const MusicTheoryControls: React.FC<MusicTheoryControlsProps> = ({
           {/* ── SCALES section ──────────────────────────── */}
           <div className="theory-section-label">Scales</div>
 
-          {/* Diatonic mode scale buttons */}
-          <div className="scale-grid">
-            {modeData.map(({ degree, modeRoot, scaleType }) => {
-              const { chordType } = chordData[degree - 1];
-              const isActive = activeDegree === null && selectedChordScale?.type === scaleType && selectedChordScale?.rootNote === modeRoot;
-              return (
-                <button
-                  key={degree}
-                  className={`mode-btn ${isActive ? 'active' : ''}`}
-                  onClick={() => selectModeScale(degree)}
-                  title={`${displayNote(modeRoot)} ${MODE_SHORT[scaleType]}`}
-                >
-                  <span className="mode-roman">{degreeLabel(degree, chordType)}</span>
-                  <span className="mode-root">{displayNote(modeRoot)}</span>
-                </button>
-              );
-            })}
+          {/* Diatonic mode scale + pentatonic rows */}
+          <div className="degree-scale-group">
+            <div className="scale-row">
+              {modeData.map(({ degree, modeRoot, scaleType }) => {
+                const { chordType } = chordData[degree - 1];
+                const isActive = activeDegree === null && selectedChordScale?.type === scaleType && selectedChordScale?.rootNote === modeRoot;
+                return (
+                  <button
+                    key={degree}
+                    className={`mode-btn ${isActive ? 'active' : ''}`}
+                    onClick={() => selectModeScale(degree)}
+                    title={`${displayNote(modeRoot)} ${MODE_SHORT[scaleType]}`}
+                  >
+                    <span className="mode-roman">{degreeLabel(degree, chordType)}</span>
+                    <span className="mode-root">{displayNote(modeRoot)}</span>
+                  </button>
+                );
+              })}
+            </div>
+            <div className="pent-row">
+              {pentData.map(({ degree, root, pentatonicType }) => {
+                const isActive = activeDegree === null && selectedChordScale?.type === pentatonicType && selectedChordScale?.rootNote === root;
+                const label = displayNote(root) + (pentatonicType === 'pentatonic-minor' ? 'm' : '');
+                return (
+                  <button
+                    key={degree}
+                    className={`pent-btn ${isActive ? 'active' : ''}`}
+                    onClick={() => handleOtherSelect(pentatonicType, root)}
+                    title={`${displayNote(root)} ${pentatonicType === 'pentatonic-major' ? 'Major' : 'Minor'} Pentatonic`}
+                  >
+                    {label}♦
+                  </button>
+                );
+              })}
+            </div>
           </div>
 
           {/* Non-diatonic scales */}

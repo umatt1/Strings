@@ -229,6 +229,21 @@ export function getDiatonicChords(
   }));
 }
 
+export function getDiatonicPentatonics(
+  keyRoot: NoteName,
+  keyType: 'major' | 'minor'
+): { degree: number; root: NoteName; pentatonicType: 'pentatonic-major' | 'pentatonic-minor' }[] {
+  const chords = getDiatonicChords(keyRoot, keyType);
+  const modes  = getModesForKey(keyRoot, keyType);
+  return chords.map(({ degree, chordType }, i) => ({
+    degree,
+    root: modes[i].modeRoot,
+    pentatonicType: (chordType === 'maj7' || chordType === 'dom7')
+      ? 'pentatonic-major'
+      : 'pentatonic-minor',
+  }));
+}
+
 export const CHORD_SCALE_MAP: Partial<Record<ChordType, ScaleType[]>> = {
   'maj7':      ['ionian', 'lydian'],
   'min7':      ['dorian', 'aeolian', 'phrygian'],

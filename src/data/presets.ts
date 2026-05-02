@@ -60,6 +60,20 @@ const AUTUMN_LEAVES: QueueItem[] = [
   item('G',  'dorian',     '3nps', 0, 'scales', 'al-6'),
 ];
 
+function bluesItem(root: string, id: string): QueueItem {
+  return item(root, 'pentatonic-major', 'caged', 0, 'scales', id);
+}
+
+// I-IV-I-V-IV-I in G: condensed 12-bar blues, each using major pentatonic in CAGED position
+const G_BLUES: QueueItem[] = [
+  bluesItem('G', 'blues-1'),
+  bluesItem('C', 'blues-2'),
+  bluesItem('G', 'blues-3'),
+  bluesItem('D', 'blues-4'),
+  bluesItem('C', 'blues-5'),
+  bluesItem('G', 'blues-6'),
+];
+
 export const PRESETS: PracticePreset[] = [
   {
     id: 'g-major-scale-workout',
@@ -75,5 +89,10 @@ export const PRESETS: PracticePreset[] = [
     id: 'autumn-leaves',
     name: 'Autumn Leaves (G minor)',
     items: AUTUMN_LEAVES,
+  },
+  {
+    id: 'g-blues',
+    name: 'G Blues (I–IV–I–V–IV–I)',
+    items: G_BLUES,
   },
 ];

@@ -370,10 +370,46 @@
 }
 
 /* Scale grid — same layout as mode-grid, used in Scales section */
-.scale-grid {
+.degree-scale-group {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.scale-row,
+.pent-row {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
   gap: 3px;
+}
+
+.pent-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px 2px;
+  background: #fff8e1;
+  border: 1px solid #ffe082;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 10px;
+  font-weight: 600;
+  color: #e65100;
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  transition: background 0.12s;
+}
+
+.pent-btn:hover {
+  background: #fff3cd;
+  border-color: #ffc107;
+}
+
+.pent-btn.active {
+  background: #e65100;
+  color: white;
+  border-color: #e65100;
 }
 
 /* Altered tension row — slightly different tint */
