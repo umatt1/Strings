@@ -6,7 +6,7 @@ import { isScaleType } from './utils/musicTheory';
 import type { ColorTheme } from './types/theme';
 import { COLOR_THEMES } from './types/theme';
 import type { PositionSystem, DisplayMode } from './utils/positions';
-import { calculatePositions } from './utils/positions';
+import { calculatePositions, is3npsEligible } from './utils/positions';
 import { Controls } from './components/Controls';
 import { MusicTheoryControls } from './components/MusicTheoryControls';
 import { PositionControls } from './components/PositionControls';
@@ -37,7 +37,7 @@ function App() {
   // 3NPS when the scale doesn't have enough notes for it
   useEffect(() => {
     setPositionIndex(0);
-    if (positionSystem === '3nps' && selectedChordScale && selectedChordScale.notes.length < 7) {
+    if (positionSystem === '3nps' && selectedChordScale && !is3npsEligible(selectedChordScale)) {
       setPositionSystem('none');
     }
   }, [selectedChordScale, positionSystem]);
@@ -137,6 +137,7 @@ function App() {
                 hasSelection={!!selectedChordScale}
                 isScaleSelected={!!selectedChordScale && isScaleType(selectedChordScale.type)}
                 scaleNoteCount={selectedChordScale?.notes.length ?? 0}
+                is3npsEligible={!!selectedChordScale && is3npsEligible(selectedChordScale)}
               />
               <div className="fretboard-panel">
                 <Fretboard

@@ -13,6 +13,7 @@ interface PositionControlsProps {
   hasSelection: boolean;
   isScaleSelected: boolean;
   scaleNoteCount: number;
+  is3npsEligible: boolean;
 }
 
 const SYSTEM_OPTIONS: [PositionSystem, string][] = [
@@ -33,6 +34,7 @@ export const PositionControls: React.FC<PositionControlsProps> = ({
   hasSelection,
   isScaleSelected,
   scaleNoteCount,
+  is3npsEligible,
 }) => {
   const handlePrev = () => {
     if (positions.length === 0) return;
@@ -73,7 +75,7 @@ export const PositionControls: React.FC<PositionControlsProps> = ({
       {/* Position System Buttons */}
       <div className="system-buttons">
         {SYSTEM_OPTIONS
-          .filter(([system]) => system !== '3nps' || scaleNoteCount >= 7)
+          .filter(([system]) => system !== '3nps' || is3npsEligible)
           .map(([system, label]) => (
             <button
               key={system}

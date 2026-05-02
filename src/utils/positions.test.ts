@@ -274,8 +274,20 @@ describe('CAGED — shape note counts', () => {
   });
 });
 
+const A_AEOLIAN: ChordScale = {
+  type: 'aeolian',
+  rootNote: 'A',
+  notes: ['A', 'B', 'C', 'D', 'E', 'F', 'G'],
+};
+
+const G_DORIAN: ChordScale = {
+  type: 'dorian',
+  rootNote: 'G',
+  notes: ['G', 'A', 'A#', 'C', 'D', 'E', 'F'],
+};
+
 describe('3NPS positions', () => {
-  it('returns 7 positions for a 7-note scale', () => {
+  it('returns 7 positions for a major scale', () => {
     const positions = calculatePositions(STANDARD_GUITAR, C_IONIAN, '3nps');
     expect(positions.length).toBe(7);
   });
@@ -290,11 +302,15 @@ describe('3NPS positions', () => {
     expect(positions.length).toBe(0);
   });
 
+  it('returns empty for non-diatonic 7-note scales (Dorian)', () => {
+    const positions = calculatePositions(STANDARD_GUITAR, G_DORIAN, '3nps');
+    expect(positions.length).toBe(0);
+  });
+
   it('each position has exactly 3 notes per string (18 total for 6 strings)', () => {
     const positions = calculatePositions(STANDARD_GUITAR, C_IONIAN, '3nps');
     for (const pos of positions) {
       expect(pos.highlights.length).toBe(18);
-      // Check each string has exactly 3
       for (let si = 0; si < 6; si++) {
         const count = pos.highlights.filter((h) => h.stringIndex === si).length;
         expect(count).toBe(3);
@@ -304,7 +320,6 @@ describe('3NPS positions', () => {
 
   it('all highlighted notes are actually in the scale', () => {
     const positions = calculatePositions(STANDARD_GUITAR, G_IONIAN, '3nps');
-    // getNoteAtFret imported at top
     for (const pos of positions) {
       for (const h of pos.highlights) {
         const str = STANDARD_GUITAR.strings[h.stringIndex];
@@ -319,6 +334,38 @@ describe('3NPS positions', () => {
     for (let i = 1; i < positions.length; i++) {
       expect(positions[i].startFret).toBeGreaterThanOrEqual(positions[i - 1].startFret);
     }
+  });
+
+  it('G major positions are labeled VII, I, II, III, IV, V, VI in ascending neck order', () => {
+    const positions = calculatePositions(STANDARD_GUITAR, G_IONIAN, '3nps');
+    const names = positions.map((p) => p.name);
+    expect(names).toEqual(['VII', 'I', 'II', 'III', 'IV', 'V', 'VI']);
+  });
+
+  it('G major Position VI (E) starts at fret 12, not fret 0', () => {
+    const positions = calculatePositions(STANDARD_GUITAR, G_IONIAN, '3nps');
+    const posVI = positions.find((p) => p.name === 'VI');
+    expect(posVI).toBeDefined();
+    expect(posVI!.startFret).toBe(12);
+  });
+
+  it('natural minor (Aeolian) tonic position is labeled VI', () => {
+    const positions = calculatePositions(STANDARD_GUITAR, A_AEOLIAN, '3nps');
+    // A Aeolian tonic = A. Starting fret of A on low E = 5.
+    const tonicPos = positions.find((p) => {
+      // The position starting on A (lowest note on low E for this position)
+      const lowENote = p.highlights
+        .filter((h) => h.stringIndex === 5)
+        .sort((a, b) => a.fretNumber - b.fretNumber)[0];
+      if (!lowENote) return false;
+      return getNoteAtFret(
+        STANDARD_GUITAR.strings[5].openNote,
+        STANDARD_GUITAR.strings[5].octave,
+        lowENote.fretNumber
+      ).name === 'A';
+    });
+    expect(tonicPos).toBeDefined();
+    expect(tonicPos!.name).toBe('VI');
   });
 });
 
@@ -363,6 +410,105 @@ describe('Mode positions', () => {
     for (let i = 1; i < positions.length; i++) {
       expect(positions[i].startFret).toBeGreaterThanOrEqual(positions[i - 1].startFret);
     }
+  });
+});
+
+describe('CAGED — A major ascending neck order starts with G Shape', () => {
+  it('G Shape has the lowest startFret for A major (GEDAC ascending order)', () => {
+    const positions = calculatePositions(STANDARD_GUITAR, A_IONIAN, 'caged');
+    // Filter to one instance per shape name (the lowest-fret instance)
+    const lowestByShape = new Map<string, number>();
+    for (const pos of positions) {
+      const existing = lowestByShape.get(pos.name);
+      if (existing === undefined || pos.startFret < existing) {
+        lowestByShape.set(pos.name, pos.startFret);
+      }
+    }
+    const gStart = lowestByShape.get('G Shape') ?? Infinity;
+    const eStart = lowestByShape.get('E Shape') ?? Infinity;
+    const dStart = lowestByShape.get('D Shape') ?? Infinity;
+    expect(gStart).toBeLessThan(eStart);
+    expect(eStart).toBeLessThan(dStart);
+  });
+});
+
+// ============================================================
+//  CAGED — Pentatonic tests (C major pentatonic, 5 notes)
+// ============================================================
+
+const C_PENTATONIC_MAJOR: ChordScale = {
+  type: 'pentatonic-major',
+  rootNote: 'C',
+  notes: ['C', 'D', 'E', 'G', 'A'],
+};
+
+const G_PENTATONIC_MAJOR: ChordScale = {
+  type: 'pentatonic-major',
+  rootNote: 'G',
+  notes: ['G', 'A', 'B', 'D', 'E'],
+};
+
+describe('CAGED — pentatonic templates', () => {
+  it('C major pentatonic A Shape near nut has G(3) and A(5) on low E and high E strings', () => {
+    const positions = calculatePositions(STANDARD_GUITAR, C_PENTATONIC_MAJOR, 'caged');
+    const instances = findShape(positions, 'A Shape');
+    const nearNut = instances.find((p) => p.startFret <= 5);
+    expect(nearNut).toBeDefined();
+
+    const loE = nearNut!.highlights.filter((h) => h.stringIndex === 5).map((h) => h.fretNumber).sort((a, b) => a - b);
+    expect(loE).toContain(3); // G
+    expect(loE).toContain(5); // A
+
+    const hiE = nearNut!.highlights.filter((h) => h.stringIndex === 0).map((h) => h.fretNumber).sort((a, b) => a - b);
+    expect(hiE).toContain(3); // G
+    expect(hiE).toContain(5); // A
+  });
+
+  it('C major pentatonic E Shape has C(8) and D(10) on high E string', () => {
+    const positions = calculatePositions(STANDARD_GUITAR, C_PENTATONIC_MAJOR, 'caged');
+    const instances = findShape(positions, 'E Shape');
+    const match = instances.find((p) => {
+      const hiE = p.highlights.filter((h) => h.stringIndex === 0).map((h) => h.fretNumber);
+      return hiE.includes(8) && hiE.includes(10);
+    });
+    expect(match).toBeDefined();
+  });
+
+  it('C major pentatonic D Shape has E(9) and G(12) on G string, not F(10)', () => {
+    const positions = calculatePositions(STANDARD_GUITAR, C_PENTATONIC_MAJOR, 'caged');
+    const instances = findShape(positions, 'D Shape');
+    const match = instances.find((p) => {
+      const gStr = p.highlights.filter((h) => h.stringIndex === 2).map((h) => h.fretNumber);
+      return gStr.includes(9) && gStr.includes(12) && !gStr.includes(10);
+    });
+    expect(match).toBeDefined();
+  });
+
+  it('C major pentatonic: each shape instance has exactly 2 notes per string (12 total)', () => {
+    const positions = calculatePositions(STANDARD_GUITAR, C_PENTATONIC_MAJOR, 'caged');
+    for (const pos of positions) {
+      // Each of the 6 strings should contribute exactly 2 highlights
+      for (let si = 0; si < 6; si++) {
+        const count = pos.highlights.filter((h) => h.stringIndex === si).length;
+        expect(count).toBe(2);
+      }
+      expect(pos.highlights.length).toBe(12);
+    }
+  });
+
+  it('G major pentatonic E Shape has G(3) and A(5) on high E string', () => {
+    const positions = calculatePositions(STANDARD_GUITAR, G_PENTATONIC_MAJOR, 'caged');
+    const instances = findShape(positions, 'E Shape');
+    const match = instances.find((p) => {
+      const hiE = p.highlights.filter((h) => h.stringIndex === 0).map((h) => h.fretNumber);
+      return hiE.includes(3) && hiE.includes(5);
+    });
+    expect(match).toBeDefined();
+  });
+
+  it('C major Ionian (7-note) CAGED E Shape still matches verified full-scale notes', () => {
+    const positions = calculatePositions(STANDARD_GUITAR, C_IONIAN, 'caged');
+    expectShapeContains(positions, 'E Shape', CAGED_C_MAJOR.find((s) => s.shapeName === 'E Shape')!.notes);
   });
 });
 
