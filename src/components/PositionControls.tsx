@@ -34,7 +34,7 @@ export const PositionControls: React.FC<PositionControlsProps> = ({
   displayMode,
   onDisplayModeChange,
   hasSelection,
-  isScaleSelected,
+  isScaleSelected: _isScaleSelected,
   scaleNoteCount: _scaleNoteCount,
   is3npsEligible,
   isFlatEligible,
@@ -60,20 +60,22 @@ export const PositionControls: React.FC<PositionControlsProps> = ({
 
   return (
     <div className="position-toolbar">
-      {/* Display Mode Tabs — only for scales */}
-      {isScaleSelected && (
-        <div className="display-mode-tabs">
-          {(['scales', 'arpeggios', 'chords'] as DisplayMode[]).map((mode) => (
-            <button
-              key={mode}
-              className={`display-mode-tab ${displayMode === mode ? 'active' : ''}`}
-              onClick={() => onDisplayModeChange(mode)}
-            >
-              {mode.charAt(0).toUpperCase() + mode.slice(1)}
-            </button>
-          ))}
-        </div>
-      )}
+      {/* Display Mode Tabs — always visible when something is selected */}
+      <div className="display-mode-tabs">
+        {([
+          ['scales',    'All Notes'],
+          ['arpeggios', 'Chord Tones'],
+          ['chords',    'Triad'],
+        ] as [DisplayMode, string][]).map(([mode, label]) => (
+          <button
+            key={mode}
+            className={`display-mode-tab ${displayMode === mode ? 'active' : ''}`}
+            onClick={() => onDisplayModeChange(mode)}
+          >
+            {label}
+          </button>
+        ))}
+      </div>
 
       {/* Position System Buttons */}
       <div className="system-buttons">

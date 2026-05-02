@@ -109,7 +109,9 @@ export const MusicTheoryControls: React.FC<MusicTheoryControlsProps> = ({
     setActiveTensions(newTensions);
     setSevenOn(true);
     applyTensionState(degree, newTensions, true);
-    onDisplayModeChange?.('arpeggios');
+    // Use 'scales' so all chord tones + any active tensions are visible.
+    // 'arpeggios' mode only passes degrees 1,3,5,7 and would hide tension notes.
+    onDisplayModeChange?.('scales');
   };
 
   const toggleTension = (t: Tension) => {
