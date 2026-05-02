@@ -4,7 +4,7 @@ import { NOTES } from '../types/music';
 // Chord Types - Organized by category
 export type TriadType = 'major' | 'minor' | 'diminished' | 'augmented';
 export type SeventhChordType = 'maj7' | 'min7' | 'dom7' | 'half-dim7' | 'dim7' | 'min-maj7' | 'aug-maj7';
-export type ExtendedChordType = 'add9' | 'add6' | 'add11' | 'sus2' | 'sus4';
+export type ExtendedChordType = 'add9' | 'sus2' | 'sus4';
 export type ChordType = TriadType | SeventhChordType | ExtendedChordType;
 
 // Scale/Mode Types - Organized by system
@@ -36,8 +36,6 @@ export const CHORD_INTERVALS: Record<ChordType, number[]> = {
   
   // Extended/Suspended
   'add9': [0, 2, 4, 7],         // Add 9 (major 2nd)
-  'add6': [0, 4, 7, 9],         // Add 6 (major triad + major 6th)
-  'add11': [0, 4, 5, 7, 10],    // Add 11 (dominant 11th, simplified voicing)
   'sus2': [0, 2, 7],            // Suspended 2nd
   'sus4': [0, 5, 7],            // Suspended 4th
 };
@@ -257,6 +255,82 @@ export function degreeLabel(degree: number, chordType: SeventhChordType): string
   return roman;
 }
 
+/** Tension degrees that can be stacked on a 7th chord. */
+export type Tension = '9' | 'b9' | '#9' | '11' | '#11' | '13' | 'b13';
+
+/** Maps a 7th chord type to its triad quality. */
+export const TRIAD_FROM_SEVENTH: Record<SeventhChordType, TriadType> = {
+  'maj7': 'major', 'min7': 'minor', 'dom7': 'major',
+  'half-dim7': 'diminished', 'dim7': 'diminished',
+  'min-maj7': 'minor', 'aug-maj7': 'augmented',
+};
+
+const TRIAD_COMPACT: Record<TriadType, string> = {
+  'major': '', 'minor': 'm', 'diminished': 'dim', 'augmented': 'aug',
+};
+
+const SEVENTH_COMPACT: Record<SeventhChordType, string> = {
+  'maj7': 'maj7', 'min7': 'm7', 'dom7': '7', 'half-dim7': 'ø7',
+  'dim7': 'dim7', 'min-maj7': 'mM7', 'aug-maj7': '+M7',
+};
+
+function shiftNote(note: NoteName, semitones: number): NoteName {
+  return NOTES[(NOTES.indexOf(note) + semitones + 12) % 12];
+}
+
+/**
+ * Given a mode scale (7 notes, index 0=root) and a set of active tensions,
+ * returns the extra note names those tensions add.
+ * Natural tensions: 9=modeScale[1], 11=modeScale[3], 13=modeScale[5].
+ * Altered tensions shift the natural note by ±1 semitone.
+ */
+export function getModeTensionNotes(modeScale: NoteName[], tensions: Set<Tension>): NoteName[] {
+  const n9 = modeScale[1], n11 = modeScale[3], n13 = modeScale[5];
+  return [...tensions].map((t) => {
+    switch (t) {
+      case '9':   return n9;
+      case 'b9':  return shiftNote(n9, -1);
+      case '#9':  return shiftNote(n9, 1);
+      case '11':  return n11;
+      case '#11': return shiftNote(n11, 1);
+      case '13':  return n13;
+      case 'b13': return shiftNote(n13, -1);
+    }
+  });
+}
+
+/**
+ * Builds a ChordScale from a degree root + base 7th type + active tension state.
+ * `sevenOn=false` reduces to the triad. Tension notes are appended to the base notes.
+ */
+export function buildTensionedChord(
+  root: NoteName,
+  baseType: SeventhChordType,
+  sevenOn: boolean,
+  tensions: Set<Tension>,
+  modeScale: NoteName[]
+): ChordScale {
+  const chordType: ChordType = sevenOn ? baseType : TRIAD_FROM_SEVENTH[baseType];
+  const baseNotes = getMusicTheoryNotes(root, chordType);
+  const tensionNotes = getModeTensionNotes(modeScale, tensions);
+  const seen = new Set<string>(baseNotes);
+  const extra = tensionNotes.filter((n) => !seen.has(n));
+  return { type: chordType, rootNote: root, notes: [...baseNotes, ...extra] };
+}
+
+/** Display label for a tensioned chord: e.g. "m7·9·11" or "dim·b9". */
+export function tensionLabel(
+  baseType: SeventhChordType,
+  sevenOn: boolean,
+  tensions: Set<Tension>
+): string {
+  const base = sevenOn
+    ? SEVENTH_COMPACT[baseType]
+    : TRIAD_COMPACT[TRIAD_FROM_SEVENTH[baseType]];
+  if (tensions.size === 0) return base;
+  return (base ? base + '·' : '') + [...tensions].join('·');
+}
+
 export function getMusicTheoryLabel(type: MusicTheoryType): string {
   if (isChordType(type)) {
     return CHORD_LABELS[type];
@@ -287,8 +361,6 @@ export const CHORD_LABELS: Record<ChordType, string> = {
   
   // Extended/Suspended
   'add9': 'Add 9',
-  'add6': 'Add 6',
-  'add11': 'Add 11',
   'sus2': 'Suspended 2nd',
   'sus4': 'Suspended 4th',
 };

@@ -7,7 +7,7 @@ import type {
   ChordScale,
   MajorModeType,
   SeventhChordType,
-  TriadType,
+  Tension,
 } from '../utils/musicTheory';
 import {
   getMusicTheoryNotes,
@@ -15,6 +15,8 @@ import {
   getModesForKey,
   getDiatonicChords,
   degreeLabel,
+  buildTensionedChord,
+  tensionLabel,
 } from '../utils/musicTheory';
 import type { DisplayMode } from '../utils/positions';
 import type { QueueItem } from '../types/practice';
@@ -28,14 +30,6 @@ interface MusicTheoryControlsProps {
   onAddCurrentToQueue?: () => void;
 }
 
-type Extension = 'triad' | 'add6' | '7th' | 'add9' | 'add11';
-
-const TRIAD_FROM_SEVENTH: Record<SeventhChordType, TriadType> = {
-  'maj7': 'major', 'min7': 'minor', 'dom7': 'major',
-  'half-dim7': 'diminished', 'dim7': 'diminished',
-  'min-maj7': 'minor', 'aug-maj7': 'augmented',
-};
-
 const CHORD_COMPACT: Record<SeventhChordType, string> = {
   'maj7': 'maj7', 'min7': 'm7', 'dom7': '7', 'half-dim7': 'ø7',
   'dim7': 'dim7', 'min-maj7': 'mM7', 'aug-maj7': '+M7',
@@ -46,20 +40,26 @@ const MODE_SHORT: Record<MajorModeType, string> = {
   mixolydian: 'Mixolydian', aeolian: 'Aeolian', locrian: 'Locrian',
 };
 
-const OTHER_TYPES: Array<{ type: ChordType | ScaleType; label: string }> = [
+const NATURAL_TENSIONS: Tension[] = ['9', '11', '13'];
+const ALTERED_TENSIONS: Tension[] = ['b9', '#9', '#11', 'b13'];
+
+const NON_DIATONIC_SCALES: Array<{ type: ScaleType; label: string }> = [
+  { type: 'pentatonic-major', label: 'pent-M'  },
+  { type: 'pentatonic-minor', label: 'pent-m'  },
+  { type: 'blues-major',      label: 'blues-M' },
+  { type: 'blues-minor',      label: 'blues-m' },
+  { type: 'harmonic-minor',   label: 'harm-m'  },
+  { type: 'melodic-minor',    label: 'mel-m'   },
+];
+
+const OTHER_CHORDS: Array<{ type: ChordType; label: string }> = [
   // TODO: future "common substitutions" panel (tritone sub, bIII, bVII) — see separate proposal
-  { type: 'augmented',        label: 'aug'    },
-  { type: 'dim7',             label: 'dim7'   },
-  { type: 'half-dim7',        label: 'ø7'     },
-  { type: 'min-maj7',         label: 'mM7'    },
-  { type: 'sus2',             label: 'sus2'   },
-  { type: 'sus4',             label: 'sus4'   },
-  { type: 'pentatonic-major', label: 'pent-M' },
-  { type: 'pentatonic-minor', label: 'pent-m' },
-  { type: 'harmonic-minor',   label: 'harm-m' },
-  { type: 'melodic-minor',    label: 'mel-m'  },
-  { type: 'blues-major',      label: 'blues-M'},
-  { type: 'blues-minor',      label: 'blues-m'},
+  { type: 'augmented',  label: 'aug'   },
+  { type: 'dim7',       label: 'dim7'  },
+  { type: 'half-dim7',  label: 'ø7'    },
+  { type: 'min-maj7',   label: 'mM7'   },
+  { type: 'sus2',       label: 'sus2'  },
+  { type: 'sus4',       label: 'sus4'  },
 ];
 
 export const MusicTheoryControls: React.FC<MusicTheoryControlsProps> = ({
@@ -69,14 +69,12 @@ export const MusicTheoryControls: React.FC<MusicTheoryControlsProps> = ({
   onAddChordsToQueue,
   onAddCurrentToQueue,
 }) => {
-  // keyRoot = the root shown in the dropdown (the KEY root, not the active chord root)
   const [keyRoot, setKeyRoot] = React.useState<NoteName>('C');
   const [keyType, setKeyType] = React.useState<'major' | 'minor'>('major');
-  const [keyPopoutOpen, setKeyPopoutOpen] = React.useState(false);
   const [isCollapsed, setIsCollapsed] = React.useState(false);
-  // activeDegree: which diatonic degree (1-7) is selected; null = non-degree selection
   const [activeDegree, setActiveDegree] = React.useState<number | null>(null);
-  const [activeExtension, setActiveExtension] = React.useState<Extension>('7th');
+  const [activeTensions, setActiveTensions] = React.useState<Set<Tension>>(new Set());
+  const [sevenOn, setSevenOn] = React.useState(true);
 
   const relRootNote: NoteName = keyType === 'minor'
     ? NOTES[(NOTES.indexOf(keyRoot) + 3) % 12]
@@ -92,35 +90,57 @@ export const MusicTheoryControls: React.FC<MusicTheoryControlsProps> = ({
   const modeData = React.useMemo(() => getModesForKey(keyRoot, keyType), [keyRoot, keyType]);
   const chordData = React.useMemo(() => getDiatonicChords(keyRoot, keyType), [keyRoot, keyType]);
 
-  const selectDegreeWithExtension = (degree: number, ext: Extension) => {
-    const { root, chordType: seventhType } = chordData[degree - 1];
-    let type: ChordType;
-    switch (ext) {
-      case 'triad': type = TRIAD_FROM_SEVENTH[seventhType]; break;
-      case 'add6':  type = 'add6'; break;
-      case '7th':   type = seventhType; break;
-      case 'add9':  type = 'add9'; break;
-      case 'add11': type = 'add11'; break;
-      // TODO: minor-quality extensions (minor add6, minor add9) need dedicated chord types
-    }
-    const notes = getMusicTheoryNotes(root, type);
-    onChordScaleChange({ type, rootNote: root, notes });
-    onDisplayModeChange?.('arpeggios');
+  // Rebuild the tensioned chord and push to parent
+  function applyTensionState(
+    degree: number,
+    newTensions: Set<Tension>,
+    newSevenOn: boolean
+  ) {
+    const { root, chordType } = chordData[degree - 1];
+    const { modeRoot, scaleType } = modeData[degree - 1];
+    const modeScale = getMusicTheoryNotes(modeRoot, scaleType);
+    const cs = buildTensionedChord(root, chordType, newSevenOn, newTensions, modeScale);
+    onChordScaleChange(cs);
+  }
+
+  const selectDegree = (degree: number) => {
+    const newTensions = new Set<Tension>();
     setActiveDegree(degree);
-    setActiveExtension(ext);
+    setActiveTensions(newTensions);
+    setSevenOn(true);
+    applyTensionState(degree, newTensions, true);
+    onDisplayModeChange?.('arpeggios');
   };
 
-  const handleShowScale = () => {
+  const toggleTension = (t: Tension) => {
     if (activeDegree === null) return;
-    const { modeRoot, scaleType } = modeData[activeDegree - 1];
+    const next = new Set(activeTensions);
+    if (next.has(t)) next.delete(t); else next.add(t);
+    setActiveTensions(next);
+    applyTensionState(activeDegree, next, sevenOn);
+  };
+
+  const toggleSeven = () => {
+    if (activeDegree === null) return;
+    const next = !sevenOn;
+    setSevenOn(next);
+    applyTensionState(activeDegree, activeTensions, next);
+  };
+
+  const selectModeScale = (degree: number) => {
+    const { modeRoot, scaleType } = modeData[degree - 1];
+    setActiveDegree(null);
+    setActiveTensions(new Set());
+    setSevenOn(true);
     onChordScaleChange({ type: scaleType, rootNote: modeRoot, notes: getMusicTheoryNotes(modeRoot, scaleType) });
     onDisplayModeChange?.('scales');
-    // keep activeDegree so the extension row stays visible
   };
 
   const handleKeyTypeChange = (kt: 'major' | 'minor') => {
     setKeyType(kt);
     setActiveDegree(null);
+    setActiveTensions(new Set());
+    setSevenOn(true);
     const type = kt === 'major' ? 'ionian' : 'aeolian';
     onChordScaleChange({ type, rootNote: keyRoot, notes: getMusicTheoryNotes(keyRoot, type) });
     onDisplayModeChange?.('scales');
@@ -129,6 +149,8 @@ export const MusicTheoryControls: React.FC<MusicTheoryControlsProps> = ({
   const handleKeyRootChange = (note: NoteName) => {
     setKeyRoot(note);
     setActiveDegree(null);
+    setActiveTensions(new Set());
+    setSevenOn(true);
     if (selectedChordScale) {
       onChordScaleChange({ type: selectedChordScale.type, rootNote: note, notes: getMusicTheoryNotes(note, selectedChordScale.type) });
     }
@@ -136,6 +158,8 @@ export const MusicTheoryControls: React.FC<MusicTheoryControlsProps> = ({
 
   const handleOtherSelect = (type: ChordType | ScaleType) => {
     setActiveDegree(null);
+    setActiveTensions(new Set());
+    setSevenOn(true);
     onChordScaleChange({ type, rootNote: keyRoot, notes: getMusicTheoryNotes(keyRoot, type) });
   };
 
@@ -163,12 +187,24 @@ export const MusicTheoryControls: React.FC<MusicTheoryControlsProps> = ({
     onAddChordsToQueue(items);
   };
 
-  const isDegreeActive = (degree: number) => activeDegree === degree;
-  const showScaleBtn = activeDegree !== null && selectedChordScale && selectedChordScale.rootNote === chordData[activeDegree - 1]?.root;
+  const activeChordType = activeDegree !== null ? chordData[activeDegree - 1]?.chordType : null;
+  const showAlteredTensions = activeChordType === 'dom7';
+
+  // Compute the display label for the selection bar
+  const selectionLabel = React.useMemo(() => {
+    if (!selectedChordScale) return '';
+    if (activeDegree !== null) {
+      const cd = chordData[activeDegree - 1];
+      if (cd && selectedChordScale.rootNote === cd.root) {
+        return tensionLabel(cd.chordType, sevenOn, activeTensions);
+      }
+    }
+    return getMusicTheoryLabel(selectedChordScale.type);
+  }, [selectedChordScale, activeDegree, chordData, sevenOn, activeTensions]);
 
   return (
     <div className={`music-theory-controls ${isCollapsed ? 'collapsed' : ''}`}>
-      <div className="theory-header" onClick={() => { setIsCollapsed(!isCollapsed); setKeyPopoutOpen(false); }}>
+      <div className="theory-header" onClick={() => setIsCollapsed(!isCollapsed)}>
         <h3>🎼 Music Theory</h3>
         <button className="collapse-button">{isCollapsed ? '▶' : '◀'}</button>
       </div>
@@ -197,113 +233,146 @@ export const MusicTheoryControls: React.FC<MusicTheoryControlsProps> = ({
             {selectedChordScale ? (
               <div className="selection-display">
                 <span className="selection-text">
-                  {selectedChordScale.rootNote} {getMusicTheoryLabel(selectedChordScale.type)}
+                  {selectedChordScale.rootNote} {selectionLabel}
                 </span>
-                {showScaleBtn && (
-                  <button className="show-scale-btn" onClick={handleShowScale} title="Switch to mode scale">
-                    Scale
-                  </button>
-                )}
                 {onAddCurrentToQueue && (
                   <button className="add-to-queue-btn-sm" onClick={onAddCurrentToQueue} title="Add to queue">
                     + Queue
                   </button>
                 )}
-                <button className="clear-button" onClick={() => { onChordScaleChange(undefined); setActiveDegree(null); }} title="Clear selection">✕</button>
+                <button className="clear-button" onClick={() => { onChordScaleChange(undefined); setActiveDegree(null); setActiveTensions(new Set()); setSevenOn(true); }} title="Clear selection">✕</button>
               </div>
             ) : (
               <span className="no-selection">Select a chord or scale</span>
             )}
           </div>
 
-          {/* Key pop-out toggle */}
-          <button
-            className={`key-popout-toggle ${keyPopoutOpen ? 'open' : ''}`}
-            onClick={() => setKeyPopoutOpen(!keyPopoutOpen)}
-          >
-            Key ▸
-          </button>
+          {/* ── CHORDS section ─────────────────────────── */}
+          <div className="theory-section-label">Chords</div>
 
-          {keyPopoutOpen && (
-            <div className="key-popout">
-              <div className="popout-header">
-                {displayNote(keyRoot)} {keyType === 'major' ? 'Major' : 'Minor'}
-                {keyType === 'minor' && (
-                  <span className="popout-subheader"> ({displayNote(relRootNote)} Major)</span>
-                )}
-              </div>
+          {/* Degree buttons (Roman numeral row) */}
+          <div className="mode-grid">
+            {modeData.map(({ degree, modeRoot, scaleType }) => {
+              const { chordType } = chordData[degree - 1];
+              return (
+                <button
+                  key={degree}
+                  className={`mode-btn ${activeDegree === degree ? 'active' : ''}`}
+                  onClick={() => selectDegree(degree)}
+                  title={`${displayNote(modeRoot)} ${MODE_SHORT[scaleType]}`}
+                >
+                  <span className="mode-roman">{degreeLabel(degree, chordType)}</span>
+                  <span className="mode-root">{displayNote(modeRoot)}</span>
+                </button>
+              );
+            })}
+          </div>
 
-              {/* Mode row — arpeggio-first on click */}
-              <div className="popout-section-label">Modes</div>
-              <div className="mode-grid">
-                {modeData.map(({ degree, modeRoot, scaleType }) => {
-                  const { chordType } = chordData[degree - 1];
-                  return (
-                    <button
-                      key={degree}
-                      className={`mode-btn ${isDegreeActive(degree) ? 'active' : ''}`}
-                      onClick={() => selectDegreeWithExtension(degree, '7th')}
-                      title={`${displayNote(modeRoot)} ${MODE_SHORT[scaleType]}`}
-                    >
-                      <span className="mode-roman">{degreeLabel(degree, chordType)}</span>
-                      <span className="mode-root">{displayNote(modeRoot)}</span>
-                    </button>
-                  );
-                })}
-              </div>
+          {/* Chord name buttons */}
+          <div className="chord-grid">
+            {chordData.map(({ degree, root, chordType }) => (
+              <button
+                key={degree}
+                className={`chord-btn-sm ${activeDegree === degree ? 'active' : ''}`}
+                onClick={() => selectDegree(degree)}
+              >
+                {displayNote(root)}{CHORD_COMPACT[chordType]}
+              </button>
+            ))}
+          </div>
 
-              {/* Diatonic 7th chord row */}
-              <div className="chord-grid">
-                {chordData.map(({ degree, root, chordType }) => (
+          {/* Tension rows — visible only when a degree is active */}
+          {activeDegree !== null && (
+            <>
+              <div className="extension-row">
+                <button
+                  className={`extension-btn ${sevenOn ? 'active' : ''}`}
+                  onClick={toggleSeven}
+                  title="Toggle 7th"
+                >
+                  7
+                </button>
+                {NATURAL_TENSIONS.map((t) => (
                   <button
-                    key={degree}
-                    className={`chord-btn-sm ${isDegreeActive(degree) ? 'active' : ''}`}
-                    onClick={() => selectDegreeWithExtension(degree, '7th')}
+                    key={t}
+                    className={`extension-btn ${activeTensions.has(t) ? 'active' : ''}`}
+                    onClick={() => toggleTension(t)}
                   >
-                    {displayNote(root)}{CHORD_COMPACT[chordType]}
+                    {t}
                   </button>
                 ))}
               </div>
-
-              {/* Extension row — only when a degree is active */}
-              {activeDegree !== null && (
-                <div className="extension-row">
-                  {(['triad', 'add6', '7th', 'add9', 'add11'] as Extension[]).map((ext) => (
+              {showAlteredTensions && (
+                <div className="extension-row altered-row">
+                  {ALTERED_TENSIONS.map((t) => (
                     <button
-                      key={ext}
-                      className={`extension-btn ${activeExtension === ext ? 'active' : ''}`}
-                      onClick={() => selectDegreeWithExtension(activeDegree, ext)}
+                      key={t}
+                      className={`extension-btn ${activeTensions.has(t) ? 'active' : ''}`}
+                      onClick={() => toggleTension(t)}
                     >
-                      {ext === 'triad' ? 'triad' : ext === '7th' ? '7' : ext === 'add6' ? '6' : ext === 'add9' ? '9' : '11'}
+                      {t}
                     </button>
                   ))}
                 </div>
               )}
-
-              {/* Add all buttons */}
-              {onAddChordsToQueue && (
-                <div className="add-all-row">
-                  <button className="add-queue-btn-sm" onClick={handleAddAllModesToQueue}>+ All modes</button>
-                  <button className="add-queue-btn-sm" onClick={handleAddAllChordsToQueue}>+ All 7ths</button>
-                </div>
-              )}
-            </div>
+            </>
           )}
 
-          {/* Other / non-diatonic section */}
-          <div className="other-section">
-            <div className="other-section-label">Other</div>
-            <div className="other-grid">
-              {OTHER_TYPES.map(({ type, label }) => (
+          {onAddChordsToQueue && (
+            <button className="add-queue-btn-sm" onClick={handleAddAllChordsToQueue}>+ All 7ths to queue</button>
+          )}
+
+          {/* ── SCALES section ──────────────────────────── */}
+          <div className="theory-section-label">Scales</div>
+
+          {/* Diatonic mode scale buttons */}
+          <div className="scale-grid">
+            {modeData.map(({ degree, modeRoot, scaleType }) => {
+              const { chordType } = chordData[degree - 1];
+              const isActive = activeDegree === null && selectedChordScale?.type === scaleType && selectedChordScale?.rootNote === modeRoot;
+              return (
                 <button
-                  key={type}
-                  className={`other-btn ${selectedChordScale?.type === type && activeDegree === null ? 'active' : ''}`}
-                  onClick={() => handleOtherSelect(type)}
+                  key={degree}
+                  className={`mode-btn ${isActive ? 'active' : ''}`}
+                  onClick={() => selectModeScale(degree)}
+                  title={`${displayNote(modeRoot)} ${MODE_SHORT[scaleType]}`}
                 >
-                  {label}
+                  <span className="mode-roman">{degreeLabel(degree, chordType)}</span>
+                  <span className="mode-root">{displayNote(modeRoot)}</span>
                 </button>
-              ))}
-            </div>
+              );
+            })}
+          </div>
+
+          {/* Non-diatonic scales */}
+          <div className="other-grid">
+            {NON_DIATONIC_SCALES.map(({ type, label }) => (
+              <button
+                key={type}
+                className={`other-btn ${selectedChordScale?.type === type && activeDegree === null ? 'active' : ''}`}
+                onClick={() => handleOtherSelect(type)}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+
+          {onAddChordsToQueue && (
+            <button className="add-queue-btn-sm" onClick={handleAddAllModesToQueue}>+ All modes to queue</button>
+          )}
+
+          {/* ── OTHER CHORDS section ─────────────────────── */}
+          <div className="theory-section-label">Other Chords</div>
+          <div className="other-grid">
+            {OTHER_CHORDS.map(({ type, label }) => (
+              <button
+                key={type}
+                className={`other-btn ${selectedChordScale?.type === type && activeDegree === null ? 'active' : ''}`}
+                onClick={() => handleOtherSelect(type)}
+              >
+                {label}
+              </button>
+            ))}
           </div>
         </div>
       )}
