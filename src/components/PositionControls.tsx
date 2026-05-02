@@ -14,11 +14,13 @@ interface PositionControlsProps {
   isScaleSelected: boolean;
   scaleNoteCount: number;
   is3npsEligible: boolean;
+  isFlatEligible: boolean;
 }
 
 const SYSTEM_OPTIONS: [PositionSystem, string][] = [
   ['none', 'All'],
   ['3nps', '3NPS'],
+  ['flat', 'Flat'],
   ['caged', 'CAGED'],
   ['modes', 'Positions'],
 ];
@@ -35,6 +37,7 @@ export const PositionControls: React.FC<PositionControlsProps> = ({
   isScaleSelected,
   scaleNoteCount,
   is3npsEligible,
+  isFlatEligible,
 }) => {
   const handlePrev = () => {
     if (positions.length === 0) return;
@@ -75,7 +78,11 @@ export const PositionControls: React.FC<PositionControlsProps> = ({
       {/* Position System Buttons */}
       <div className="system-buttons">
         {SYSTEM_OPTIONS
-          .filter(([system]) => system !== '3nps' || is3npsEligible)
+          .filter(([system]) => {
+            if (system === '3nps') return is3npsEligible;
+            if (system === 'flat') return isFlatEligible;
+            return true;
+          })
           .map(([system, label]) => (
             <button
               key={system}

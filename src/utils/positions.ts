@@ -3,7 +3,7 @@ import { NOTES, getNoteAtFret } from '../types/music';
 import type { ChordScale } from './musicTheory';
 import { getScaleDegreeInfo } from './musicTheory';
 
-export type PositionSystem = 'none' | '3nps' | 'caged' | 'modes';
+export type PositionSystem = 'none' | '3nps' | 'flat' | 'caged' | 'modes';
 export type DisplayMode = 'scales' | 'arpeggios' | 'chords';
 
 export interface PositionHighlight {
@@ -42,6 +42,9 @@ export function calculatePositions(
   switch (system) {
     case '3nps':
       positions = calculate3NPS(instrument, chordScale);
+      break;
+    case 'flat':
+      positions = calculateFlatPositions(instrument, chordScale);
       break;
     case 'caged':
       positions = calculateCAGED(instrument, chordScale);
@@ -222,14 +225,46 @@ interface CAGEDShapeTemplate {
   stringIntervals: number[][];
 }
 
+/**
+ * CAGED shape templates — verified against C, G, and A major.
+ *
+ * Each template defines per-string semitone intervals from baseFret,
+ * where baseFret = rootFret + baseOff (+ octave*12 for tiling).
+ * Negative intervals are valid (e.g., D Shape G string reaches one fret
+ * below baseFret to include the scale tone that would otherwise be missed).
+ *
+ * These templates work for both full 7-note scales and 5-note pentatonic
+ * scales: the scaleNotes filter naturally selects the correct subset,
+ * yielding exactly 2 notes per string for pentatonic shapes.
+ *
+ * Verified interval tables:
+ *
+ *   E Shape (baseOff=-1):
+ *     [0] hi E: [0,1,3]  [1] B: [1,3]  [2] G: [0,2,3]  [3] D: [0,2,3]
+ *     [4] A: [0,1,3]  [5] loE: [1,3]
+ *
+ *   D Shape (baseOff=2):
+ *     [0] hi E: [0,2,3]  [1] B: [0,2,3]  [2] G: [-1,0,2]  [3] D: [0,2]
+ *     [4] A: [0,2,4]  [5] loE: [0,2,3]
+ *
+ *   C Shape (baseOff=4):
+ *     [0] hi E: [0,1,3]  [1] B: [0,1,3]  [2] G: [0,2]  [3] D: [0,2,3]
+ *     [4] A: [0,2,3]  [5] loE: [0,1,3]
+ *
+ *   A Shape (baseOff=5):
+ *     [0] hi E: [2,4]  [1] B: [2,4]  [2] G: [1,3,4]  [3] D: [1,2,4]
+ *     [4] A: [1,2,4]  [5] loE: [2,4]
+ *
+ *   G Shape (baseOff=9):
+ *     [0] hi E: [0,2,3]  [1] B: [0,1,3]  [2] G: [0,2]  [3] D: [0,2,4]
+ *     [4] A: [0,2,3]  [5] loE: [0,2,3]
+ */
 const CAGED_TEMPLATES: CAGEDShapeTemplate[] = [
-  // Full major-scale templates (2–3 notes per string)
-  // Used for 6- and 7-note scales. Verified for C, G, A major.
   {
     name: 'E Shape',
     baseOff: -1,
     stringIntervals: [
-      [0, 1],       // [0] high E
+      [0, 1, 3],    // [0] high E — extends to 2nd degree above root
       [1, 3],       // [1] B
       [0, 2, 3],    // [2] G
       [0, 2, 3],    // [3] D
@@ -243,8 +278,8 @@ const CAGED_TEMPLATES: CAGEDShapeTemplate[] = [
     stringIntervals: [
       [0, 2, 3],    // [0] high E
       [0, 2, 3],    // [1] B
-      [0, 2],       // [2] G
-      [0, 2, 4],    // [3] D
+      [-1, 0, 2],   // [2] G — reaches 1 fret below baseFret for the 6th/7th
+      [0, 2],       // [3] D
       [0, 2, 4],    // [4] A
       [0, 2, 3],    // [5] low E
     ],
@@ -265,7 +300,7 @@ const CAGED_TEMPLATES: CAGEDShapeTemplate[] = [
     name: 'A Shape',
     baseOff: 5,
     stringIntervals: [
-      [0, 2],       // [0] high E
+      [2, 4],       // [0] high E — 5th and 6th degrees of shape
       [2, 4],       // [1] B
       [1, 3, 4],    // [2] G
       [1, 2, 4],    // [3] D
@@ -283,97 +318,6 @@ const CAGED_TEMPLATES: CAGEDShapeTemplate[] = [
       [0, 2, 4],    // [3] D
       [0, 2, 3],    // [4] A
       [0, 2, 3],    // [5] low E
-    ],
-  },
-];
-
-/**
- * Pentatonic CAGED templates (2 notes per string per shape).
- *
- * Used when scaleNotes.length === 5. Verified from C major pentatonic reference
- * image against C, G, and A major. Differs from full-scale templates in two
- * key ways:
- *   - A Shape uses baseOff=6 (vs 5) so baseFret aligns correctly for all keys
- *   - D Shape uses baseOff=1 (vs 2) so G string reaches E at interval 0 (fret 9
- *     for C major), avoiding the non-pentatonic F that falls at interval 0 with
- *     the full-scale baseFret of 10
- *
- * Verified interval tables (2 offsets per string):
- *
- *   E Shape (baseOff=-1):
- *     [0] hi E: [1,3]  [1] B: [1,3]  [2] G: [0,2]  [3] D: [0,3]  [4] A: [0,3]  [5] loE: [1,3]
- *
- *   D Shape (baseOff=1):
- *     [0] hi E: [1,3]  [1] B: [1,4]  [2] G: [0,3]  [3] D: [1,3]  [4] A: [1,3]  [5] loE: [1,3]
- *
- *   C Shape (baseOff=4):
- *     [0] hi E: [0,3]  [1] B: [1,3]  [2] G: [0,2]  [3] D: [0,2]  [4] A: [0,3]  [5] loE: [0,3]
- *
- *   A Shape (baseOff=6):
- *     [0] hi E: [1,3]  [1] B: [1,3]  [2] G: [0,3]  [3] D: [0,3]  [4] A: [1,3]  [5] loE: [1,3]
- *
- *   G Shape (baseOff=9):
- *     [0] hi E: [0,3]  [1] B: [0,3]  [2] G: [0,2]  [3] D: [0,2]  [4] A: [0,2]  [5] loE: [0,3]
- */
-const CAGED_PENTATONIC_TEMPLATES: CAGEDShapeTemplate[] = [
-  {
-    name: 'E Shape',
-    baseOff: -1,
-    stringIntervals: [
-      [1, 3],    // [0] high E
-      [1, 3],    // [1] B
-      [0, 2],    // [2] G
-      [0, 3],    // [3] D
-      [0, 3],    // [4] A
-      [1, 3],    // [5] low E
-    ],
-  },
-  {
-    name: 'D Shape',
-    baseOff: 1,
-    stringIntervals: [
-      [1, 3],    // [0] high E
-      [1, 4],    // [1] B
-      [0, 3],    // [2] G
-      [1, 3],    // [3] D
-      [1, 3],    // [4] A
-      [1, 3],    // [5] low E
-    ],
-  },
-  {
-    name: 'C Shape',
-    baseOff: 4,
-    stringIntervals: [
-      [0, 3],    // [0] high E
-      [1, 3],    // [1] B
-      [0, 2],    // [2] G
-      [0, 2],    // [3] D
-      [0, 3],    // [4] A
-      [0, 3],    // [5] low E
-    ],
-  },
-  {
-    name: 'A Shape',
-    baseOff: 6,
-    stringIntervals: [
-      [1, 3],    // [0] high E
-      [1, 3],    // [1] B
-      [0, 3],    // [2] G
-      [0, 3],    // [3] D
-      [1, 3],    // [4] A
-      [1, 3],    // [5] low E
-    ],
-  },
-  {
-    name: 'G Shape',
-    baseOff: 9,
-    stringIntervals: [
-      [0, 3],    // [0] high E
-      [0, 3],    // [1] B
-      [0, 2],    // [2] G
-      [0, 2],    // [3] D
-      [0, 2],    // [4] A
-      [0, 3],    // [5] low E
     ],
   },
 ];
@@ -401,13 +345,9 @@ function calculateCAGED(
   const useTemplates = strings.length === 6;
   const positions: Position[] = [];
 
-  // 5-note scales (pentatonic) use a separate template set with exactly 2
-  // intervals per string, verified against reference pentatonic CAGED patterns.
-  const templates = scaleNotes.length === 5 ? CAGED_PENTATONIC_TEMPLATES : CAGED_TEMPLATES;
-
   // Tile shapes across octaves
   for (let octave = -1; octave <= 2; octave++) {
-    for (const tmpl of templates) {
+    for (const tmpl of CAGED_TEMPLATES) {
       const baseFret = rootFret + tmpl.baseOff + octave * 12;
 
       const highlights: PositionHighlight[] = [];
@@ -552,4 +492,95 @@ export function isAllowedByDisplayMode(
  */
 export function is3npsEligible(chordScale: ChordScale): boolean {
   return DIATONIC_3NPS_TYPES.has(chordScale.type) && chordScale.notes.length >= 7;
+}
+
+/**
+ * Returns true if the given ChordScale supports flat 2-octave positions.
+ * Same eligibility as 3NPS.
+ */
+export function isFlatEligible(chordScale: ChordScale): boolean {
+  return DIATONIC_3NPS_TYPES.has(chordScale.type) && chordScale.notes.length >= 7;
+}
+
+/**
+ * Flat 2-octave positions.
+ *
+ * Produces 7 box positions tiling the neck — one per scale degree, anchored
+ * at the fret where that degree's root appears on the lowest string.
+ *
+ * For each position, all scale notes within the window [rootFret-1, rootFret+3]
+ * are included on every string. This algorithmic approach (verified against
+ * reference "Two Octave Major Key Mode" patterns) generalises to any key.
+ *
+ * Labels, minor offset, and sort order follow the same conventions as 3NPS:
+ * Roman numerals I–VII, natural minor tonic = VI.
+ */
+function calculateFlatPositions(
+  instrument: InstrumentConfig,
+  chordScale: ChordScale
+): Position[] {
+  if (!DIATONIC_3NPS_TYPES.has(chordScale.type)) return [];
+
+  const scaleNotes = chordScale.notes;
+  if (scaleNotes.length < 7) return [];
+
+  const strings = instrument.strings; // index 0 = highest pitch
+  const rootNote = chordScale.rootNote;
+
+  const isNaturalMinor = chordScale.type === 'aeolian' || chordScale.type === 'natural-minor';
+  const labelOffset = isNaturalMinor ? 5 : 0;
+
+  // Find rootFret on lowest string (frets 0–11)
+  const lowestStr = strings[strings.length - 1];
+  let rootFret = 0;
+  for (let f = 0; f <= 11; f++) {
+    if (getNoteAtFret(lowestStr.openNote, lowestStr.octave, f).name === rootNote) {
+      rootFret = f;
+      break;
+    }
+  }
+
+  const rootNoteIdx = NOTES.indexOf(rootNote);
+  const positions: Position[] = [];
+
+  for (let posIdx = 0; posIdx < 7; posIdx++) {
+    const degreeNote = scaleNotes[posIdx];
+    const degreeNoteIdx = NOTES.indexOf(degreeNote);
+    const semitoneOffset = (degreeNoteIdx - rootNoteIdx + 12) % 12;
+
+    // Same starting fret formula as 3NPS — keeps positions in sync
+    let modeFret = rootFret + semitoneOffset;
+    if (modeFret > rootFret + 10) modeFret -= 12;
+    if (modeFret < 0) modeFret += 12;
+
+    const highlights: PositionHighlight[] = [];
+    let maxFret = modeFret;
+
+    for (let si = 0; si < strings.length; si++) {
+      const str = strings[si];
+      // B string (si=1) and G string (si=2) need narrower windows because the
+      // G→B tuning gap is 4 semitones instead of 5, pushing edge notes out of range.
+      const winS = si === 1 ? modeFret : modeFret - 1;
+      const winE = si === 2 ? modeFret + 2 : modeFret + 3;
+      for (let f = Math.max(0, winS); f <= winE; f++) {
+        const note = getNoteAtFret(str.openNote, str.octave, f);
+        if (scaleNotes.includes(note.name)) {
+          highlights.push({ stringIndex: si, fretNumber: f });
+          maxFret = Math.max(maxFret, f);
+        }
+      }
+    }
+
+    if (highlights.length > 0) {
+      const label = ROMAN[(posIdx + labelOffset) % 7];
+      positions.push({
+        name: label,
+        highlights,
+        startFret: modeFret,
+        endFret: maxFret,
+      });
+    }
+  }
+
+  return positions;
 }

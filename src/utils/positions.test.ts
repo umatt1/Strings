@@ -512,6 +512,76 @@ describe('CAGED — pentatonic templates', () => {
   });
 });
 
+// ============================================================
+//  Flat 2-octave positions
+// ============================================================
+
+describe('Flat positions', () => {
+  it('returns 7 positions for G major labeled VII, I, II, III, IV, V, VI', () => {
+    const positions = calculatePositions(STANDARD_GUITAR, G_IONIAN, 'flat');
+    expect(positions.length).toBe(7);
+    const names = positions.map((p) => p.name);
+    expect(names).toEqual(['VII', 'I', 'II', 'III', 'IV', 'V', 'VI']);
+  });
+
+  it('all highlighted notes are in the scale', () => {
+    const positions = calculatePositions(STANDARD_GUITAR, G_IONIAN, 'flat');
+    for (const pos of positions) {
+      for (const h of pos.highlights) {
+        const str = STANDARD_GUITAR.strings[h.stringIndex];
+        const note = getNoteAtFret(str.openNote, str.octave, h.fretNumber);
+        expect(G_IONIAN.notes).toContain(note.name);
+      }
+    }
+  });
+
+  it('positions are sorted by startFret ascending', () => {
+    const positions = calculatePositions(STANDARD_GUITAR, G_IONIAN, 'flat');
+    for (let i = 1; i < positions.length; i++) {
+      expect(positions[i].startFret).toBeGreaterThanOrEqual(positions[i - 1].startFret);
+    }
+  });
+
+  it('each position has highlights on all 6 strings', () => {
+    const positions = calculatePositions(STANDARD_GUITAR, G_IONIAN, 'flat');
+    for (const pos of positions) {
+      for (let si = 0; si < 6; si++) {
+        const count = pos.highlights.filter((h) => h.stringIndex === si).length;
+        expect(count).toBeGreaterThanOrEqual(2); // at least 2 notes per string
+      }
+    }
+  });
+
+  it('3NPS and flat position I share the same startFret region for G major', () => {
+    const flat = calculatePositions(STANDARD_GUITAR, G_IONIAN, 'flat');
+    const nps  = calculatePositions(STANDARD_GUITAR, G_IONIAN, '3nps');
+    const flatI = flat.find((p) => p.name === 'I');
+    const npsI  = nps.find((p) => p.name === 'I');
+    expect(flatI).toBeDefined();
+    expect(npsI).toBeDefined();
+    // Both should anchor near the same fret (within 2 frets of each other)
+    expect(Math.abs(flatI!.startFret - npsI!.startFret)).toBeLessThanOrEqual(2);
+  });
+
+  it('returns empty for pentatonic (5-note) scale', () => {
+    const pent: ChordScale = { type: 'pentatonic-major', rootNote: 'G', notes: ['G','A','B','D','E'] };
+    expect(calculatePositions(STANDARD_GUITAR, pent, 'flat')).toHaveLength(0);
+  });
+
+  it('natural minor tonic position is labeled VI', () => {
+    const positions = calculatePositions(STANDARD_GUITAR, A_AEOLIAN, 'flat');
+    expect(positions.length).toBe(7);
+    // A Aeolian tonic = A, low E fret 5. Find that position.
+    const tonicPos = positions.find((p) => {
+      return p.highlights.some(
+        (h) => h.stringIndex === 5 && h.fretNumber === 5 &&
+          getNoteAtFret(STANDARD_GUITAR.strings[5].openNote, STANDARD_GUITAR.strings[5].octave, 5).name === 'A'
+      );
+    });
+    expect(tonicPos?.name).toBe('VI');
+  });
+});
+
 describe('calculatePositions edge cases', () => {
   it('returns empty array for system "none"', () => {
     expect(calculatePositions(STANDARD_GUITAR, C_IONIAN, 'none')).toEqual([]);
