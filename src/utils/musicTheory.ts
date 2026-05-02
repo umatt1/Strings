@@ -4,7 +4,7 @@ import { NOTES } from '../types/music';
 // Chord Types - Organized by category
 export type TriadType = 'major' | 'minor' | 'diminished' | 'augmented';
 export type SeventhChordType = 'maj7' | 'min7' | 'dom7' | 'half-dim7' | 'dim7' | 'min-maj7' | 'aug-maj7';
-export type ExtendedChordType = 'add9' | 'sus2' | 'sus4';
+export type ExtendedChordType = 'add9' | 'add6' | 'add11' | 'sus2' | 'sus4';
 export type ChordType = TriadType | SeventhChordType | ExtendedChordType;
 
 // Scale/Mode Types - Organized by system
@@ -36,6 +36,8 @@ export const CHORD_INTERVALS: Record<ChordType, number[]> = {
   
   // Extended/Suspended
   'add9': [0, 2, 4, 7],         // Add 9 (major 2nd)
+  'add6': [0, 4, 7, 9],         // Add 6 (major triad + major 6th)
+  'add11': [0, 4, 5, 7, 10],    // Add 11 (dominant 11th, simplified voicing)
   'sus2': [0, 2, 7],            // Suspended 2nd
   'sus4': [0, 5, 7],            // Suspended 4th
 };
@@ -244,6 +246,17 @@ export function suggestScale(chordType: ChordType): ScaleType | undefined {
   return CHORD_SCALE_MAP[chordType]?.[0];
 }
 
+/**
+ * Returns the correctly-cased Roman numeral for a diatonic scale degree.
+ * Uppercase = major/dominant, lowercase = minor, lowercase+° = half/full dim.
+ */
+export function degreeLabel(degree: number, chordType: SeventhChordType): string {
+  const roman = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII'][degree - 1] ?? String(degree);
+  if (chordType === 'half-dim7' || chordType === 'dim7') return roman.toLowerCase() + '°';
+  if (chordType === 'min7') return roman.toLowerCase();
+  return roman;
+}
+
 export function getMusicTheoryLabel(type: MusicTheoryType): string {
   if (isChordType(type)) {
     return CHORD_LABELS[type];
@@ -274,6 +287,8 @@ export const CHORD_LABELS: Record<ChordType, string> = {
   
   // Extended/Suspended
   'add9': 'Add 9',
+  'add6': 'Add 6',
+  'add11': 'Add 11',
   'sus2': 'Suspended 2nd',
   'sus4': 'Suspended 4th',
 };

@@ -155,6 +155,18 @@ function App() {
     setQueue((prev) => [...prev, ...items]);
   }, []);
 
+  const handleAddCurrentToQueue = useCallback(() => {
+    if (!selectedChordScale) return;
+    const newItem: QueueItem = {
+      id: `q-${Date.now()}`,
+      chordScale: selectedChordScale,
+      positionSystem,
+      positionIndex,
+      displayMode,
+    };
+    setQueue((prev) => [...prev, newItem]);
+  }, [selectedChordScale, positionSystem, positionIndex, displayMode]);
+
   // ── Note selector (interval tool) ─────────────────────────────────────
   const handleNoteSelect = (note: Note, _stringIndex: number, _fretNumber: number) => {
     setSelectedNotes(prev => {
@@ -192,7 +204,9 @@ function App() {
             <MusicTheoryControls
               selectedChordScale={selectedChordScale}
               onChordScaleChange={setSelectedChordScale}
+              onDisplayModeChange={setDisplayMode}
               onAddChordsToQueue={handleAddChordsToQueue}
+              onAddCurrentToQueue={handleAddCurrentToQueue}
             />
           </div>
 
