@@ -64,7 +64,7 @@ The default theme on load is `indigo`. The `indigo` theme uses blue/orange/purpl
 
 ### REQ-UI-07: App state ownership
 
-All state lives in `App.tsx`. No external state library is used. State variables:
+All state lives in `App.tsx` (via the `usePracticeMode` hook for practice-mode state). No external state library is used. State variables:
 - `instrument: InstrumentConfig`
 - `mirrorStrings: boolean`
 - `selectedChordScale: ChordScale | undefined`
@@ -74,3 +74,45 @@ All state lives in `App.tsx`. No external state library is used. State variables
 - `positionSystem: PositionSystem`
 - `positionIndex: number`
 - `displayMode: DisplayMode`
+- Practice-mode state is managed by `usePracticeMode` hook (`src/hooks/usePracticeMode.ts`)
+
+### REQ-UI-08: Chord-name buttons do not truncate
+
+Chord-name buttons in the CHORDS section SHALL display their full label without truncation regardless of key signature. Labels such as `Cmaj7`, `Ebmaj7`, and `Abmaj7` SHALL be fully readable.
+
+#### Scenario: Long chord name rendered fully in C Major
+- **WHEN** the user selects C Major key
+- **THEN** the chord-name row shows `Cmaj7` (not `Cm...`) in the first button
+- **AND** all seven chord buttons show their full label
+
+#### Scenario: Flat-key chord names rendered fully in C Minor
+- **WHEN** the user selects C Minor key
+- **THEN** buttons for `Ebmaj7` and `Abmaj7` show their full labels without truncation
+
+### REQ-UI-09: CHORDS and SCALES degree rows are visually distinct
+
+The degree-button row in the CHORDS section and the degree-button row in the SCALES section SHALL be visually distinguishable at a glance to prevent accidental mis-clicks.
+
+#### Scenario: Scale degree row has distinct styling
+- **WHEN** the theory panel is expanded and C Major is selected
+- **THEN** the degree buttons in the SCALES section have a visually distinct appearance from those in the CHORDS section (blue tint background vs white background)
+- **AND** the CHORDS degree buttons retain their existing white appearance
+
+#### Scenario: Clicking correct row selects the right thing
+- **WHEN** the user clicks degree `V` in the CHORDS section
+- **THEN** G7 is selected as a chord (tension rows appear)
+- **WHEN** the user clicks degree `V` in the SCALES section
+- **THEN** G Mixolydian is selected as a scale (no tension rows)
+
+### REQ-UI-10: PracticeBar is visible without manual scrolling on practice-mode entry
+
+When the user enters practice mode, the PracticeBar SHALL scroll into view automatically.
+
+#### Scenario: Entering practice mode scrolls PracticeBar into view
+- **WHEN** the user clicks the Practice button
+- **THEN** the PracticeBar becomes visible in the viewport within 500ms (smooth scroll)
+- **AND** the fretboard position highlight is already loaded before the scroll completes
+
+#### Scenario: Exiting practice mode does not force a scroll
+- **WHEN** the user clicks "Exit Practice"
+- **THEN** the viewport position is not forcibly changed
