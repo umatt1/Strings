@@ -241,3 +241,104 @@
 .add-item-confirm:hover {
   background: #283593;
 }
+
+/* Inline edit form */
+.qe-section-list {
+  flex: 1;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.queue-list-item.editing {
+  background: #f0f4ff;
+  border-color: #aac4f7;
+  flex-direction: column;
+  align-items: stretch;
+  padding: 8px;
+}
+
+.qli-edit-form {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.qli-edit-row {
+  display: flex;
+  gap: 5px;
+  align-items: center;
+}
+
+.qli-edit-select {
+  padding: 4px 6px;
+  border: 1px solid #c5cae9;
+  border-radius: 4px;
+  font-size: 12px;
+  background: white;
+}
+
+.qli-edit-root {
+  min-width: 56px;
+}
+
+.qli-edit-type {
+  flex: 1;
+}
+
+.qli-edit-pos {
+  width: 52px;
+  padding: 4px 6px;
+  border: 1px solid #c5cae9;
+  border-radius: 4px;
+  font-size: 12px;
+  text-align: center;
+}
+
+.qli-edit-label {
+  flex: 1;
+  padding: 4px 8px;
+  border: 1px solid #c5cae9;
+  border-radius: 4px;
+  font-size: 12px;
+  background: white;
+  width: 100%;
+}
+
+.qli-edit-actions {
+  display: flex;
+  gap: 5px;
+  justify-content: flex-end;
+  margin-top: 2px;
+}
+
+.qli-confirm {
+  padding: 4px 12px;
+  background: #3949ab;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 600;
+  transition: background 0.1s;
+}
+
+.qli-confirm:hover {
+  background: #283593;
+}
+
+.qli-cancel {
+  padding: 4px 10px;
+  background: #f5f5f5;
+  color: #555;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 12px;
+  transition: background 0.1s;
+}
+
+.qli-cancel:hover {
+  background: #eee;
+}

@@ -7,6 +7,7 @@ export interface QueueItem {
   positionSystem: PositionSystem;
   positionIndex: number;
   displayMode: DisplayMode;
+  label?: string;
 }
 
 export interface PracticePreset {

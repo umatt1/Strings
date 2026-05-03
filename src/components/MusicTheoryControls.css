@@ -369,6 +369,23 @@
   border-bottom: 1px solid #f0f0f0;
 }
 
+/* Scale degree buttons — distinct tint from CHORDS row buttons */
+.scale-mode-btn {
+  background: #e8f0fe !important;
+  border-color: #aac4f7 !important;
+}
+
+.scale-mode-btn:hover {
+  background: #c5d8fb !important;
+  border-color: #7baef5 !important;
+}
+
+.scale-mode-btn.active {
+  background: #1a73e8 !important;
+  border-color: #1a73e8 !important;
+  color: white !important;
+}
+
 /* Scale grid — same layout as mode-grid, used in Scales section */
 .degree-scale-group {
   display: flex;
@@ -481,19 +498,20 @@
 }
 
 .chord-btn-sm {
-  padding: 5px 2px;
+  padding: 4px 1px;
   background: white;
   border: 1px solid #ddd;
   border-radius: 4px;
   cursor: pointer;
-  font-size: 10px;
+  font-size: 9px;
   font-weight: 600;
   text-align: center;
   transition: background 0.15s, border-color 0.15s;
   min-width: 0;
   overflow: hidden;
-  text-overflow: ellipsis;
   white-space: nowrap;
+  text-overflow: clip;
+  letter-spacing: -0.2px;
 }
 
 .chord-btn-sm:hover {

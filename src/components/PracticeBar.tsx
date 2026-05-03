@@ -11,10 +11,12 @@ interface PracticeBarProps {
   timer: number | null;
   onTimerChange: (seconds: number | null) => void;
   onEditQueue: () => void;
+  containerRef?: React.RefObject<HTMLDivElement | null>;
 }
 
 function itemLabel(item: QueueItem): string {
-  return `${item.chordScale.rootNote} ${getMusicTheoryLabel(item.chordScale.type)}`;
+  if (item.label) return item.label;
+  return `${item.chordScale.rootNote} ${getMusicTheoryLabel(item.chordScale.type)} · pos ${item.positionIndex + 1}`;
 }
 
 export const PracticeBar: React.FC<PracticeBarProps> = ({
@@ -25,6 +27,7 @@ export const PracticeBar: React.FC<PracticeBarProps> = ({
   timer,
   onTimerChange,
   onEditQueue,
+  containerRef,
 }) => {
   const stripRef = React.useRef<HTMLDivElement>(null);
 
@@ -39,7 +42,7 @@ export const PracticeBar: React.FC<PracticeBarProps> = ({
   }, [queueIndex]);
 
   return (
-    <div className="practice-bar">
+    <div className="practice-bar" ref={containerRef}>
       <div className="practice-bar-top">
         {/* Navigation */}
         <button className="pb-nav-btn" onClick={onRetreat} title="Previous (Shift+Space)">◀</button>

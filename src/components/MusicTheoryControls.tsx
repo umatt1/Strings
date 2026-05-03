@@ -338,7 +338,7 @@ export const MusicTheoryControls: React.FC<MusicTheoryControlsProps> = ({
                 return (
                   <button
                     key={degree}
-                    className={`mode-btn ${isActive ? 'active' : ''}`}
+                    className={`mode-btn scale-mode-btn ${isActive ? 'active' : ''}`}
                     onClick={() => selectModeScale(degree)}
                     title={`${displayNote(modeRoot)} ${MODE_SHORT[scaleType]}`}
                   >

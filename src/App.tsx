@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect, useCallback, useRef } from 'react';
+import { useState, useMemo, useEffect, useRef } from 'react';
 import type { InstrumentConfig, Note, EnharmonicPreference } from './types/music';
 import { GUITAR_TUNINGS, createInstrumentFromTuning } from './types/music';
 import type { ChordScale } from './utils/musicTheory';
@@ -7,8 +7,7 @@ import type { ColorTheme } from './types/theme';
 import { COLOR_THEMES } from './types/theme';
 import type { PositionSystem, DisplayMode } from './utils/positions';
 import { calculatePositions, is3npsEligible, isFlatEligible } from './utils/positions';
-import type { QueueItem } from './types/practice';
-import { PRESETS } from './data/presets';
+import { usePracticeMode } from './hooks/usePracticeMode';
 import { Controls } from './components/Controls';
 import { MusicTheoryControls } from './components/MusicTheoryControls';
 import { PositionControls } from './components/PositionControls';
@@ -16,14 +15,8 @@ import { Fretboard } from './components/Fretboard';
 import { PlaybackControls } from './components/PlaybackControls';
 import { PracticeBar } from './components/PracticeBar';
 import { QueueEditor } from './components/QueueEditor';
+import { PRESETS } from './data/presets';
 import './App.css';
-
-interface RefSnapshot {
-  selectedChordScale?: ChordScale;
-  positionSystem: PositionSystem;
-  positionIndex: number;
-  displayMode: DisplayMode;
-}
 
 function App() {
   // ── Reference mode state ──────────────────────────────────────────────
@@ -39,13 +32,38 @@ function App() {
   const [positionIndex, setPositionIndex] = useState(0);
   const [displayMode, setDisplayMode] = useState<DisplayMode>('scales');
 
-  // ── Practice mode state ───────────────────────────────────────────────
-  const [practiceMode, setPracticeMode] = useState(false);
-  const [queue, setQueue] = useState<QueueItem[]>([]);
-  const [queueIndex, setQueueIndex] = useState(0);
-  const [timer, setTimer] = useState<number | null>(null);
-  const [queueEditorOpen, setQueueEditorOpen] = useState(false);
-  const [refSnapshot, setRefSnapshot] = useState<RefSnapshot | null>(null);
+  // ── Practice mode (via hook) ──────────────────────────────────────────
+  const practiceBarRef = useRef<HTMLDivElement>(null);
+
+  const getCurrentSnapshot = () => ({
+    selectedChordScale,
+    positionSystem,
+    positionIndex,
+    displayMode,
+  });
+
+  const applySnapshot = (snap: { selectedChordScale?: ChordScale; positionSystem: PositionSystem; positionIndex: number; displayMode: DisplayMode }) => {
+    setSelectedChordScale(snap.selectedChordScale);
+    setPositionSystem(snap.positionSystem);
+    setPositionIndex(snap.positionIndex);
+    setDisplayMode(snap.displayMode);
+  };
+
+  const {
+    practiceMode,
+    queue,
+    queueIndex,
+    timer,
+    queueEditorOpen,
+    setQueue,
+    setTimer,
+    setQueueEditorOpen,
+    advanceQueue,
+    retreatQueue,
+    handlePracticeModeToggle,
+    handleAddChordsToQueue,
+    handleAddCurrentToQueue,
+  } = usePracticeMode(getCurrentSnapshot, applySnapshot);
 
   // ── Computed positions ────────────────────────────────────────────────
   const positions = useMemo(() => {
@@ -53,8 +71,7 @@ function App() {
     return calculatePositions(instrument, selectedChordScale, positionSystem);
   }, [instrument, selectedChordScale, positionSystem]);
 
-  // Reset positionIndex on chord/scale change (skip in practice mode —
-  // the queue item controls the index)
+  // Reset positionIndex on chord/scale change (skip in practice mode)
   useEffect(() => {
     if (!practiceMode) setPositionIndex(0);
     if (positionSystem === '3nps' && selectedChordScale && !is3npsEligible(selectedChordScale)) {
@@ -78,30 +95,6 @@ function App() {
     return pos ? pos.startFret : null;
   }, [positions, positionIndex, positionSystem]);
 
-  // ── Practice mode helpers ─────────────────────────────────────────────
-  const setQueueFromItem = useCallback((item: QueueItem) => {
-    setSelectedChordScale(item.chordScale);
-    setPositionSystem(item.positionSystem);
-    setPositionIndex(item.positionIndex);
-    setDisplayMode(item.displayMode);
-  }, []);
-
-  const advanceQueue = useCallback(() => {
-    if (queue.length === 0) return;
-    setQueueIndex((prev) => (prev + 1) % queue.length);
-  }, [queue.length]);
-
-  const retreatQueue = useCallback(() => {
-    if (queue.length === 0) return;
-    setQueueIndex((prev) => (prev - 1 + queue.length) % queue.length);
-  }, [queue.length]);
-
-  // Apply queue item whenever queueIndex changes in practice mode
-  useEffect(() => {
-    if (!practiceMode || queue.length === 0) return;
-    setQueueFromItem(queue[queueIndex]);
-  }, [practiceMode, queueIndex]); // eslint-disable-line react-hooks/exhaustive-deps
-
   // Spacebar advances queue (ignored when an interactive element has focus)
   useEffect(() => {
     if (!practiceMode) return;
@@ -116,56 +109,12 @@ function App() {
     return () => window.removeEventListener('keydown', onKey);
   }, [practiceMode, advanceQueue]);
 
-  // Auto-advance timer
-  const advanceQueueRef = useRef(advanceQueue);
-  advanceQueueRef.current = advanceQueue;
+  // Scroll PracticeBar into view when practice mode is entered
   useEffect(() => {
-    if (!practiceMode || timer === null) return;
-    const id = setInterval(() => advanceQueueRef.current(), timer * 1000);
-    return () => clearInterval(id);
-  }, [practiceMode, timer]);
-
-  // ── Practice mode toggle ──────────────────────────────────────────────
-  const handlePracticeModeToggle = () => {
-    if (!practiceMode) {
-      // Entering practice mode: save reference state, load default preset if queue empty
-      setRefSnapshot({ selectedChordScale, positionSystem, positionIndex, displayMode });
-      let activeQueue = queue;
-      if (queue.length === 0) {
-        const defaultPreset = PRESETS.find(p => p.id === 'g-major-scale-workout') ?? PRESETS[0];
-        activeQueue = defaultPreset.items;
-        setQueue(activeQueue);
-      }
-      setQueueIndex(0);
-      if (activeQueue.length > 0) setQueueFromItem(activeQueue[0]);
-      setPracticeMode(true);
-    } else {
-      // Leaving practice mode: restore reference state
-      setPracticeMode(false);
-      if (refSnapshot) {
-        setSelectedChordScale(refSnapshot.selectedChordScale);
-        setPositionSystem(refSnapshot.positionSystem);
-        setPositionIndex(refSnapshot.positionIndex);
-        setDisplayMode(refSnapshot.displayMode);
-      }
+    if (practiceMode) {
+      practiceBarRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     }
-  };
-
-  const handleAddChordsToQueue = useCallback((items: QueueItem[]) => {
-    setQueue((prev) => [...prev, ...items]);
-  }, []);
-
-  const handleAddCurrentToQueue = useCallback(() => {
-    if (!selectedChordScale) return;
-    const newItem: QueueItem = {
-      id: `q-${Date.now()}`,
-      chordScale: selectedChordScale,
-      positionSystem,
-      positionIndex,
-      displayMode,
-    };
-    setQueue((prev) => [...prev, newItem]);
-  }, [selectedChordScale, positionSystem, positionIndex, displayMode]);
+  }, [practiceMode]);
 
   // ── Note selector (interval tool) ─────────────────────────────────────
   const handleNoteSelect = (note: Note, _stringIndex: number, _fretNumber: number) => {
@@ -271,6 +220,7 @@ function App() {
                   timer={timer}
                   onTimerChange={setTimer}
                   onEditQueue={() => setQueueEditorOpen(true)}
+                  containerRef={practiceBarRef}
                 />
               )}
             </div>
