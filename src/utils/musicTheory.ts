@@ -210,11 +210,16 @@ export function getModesForKey(
   keyType: 'major' | 'minor'
 ): { degree: number; modeRoot: NoteName; scaleType: MajorModeType }[] {
   const relRootIdx = NOTES.indexOf(keyType === 'minor' ? NOTES[(NOTES.indexOf(keyRoot) + 3) % 12] : keyRoot);
-  return MAJOR_MODES.map((scaleType, i) => ({
+  const all = MAJOR_MODES.map((scaleType, i) => ({
     degree: i + 1,
     modeRoot: NOTES[(relRootIdx + MAJOR_MODE_SEMITONES[i]) % 12],
     scaleType,
   }));
+  if (keyType === 'minor') {
+    // Rotate so Aeolian (index 5, degree VI) becomes degree i of the minor key
+    return [...all.slice(5), ...all.slice(0, 5)].map((m, i) => ({ ...m, degree: i + 1 }));
+  }
+  return all;
 }
 
 export function getDiatonicChords(
@@ -222,11 +227,15 @@ export function getDiatonicChords(
   keyType: 'major' | 'minor'
 ): { degree: number; root: NoteName; chordType: SeventhChordType }[] {
   const relRootIdx = NOTES.indexOf(keyType === 'minor' ? NOTES[(NOTES.indexOf(keyRoot) + 3) % 12] : keyRoot);
-  return DIATONIC_SEVENTH_TYPES.map((chordType, i) => ({
+  const all = DIATONIC_SEVENTH_TYPES.map((chordType, i) => ({
     degree: i + 1,
     root: NOTES[(relRootIdx + MAJOR_MODE_SEMITONES[i]) % 12],
     chordType,
   }));
+  if (keyType === 'minor') {
+    return [...all.slice(5), ...all.slice(0, 5)].map((c, i) => ({ ...c, degree: i + 1 }));
+  }
+  return all;
 }
 
 export function getDiatonicPentatonics(
