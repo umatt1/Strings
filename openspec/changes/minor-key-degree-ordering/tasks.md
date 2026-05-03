@@ -4,22 +4,22 @@
 
 ## 1. Fix `getModesForKey` for minor key
 
-- [ ] 1.1 In `musicTheory.ts`, after computing the 7-element `modes` array in `getModesForKey`, add: if `keyType === 'minor'`, rotate by `[...modes.slice(5), ...modes.slice(0, 5)]` and re-map each element to `{ ...m, degree: i + 1 }`.
-- [ ] 1.2 Verify by inspection: `getModesForKey('G', 'minor')` returns `[{degree:1, modeRoot:'G', scaleType:'aeolian'}, {degree:2, modeRoot:'A', scaleType:'locrian'}, {degree:3, modeRoot:'A#', scaleType:'ionian'}, ...]`.
+- [x] 1.1 In `musicTheory.ts`, after computing the 7-element `modes` array in `getModesForKey`, add: if `keyType === 'minor'`, rotate by `[...modes.slice(5), ...modes.slice(0, 5)]` and re-map each element to `{ ...m, degree: i + 1 }`.
+- [x] 1.2 Verify by inspection: `getModesForKey('G', 'minor')` returns `[{degree:1, modeRoot:'G', scaleType:'aeolian'}, {degree:2, modeRoot:'A', scaleType:'locrian'}, {degree:3, modeRoot:'A#', scaleType:'ionian'}, ...]`.
 
 ---
 
 ## 2. Fix `getDiatonicChords` for minor key
 
-- [ ] 2.1 In `musicTheory.ts`, after computing the 7-element `chords` array in `getDiatonicChords`, add: if `keyType === 'minor'`, rotate by `[...chords.slice(5), ...chords.slice(0, 5)]` and re-map each element to `{ ...c, degree: i + 1 }`.
-- [ ] 2.2 Verify: `getDiatonicChords('G', 'minor')` returns `[{degree:1, root:'G', chordType:'min7'}, {degree:2, root:'A', chordType:'half-dim7'}, {degree:3, root:'A#', chordType:'maj7'}, ...]`.
+- [x] 2.1 In `musicTheory.ts`, after computing the 7-element `chords` array in `getDiatonicChords`, add: if `keyType === 'minor'`, rotate by `[...chords.slice(5), ...chords.slice(0, 5)]` and re-map each element to `{ ...c, degree: i + 1 }`.
+- [x] 2.2 Verify: `getDiatonicChords('G', 'minor')` returns `[{degree:1, root:'G', chordType:'min7'}, {degree:2, root:'A', chordType:'half-dim7'}, {degree:3, root:'A#', chordType:'maj7'}, ...]`.
 
 ---
 
 ## 3. Remove subheader from UI
 
-- [ ] 3.1 In `MusicTheoryControls.tsx`, remove the `{keyType === 'minor' && <span className="popout-subheader">...</span>}` fragment from the panel header area. The header should just show `{displayNote(keyRoot)} {keyType === 'major' ? 'Major' : 'Minor'}`.
-- [ ] 3.2 Verify `getDiatonicPentatonics('G', 'minor')` now correctly returns pentatonics starting from G (minor pent at degree i, etc.) — no code change needed, it inherits the fix automatically.
+- [x] 3.1 In `MusicTheoryControls.tsx`, remove the `{keyType === 'minor' && <span className="popout-subheader">...</span>}` fragment from the panel header area. The header should just show `{displayNote(keyRoot)} {keyType === 'major' ? 'Major' : 'Minor'}`.
+- [x] 3.2 Verify `getDiatonicPentatonics('G', 'minor')` now correctly returns pentatonics starting from G (minor pent at degree i, etc.) — no code change needed, it inherits the fix automatically.
 
 ---
 

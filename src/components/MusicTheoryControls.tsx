@@ -237,7 +237,7 @@ export const MusicTheoryControls: React.FC<MusicTheoryControlsProps> = ({
             {selectedChordScale ? (
               <div className="selection-display">
                 <span className="selection-text">
-                  {selectedChordScale.rootNote} {selectionLabel}
+                  {displayNote(selectedChordScale.rootNote)} {selectionLabel}
                 </span>
                 {onAddCurrentToQueue && (
                   <button className="add-to-queue-btn-sm" onClick={onAddCurrentToQueue} title="Add to queue">
