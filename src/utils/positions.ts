@@ -126,11 +126,10 @@ function calculate3NPS(
     const degreeNoteIdx = NOTES.indexOf(degreeNote);
     const semitoneOffset = (degreeNoteIdx - rootNoteIdx + 12) % 12;
 
-    // Compute canonical starting fret: keep the leading tone (offset=11) just
-    // below the root rather than an octave above it.
-    let startFret = rootFret + semitoneOffset;
-    if (startFret > rootFret + 10) startFret -= 12;
-    if (startFret < 0) startFret += 12;
+    // Map each degree to its lowest occurrence on the neck (frets 0–11).
+    // % 12 ensures VII (offset=11) lands at rootFret-1 (just below root)
+    // while all other positions land at their lowest possible fret.
+    const startFret = (rootFret + semitoneOffset) % 12;
 
     const highlights: PositionHighlight[] = [];
     let degIdx = posIdx;
@@ -551,10 +550,8 @@ function calculateFlatPositions(
     const degreeNoteIdx = NOTES.indexOf(degreeNote);
     const semitoneOffset = (degreeNoteIdx - rootNoteIdx + 12) % 12;
 
-    // Same starting fret formula as 3NPS — keeps positions in sync
-    let modeFret = rootFret + semitoneOffset;
-    if (modeFret > rootFret + 10) modeFret -= 12;
-    if (modeFret < 0) modeFret += 12;
+    // Same fix as 3NPS: lowest occurrence on the neck (frets 0–11).
+    const modeFret = (rootFret + semitoneOffset) % 12;
 
     const highlights: PositionHighlight[] = [];
     let maxFret = modeFret;

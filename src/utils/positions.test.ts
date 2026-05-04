@@ -336,17 +336,39 @@ describe('3NPS positions', () => {
     }
   });
 
-  it('G major positions are labeled VII, I, II, III, IV, V, VI in ascending neck order', () => {
+  it('G major positions are labeled VI, VII, I, II, III, IV, V in ascending neck order', () => {
     const positions = calculatePositions(STANDARD_GUITAR, G_IONIAN, '3nps');
     const names = positions.map((p) => p.name);
-    expect(names).toEqual(['VII', 'I', 'II', 'III', 'IV', 'V', 'VI']);
+    // VI (E, fret 0), VII (F#, fret 2), I (G, fret 3), II (A, fret 5), III (B, fret 7), IV (C, fret 8), V (D, fret 10)
+    expect(names).toEqual(['VI', 'VII', 'I', 'II', 'III', 'IV', 'V']);
   });
 
-  it('G major Position VI (E) starts at fret 12, not fret 0', () => {
+  it('G major Position VI (E) starts at fret 0 (open string)', () => {
     const positions = calculatePositions(STANDARD_GUITAR, G_IONIAN, '3nps');
     const posVI = positions.find((p) => p.name === 'VI');
     expect(posVI).toBeDefined();
-    expect(posVI!.startFret).toBe(12);
+    expect(posVI!.startFret).toBe(0);
+  });
+
+  it('C major 3NPS: all 7 positions anchor at their lowest fret (0–10)', () => {
+    const positions = calculatePositions(STANDARD_GUITAR, C_IONIAN, '3nps');
+    const frets = positions.map((p) => p.startFret);
+    // III=0, IV=1, V=3, VI=5, VII=7, I=8, II=10 — all in 0–10, none at 12+
+    expect(frets).toEqual([0, 1, 3, 5, 7, 8, 10]);
+    expect(Math.max(...frets)).toBeLessThan(12);
+  });
+
+  it('Position VII is always one fret below Position I for any major key', () => {
+    const keys = [C_IONIAN, G_IONIAN, A_IONIAN]; // rootFrets: 8, 3, 5
+    for (const cs of keys) {
+      const positions = calculatePositions(STANDARD_GUITAR, cs, '3nps');
+      const posI   = positions.find((p) => p.name === 'I')!;
+      const posVII = positions.find((p) => p.name === 'VII')!;
+      expect(posI).toBeDefined();
+      expect(posVII).toBeDefined();
+      const expected = (posI.startFret - 1 + 12) % 12;
+      expect(posVII.startFret).toBe(expected);
+    }
   });
 
   it('natural minor (Aeolian) tonic position is labeled VI', () => {
@@ -517,11 +539,12 @@ describe('CAGED — pentatonic templates', () => {
 // ============================================================
 
 describe('Flat positions', () => {
-  it('returns 7 positions for G major labeled VII, I, II, III, IV, V, VI', () => {
+  it('returns 7 positions for G major labeled VI, VII, I, II, III, IV, V', () => {
     const positions = calculatePositions(STANDARD_GUITAR, G_IONIAN, 'flat');
     expect(positions.length).toBe(7);
     const names = positions.map((p) => p.name);
-    expect(names).toEqual(['VII', 'I', 'II', 'III', 'IV', 'V', 'VI']);
+    // VI (E, fret 0), VII (F#, fret 2), I (G, fret 3), II (A, fret 5), III (B, fret 7), IV (C, fret 8), V (D, fret 10)
+    expect(names).toEqual(['VI', 'VII', 'I', 'II', 'III', 'IV', 'V']);
   });
 
   it('all highlighted notes are in the scale', () => {
@@ -568,16 +591,20 @@ describe('Flat positions', () => {
     expect(calculatePositions(STANDARD_GUITAR, pent, 'flat')).toHaveLength(0);
   });
 
+  it('C major flat: all 7 positions anchor at their lowest fret (0–10)', () => {
+    const positions = calculatePositions(STANDARD_GUITAR, C_IONIAN, 'flat');
+    const frets = positions.map((p) => p.startFret);
+    // III=0, IV=1, V=3, VI=5, VII=7, I=8, II=10 — same anchor sequence as 3NPS
+    expect(frets).toEqual([0, 1, 3, 5, 7, 8, 10]);
+    expect(Math.max(...frets)).toBeLessThan(12);
+  });
+
   it('natural minor tonic position is labeled VI', () => {
     const positions = calculatePositions(STANDARD_GUITAR, A_AEOLIAN, 'flat');
     expect(positions.length).toBe(7);
-    // A Aeolian tonic = A, low E fret 5. Find that position.
-    const tonicPos = positions.find((p) => {
-      return p.highlights.some(
-        (h) => h.stringIndex === 5 && h.fretNumber === 5 &&
-          getNoteAtFret(STANDARD_GUITAR.strings[5].openNote, STANDARD_GUITAR.strings[5].octave, 5).name === 'A'
-      );
-    });
+    // A Aeolian tonic = A, rootFret = 5. The tonic position anchors at startFret 5.
+    // (Using startFret to identify the tonic position, since adjacent windows may overlap.)
+    const tonicPos = positions.find((p) => p.startFret === 5);
     expect(tonicPos?.name).toBe('VI');
   });
 });
