@@ -1,5 +1,5 @@
 import React from 'react';
-import type { PositionSystem, DisplayMode, Position } from '../utils/positions';
+import type { PositionSystem, Position } from '../utils/positions';
 import './PositionControls.css';
 
 interface PositionControlsProps {
@@ -8,11 +8,7 @@ interface PositionControlsProps {
   positions: Position[];
   positionIndex: number;
   onPositionIndexChange: (index: number) => void;
-  displayMode: DisplayMode;
-  onDisplayModeChange: (mode: DisplayMode) => void;
   hasSelection: boolean;
-  isScaleSelected: boolean;
-  scaleNoteCount?: number;
   is3npsEligible: boolean;
   isFlatEligible: boolean;
 }
@@ -31,11 +27,7 @@ export const PositionControls: React.FC<PositionControlsProps> = ({
   positions,
   positionIndex,
   onPositionIndexChange,
-  displayMode,
-  onDisplayModeChange,
   hasSelection,
-  isScaleSelected: _isScaleSelected,
-  scaleNoteCount: _scaleNoteCount,
   is3npsEligible,
   isFlatEligible,
 }) => {
@@ -60,23 +52,6 @@ export const PositionControls: React.FC<PositionControlsProps> = ({
 
   return (
     <div className="position-toolbar">
-      {/* Display Mode Tabs — always visible when something is selected */}
-      <div className="display-mode-tabs">
-        {([
-          ['scales',    'All Notes'],
-          ['arpeggios', 'Chord Tones'],
-          ['chords',    'Triad'],
-        ] as [DisplayMode, string][]).map(([mode, label]) => (
-          <button
-            key={mode}
-            className={`display-mode-tab ${displayMode === mode ? 'active' : ''}`}
-            onClick={() => onDisplayModeChange(mode)}
-          >
-            {label}
-          </button>
-        ))}
-      </div>
-
       {/* Position System Buttons */}
       <div className="system-buttons">
         {SYSTEM_OPTIONS

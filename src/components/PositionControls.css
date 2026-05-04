@@ -10,42 +10,6 @@
   border-radius: 6px;
 }
 
-/* ---- Display Mode Tabs ---- */
-.position-toolbar .display-mode-tabs {
-  display: flex;
-  gap: 0;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  overflow: hidden;
-}
-
-.position-toolbar .display-mode-tab {
-  padding: 5px 10px;
-  background: white;
-  border: none;
-  border-right: 1px solid #ccc;
-  cursor: pointer;
-  font-size: 12px;
-  font-weight: 500;
-  color: #555;
-  transition: background 0.15s ease, color 0.15s ease;
-  white-space: nowrap;
-}
-
-.position-toolbar .display-mode-tab:last-child {
-  border-right: none;
-}
-
-.position-toolbar .display-mode-tab:hover {
-  background: #eee;
-}
-
-.position-toolbar .display-mode-tab.active {
-  background: #4CAF50;
-  color: white;
-  font-weight: 600;
-}
-
 /* ---- Position System Buttons ---- */
 .position-toolbar .system-buttons {
   display: flex;
@@ -123,7 +87,6 @@
 /* ============================================
    MOBILE TOUCH OPTIMIZATIONS
    ============================================ */
-.position-toolbar .display-mode-tab,
 .position-toolbar .system-button {
   min-height: 36px;
   touch-action: manipulation;
@@ -139,7 +102,6 @@
   touch-action: manipulation;
 }
 
-.position-toolbar .display-mode-tab:active,
 .position-toolbar .system-button:active {
   transform: scale(0.96);
 }
@@ -149,13 +111,9 @@
 }
 
 @media (hover: none) and (pointer: coarse) {
-  .position-toolbar .display-mode-tab:hover,
   .position-toolbar .system-button:hover,
   .position-toolbar .nav-button:hover {
     background: white;
-  }
-  .position-toolbar .display-mode-tab.active:hover {
-    background: #4CAF50;
   }
   .position-toolbar .system-button.active:hover {
     background: #2196F3;
@@ -176,7 +134,6 @@
 
 /* Desktop — tighter sizing */
 @media (min-width: 768px) {
-  .position-toolbar .display-mode-tab,
   .position-toolbar .system-button {
     min-height: auto;
     padding: 5px 12px;

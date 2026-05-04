@@ -112,7 +112,7 @@ export const QueueEditor: React.FC<QueueEditorProps> = ({
     const newItem: QueueItem = {
       id: makeId(),
       chordScale: { type: addType as never, rootNote: addRoot, notes },
-      positionSystem: '3nps',
+      positionSystem: 'none',
       positionIndex: 0,
       displayMode: isChordType(addType) ? 'arpeggios' : 'scales',
     };

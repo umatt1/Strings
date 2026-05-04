@@ -172,9 +172,9 @@ export const MusicTheoryControls: React.FC<MusicTheoryControlsProps> = ({
     const items: QueueItem[] = chordData.map(({ root, chordType }, i) => ({
       id: `queue-chord-${root}-${chordType}-${i}-${Date.now()}`,
       chordScale: { type: chordType, rootNote: root, notes: getMusicTheoryNotes(root, chordType) },
-      positionSystem: 'caged',
+      positionSystem: 'none',
       positionIndex: 0,
-      displayMode: 'arpeggios',
+      displayMode: 'scales',
     }));
     onAddChordsToQueue(items);
   };
@@ -184,7 +184,7 @@ export const MusicTheoryControls: React.FC<MusicTheoryControlsProps> = ({
     const items: QueueItem[] = modeData.map(({ modeRoot, scaleType }, i) => ({
       id: `queue-mode-${modeRoot}-${scaleType}-${i}-${Date.now()}`,
       chordScale: { type: scaleType, rootNote: modeRoot, notes: getMusicTheoryNotes(modeRoot, scaleType) },
-      positionSystem: '3nps',
+      positionSystem: 'none',
       positionIndex: 0,
       displayMode: 'scales',
     }));

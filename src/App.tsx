@@ -1,12 +1,12 @@
-import { useState, useMemo, useEffect, useRef } from 'react';
+import { useState, useMemo, useEffect, useCallback } from 'react';
 import type { InstrumentConfig, Note, EnharmonicPreference } from './types/music';
 import { GUITAR_TUNINGS, createInstrumentFromTuning } from './types/music';
 import type { ChordScale } from './utils/musicTheory';
-import { isScaleType } from './utils/musicTheory';
 import type { ColorTheme } from './types/theme';
 import { COLOR_THEMES } from './types/theme';
 import type { PositionSystem, DisplayMode } from './utils/positions';
 import { calculatePositions, is3npsEligible, isFlatEligible } from './utils/positions';
+import type { QueueItem } from './types/practice';
 import { usePracticeMode } from './hooks/usePracticeMode';
 import { Controls } from './components/Controls';
 import { MusicTheoryControls } from './components/MusicTheoryControls';
@@ -19,7 +19,7 @@ import { PRESETS } from './data/presets';
 import './App.css';
 
 function App() {
-  // ── Reference mode state ──────────────────────────────────────────────
+  // ── Reference state ───────────────────────────────────────────────────
   const [instrument, setInstrument] = useState<InstrumentConfig>(
     createInstrumentFromTuning(GUITAR_TUNINGS.find(t => t.id === 'standard')!)
   );
@@ -32,25 +32,17 @@ function App() {
   const [positionIndex, setPositionIndex] = useState(0);
   const [displayMode, setDisplayMode] = useState<DisplayMode>('scales');
 
-  // ── Practice mode (via hook) ──────────────────────────────────────────
-  const practiceBarRef = useRef<HTMLDivElement>(null);
+  // ── Queue (always-on) ─────────────────────────────────────────────────
+  const onItemActivated = useCallback((item: QueueItem) => {
+    setSelectedChordScale(item.chordScale);
+    setPositionSystem(item.positionSystem);
+    setPositionIndex(item.positionIndex);
+    setDisplayMode(item.displayMode);
+  }, []);
 
-  const getCurrentSnapshot = () => ({
-    selectedChordScale,
-    positionSystem,
-    positionIndex,
-    displayMode,
-  });
-
-  const applySnapshot = (snap: { selectedChordScale?: ChordScale; positionSystem: PositionSystem; positionIndex: number; displayMode: DisplayMode }) => {
-    setSelectedChordScale(snap.selectedChordScale);
-    setPositionSystem(snap.positionSystem);
-    setPositionIndex(snap.positionIndex);
-    setDisplayMode(snap.displayMode);
-  };
+  const getSelectedChordScale = useCallback(() => selectedChordScale, [selectedChordScale]);
 
   const {
-    practiceMode,
     queue,
     queueIndex,
     timer,
@@ -60,10 +52,9 @@ function App() {
     setQueueEditorOpen,
     advanceQueue,
     retreatQueue,
-    handlePracticeModeToggle,
     handleAddChordsToQueue,
     handleAddCurrentToQueue,
-  } = usePracticeMode(getCurrentSnapshot, applySnapshot);
+  } = usePracticeMode(onItemActivated, getSelectedChordScale);
 
   // ── Computed positions ────────────────────────────────────────────────
   const positions = useMemo(() => {
@@ -71,9 +62,8 @@ function App() {
     return calculatePositions(instrument, selectedChordScale, positionSystem);
   }, [instrument, selectedChordScale, positionSystem]);
 
-  // Reset positionIndex on chord/scale change (skip in practice mode)
   useEffect(() => {
-    if (!practiceMode) setPositionIndex(0);
+    setPositionIndex(0);
     if (positionSystem === '3nps' && selectedChordScale && !is3npsEligible(selectedChordScale)) {
       setPositionSystem('none');
     }
@@ -95,9 +85,9 @@ function App() {
     return pos ? pos.startFret : null;
   }, [positions, positionIndex, positionSystem]);
 
-  // Spacebar advances queue (ignored when an interactive element has focus)
+  // ── Spacebar advances queue when non-empty ────────────────────────────
   useEffect(() => {
-    if (!practiceMode) return;
+    if (queue.length === 0) return;
     const onKey = (e: KeyboardEvent) => {
       if (e.code !== 'Space') return;
       const tag = (document.activeElement?.tagName ?? '').toLowerCase();
@@ -107,14 +97,7 @@ function App() {
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  }, [practiceMode, advanceQueue]);
-
-  // Scroll PracticeBar into view when practice mode is entered
-  useEffect(() => {
-    if (practiceMode) {
-      practiceBarRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-    }
-  }, [practiceMode]);
+  }, [queue.length, advanceQueue]);
 
   // ── Note selector (interval tool) ─────────────────────────────────────
   const handleNoteSelect = (note: Note, _stringIndex: number, _fretNumber: number) => {
@@ -173,15 +156,6 @@ function App() {
               />
             </div>
 
-            <div className="practice-toggle-row">
-              <button
-                className={`practice-toggle-btn ${practiceMode ? 'active' : ''}`}
-                onClick={handlePracticeModeToggle}
-              >
-                {practiceMode ? 'Exit Practice' : 'Practice'}
-              </button>
-            </div>
-
             <div className="fretboard-area">
               <PositionControls
                 positionSystem={positionSystem}
@@ -189,11 +163,7 @@ function App() {
                 positions={positions}
                 positionIndex={positionIndex}
                 onPositionIndexChange={setPositionIndex}
-                displayMode={displayMode}
-                onDisplayModeChange={setDisplayMode}
                 hasSelection={!!selectedChordScale}
-                isScaleSelected={!!selectedChordScale && isScaleType(selectedChordScale.type)}
-                scaleNoteCount={selectedChordScale?.notes.length ?? 0}
                 is3npsEligible={!!selectedChordScale && is3npsEligible(selectedChordScale)}
                 isFlatEligible={!!selectedChordScale && isFlatEligible(selectedChordScale)}
               />
@@ -211,7 +181,7 @@ function App() {
                   scrollToFret={scrollToFret}
                 />
               </div>
-              {practiceMode && queue.length > 0 && (
+              {queue.length > 0 ? (
                 <PracticeBar
                   queue={queue}
                   queueIndex={queueIndex}
@@ -220,8 +190,11 @@ function App() {
                   timer={timer}
                   onTimerChange={setTimer}
                   onEditQueue={() => setQueueEditorOpen(true)}
-                  containerRef={practiceBarRef}
                 />
+              ) : (
+                <div className="queue-empty-bar">
+                  Queue is empty — add chords or scales using the panel on the left
+                </div>
               )}
             </div>
 

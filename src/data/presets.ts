@@ -28,8 +28,8 @@ const G_MAJOR_NOTES = getMusicTheoryNotes('G', 'ionian');
 const G_MAJOR_FLAT_ITEMS: QueueItem[] = [0, 1, 2, 3, 4, 5, 6].map((i) => ({
   id: `g-major-flat-${i}`,
   chordScale: { type: 'ionian', rootNote: 'G', notes: G_MAJOR_NOTES },
-  positionSystem: 'flat',
-  positionIndex: i,
+  positionSystem: 'none',
+  positionIndex: 0,
   displayMode: 'scales',
   label: `G Ionian · Flat ${ROMAN[i]}`,
 }));
@@ -37,37 +37,37 @@ const G_MAJOR_FLAT_ITEMS: QueueItem[] = [0, 1, 2, 3, 4, 5, 6].map((i) => ({
 const G_MAJOR_3NPS_ITEMS: QueueItem[] = [0, 1, 2, 3, 4, 5, 6].map((i) => ({
   id: `g-major-3nps-${i}`,
   chordScale: { type: 'ionian', rootNote: 'G', notes: G_MAJOR_NOTES },
-  positionSystem: '3nps',
-  positionIndex: i,
+  positionSystem: 'none',
+  positionIndex: 0,
   displayMode: 'scales',
   label: `G Ionian · 3NPS ${ROMAN[i]}`,
 }));
 
 const G_MAJOR_ARPEGGIOS: QueueItem[] = [
-  item('G', 'maj7',     'caged', 0, 'arpeggios', 'g-arp-0', 'Gmaj7 · CAGED'),
-  item('A', 'min7',     'caged', 0, 'arpeggios', 'g-arp-1', 'Am7 · CAGED'),
-  item('B', 'min7',     'caged', 0, 'arpeggios', 'g-arp-2', 'Bm7 · CAGED'),
-  item('C', 'maj7',     'caged', 0, 'arpeggios', 'g-arp-3', 'Cmaj7 · CAGED'),
-  item('D', 'dom7',     'caged', 0, 'arpeggios', 'g-arp-4', 'D7 · CAGED'),
-  item('E', 'min7',     'caged', 0, 'arpeggios', 'g-arp-5', 'Em7 · CAGED'),
-  item('F#','half-dim7','caged', 0, 'arpeggios', 'g-arp-6', 'F#ø7 · CAGED'),
+  item('G', 'maj7',     'none', 0, 'arpeggios', 'g-arp-0', 'Gmaj7'),
+  item('A', 'min7',     'none', 0, 'arpeggios', 'g-arp-1', 'Am7'),
+  item('B', 'min7',     'none', 0, 'arpeggios', 'g-arp-2', 'Bm7'),
+  item('C', 'maj7',     'none', 0, 'arpeggios', 'g-arp-3', 'Cmaj7'),
+  item('D', 'dom7',     'none', 0, 'arpeggios', 'g-arp-4', 'D7'),
+  item('E', 'min7',     'none', 0, 'arpeggios', 'g-arp-5', 'Em7'),
+  item('F#','half-dim7','none', 0, 'arpeggios', 'g-arp-6', 'F#ø7'),
 ];
 
 // Autumn Leaves: each chord shown as its suggested scale in a 3NPS position.
 // Cm7→C Dorian, F7→F Mixolydian, Bbmaj7→Bb Ionian, Ebmaj7→Eb Ionian,
 // Am7b5→A Locrian, D7→D Mixolydian, Gm7→G Dorian
 const AUTUMN_LEAVES: QueueItem[] = [
-  item('C',  'dorian',     '3nps', 0, 'scales', 'al-0', 'Cm7 (C Dorian)'),
-  item('F',  'mixolydian', '3nps', 0, 'scales', 'al-1', 'F7 (F Mixolydian)'),
-  item('A#', 'ionian',     '3nps', 0, 'scales', 'al-2', 'Bb Ionian'),
-  item('D#', 'ionian',     '3nps', 0, 'scales', 'al-3', 'Eb Ionian'),
-  item('A',  'locrian',    '3nps', 0, 'scales', 'al-4', 'Am7b5 (A Locrian)'),
-  item('D',  'mixolydian', '3nps', 0, 'scales', 'al-5', 'D7 (D Mixolydian)'),
-  item('G',  'dorian',     '3nps', 0, 'scales', 'al-6', 'Gm7 (G Dorian)'),
+  item('C',  'dorian',     'none', 0, 'scales', 'al-0', 'Cm7 (C Dorian)'),
+  item('F',  'mixolydian', 'none', 0, 'scales', 'al-1', 'F7 (F Mixolydian)'),
+  item('A#', 'ionian',     'none', 0, 'scales', 'al-2', 'Bb Ionian'),
+  item('D#', 'ionian',     'none', 0, 'scales', 'al-3', 'Eb Ionian'),
+  item('A',  'locrian',    'none', 0, 'scales', 'al-4', 'Am7b5 (A Locrian)'),
+  item('D',  'mixolydian', 'none', 0, 'scales', 'al-5', 'D7 (D Mixolydian)'),
+  item('G',  'dorian',     'none', 0, 'scales', 'al-6', 'Gm7 (G Dorian)'),
 ];
 
 function bluesItem(root: string, id: string, label: string): QueueItem {
-  return item(root, 'pentatonic-major', 'caged', 0, 'scales', id, label);
+  return item(root, 'pentatonic-major', 'none', 0, 'scales', id, label);
 }
 
 // I-IV-I-V-IV-I in G: condensed 12-bar blues, each using major pentatonic in CAGED position
