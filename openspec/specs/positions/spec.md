@@ -17,17 +17,27 @@ On startup and when no chord/scale is selected, `positionSystem` = `'none'`. The
 3 Notes Per String generates one position per scale degree of a diatonic scale, placing exactly 3 consecutive scale tones per string. Each position is labeled with the Roman numeral (I–VII) corresponding to the scale degree on which the position starts on the lowest string.
 
 - Only valid for major (Ionian) and natural minor (Aeolian) scale types. All other scale types (including other modes and pentatonic) cause the system to fall back to `'none'`.
-- Starting frets are computed mathematically from the root's lowest fret on the lowest string, not by scanning from fret 0. The formula `rootFret + semitoneOffset` (adjusted by ±12 to keep the leading tone just below the root) ensures no position lands on an open string when a higher-octave fret is correct.
-- Positions are sorted ascending by `startFret`. Position labels reflect scale degree: for G major the order on the neck is VII, I, II, III, IV, V, VI.
+- Starting frets are computed as `(rootFret + semitoneOffset) % 12`, placing each position at its lowest possible occurrence on the neck (frets 0–11). No position is shown at fret 12 or above when an equivalent lower-fret occurrence exists.
+- Positions are sorted ascending by `startFret`. Position labels reflect scale degree: for G major the order on the neck is VI, VII, I, II, III, IV, V.
 - For natural minor (Aeolian) scales, the tonic position is labeled VI (Aeolian is the sixth mode). The neck order reads VI, VII, I, II, III, IV, V ascending from the nut.
 
-**Scenario:** G major produces 7 correct positions in VII–VI neck order
-- WHEN G Ionian is selected and positionSystem = `'3nps'`
-- THEN exactly 7 positions are returned, Position VII starts at fret 2 (F# on low E), Position I starts at fret 3 (G on low E), and they are sorted in that ascending order
+**Scenario:** C major 3NPS positions cover frets 0–10
+- WHEN C Ionian is selected and positionSystem = `'3nps'`
+- THEN the 7 positions have anchor frets: III=0, IV=1, V=3, VI=5, VII=7, I=8, II=10
+- AND no position anchor is at fret 12 or above
 
-**Scenario:** No open-string anchoring for G major Position VI
+**Scenario:** G major 3NPS positions include the open-string box
 - WHEN G Ionian is selected and positionSystem = `'3nps'`
-- THEN Position VI (E) starts at fret 12 on the low E string, not fret 0
+- THEN exactly 7 positions are returned, Position VI (E) has anchor fret 0, Position VII (F#) starts at fret 2, Position I (G) starts at fret 3, sorted in ascending order
+
+**Scenario:** E major 3NPS starts from position I at open
+- WHEN E Ionian is selected and positionSystem = `'3nps'`
+- THEN position I (E/root) has anchor fret 0 (open string)
+- AND positions proceed: I=0, II=2, III=4, IV=5, V=7, VI=9, VII=11
+
+**Scenario:** Position VII is always just below the root
+- WHEN any major key is selected and positionSystem = `'3nps'`
+- THEN position VII's anchor fret is exactly `(rootFret - 1 + 12) % 12` (one fret below position I)
 
 **Scenario:** Labels use Roman numerals
 - WHEN any major scale is selected and positionSystem = `'3nps'`
