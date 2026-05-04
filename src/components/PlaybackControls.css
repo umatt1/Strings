@@ -1,237 +1,23 @@
-/* Collapsible Playback Controls */
-.playback-controls {
-  background: white;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  margin-bottom: 20px;
-  overflow: hidden;
-  transition: all 0.3s ease;
-}
-
-.playback-controls.collapsed {
-  margin-bottom: 10px;
-}
-
-.playback-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 16px 20px;
-  background: linear-gradient(135deg, #e8f5e8 0%, #c8e6c9 100%);
-  cursor: pointer;
-  border-bottom: 2px solid #a5d6a7;
-  transition: background 0.2s ease;
-}
-
-.playback-header:hover {
-  background: linear-gradient(135deg, #c8e6c9 0%, #a5d6a7 100%);
-}
-
-.playback-header h3 {
-  margin: 0;
-  font-size: 16px;
-  color: #2e7d32;
-  font-weight: 600;
-}
-
-.playback-controls .collapse-button {
-  background: none;
-  border: none;
-  font-size: 14px;
-  color: #4caf50;
-  cursor: pointer;
-  padding: 4px;
-  border-radius: 4px;
-  transition: all 0.2s ease;
-}
-
-.playback-controls .collapse-button:hover {
-  background: rgba(76, 175, 80, 0.2);
-  color: #2e7d32;
-}
-
-.playback-content {
-  padding: 20px;
-  transition: opacity 0.3s ease;
-}
-
-.playback-controls.collapsed .playback-content {
-  display: none;
-}
-
-.selection-info {
-  background: rgba(76, 175, 80, 0.1);
-  border: 2px solid #4CAF50;
-  border-radius: 8px;
-  padding: 12px;
-  margin-bottom: 16px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 12px;
-}
-
-.selection-info p {
-  margin: 0;
-  font-weight: 600;
-  color: #2e7d32;
-}
-
-.clear-button {
-  background: #f44336;
-  color: white;
-  border: none;
-  border-radius: 6px;
-  padding: 6px 12px;
-  cursor: pointer;
-  font-size: 12px;
-  font-weight: 600;
-  transition: background 0.2s ease;
-}
-
-.clear-button:hover {
-  background: #d32f2f;
-}
-
-.play-button.primary {
-  background: #4CAF50;
-  color: white;
-  border: 2px solid #2e7d32;
-  font-weight: 700;
-  font-size: 16px;
-}
-
-.play-button.primary:hover {
-  background: #45a049;
-}
-
-.play-button.secondary {
-  background: #f0f0f0;
-  color: #666;
-  border: 2px solid #ccc;
-  font-size: 14px;
-}
-
-.play-button.secondary:hover {
-  background: #e0e0e0;
-}
-
-.instruction {
-  background: rgba(255, 193, 7, 0.1);
-  border: 2px solid #ffc107;
-  border-radius: 8px;
-  padding: 12px;
-  margin: 8px 0;
-  text-align: center;
-  font-weight: 600;
-  color: #f57c00;
-  font-size: 14px;
-}
-
-.playback-controls {
-  background: white;
-  padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  margin-bottom: 20px;
-}
-
-.playback-controls.disabled {
-  background: #f5f5f5;
-  color: #999;
-  text-align: center;
-}
-
-.playback-controls h3 {
-  margin: 0 0 12px 0;
-  font-size: 16px;
-  color: #333;
-  font-weight: 600;
-}
-
-.playback-buttons {
-  display: flex;
-  gap: 12px;
-  flex-wrap: wrap;
-  margin-bottom: 12px;
-}
-
-.play-button {
-  padding: 12px 24px;
-  background: linear-gradient(135deg, #2196F3 0%, #1976D2 100%);
-  border: none;
-  border-radius: 6px;
-  color: white;
-  font-size: 14px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  box-shadow: 0 2px 4px rgba(33, 150, 243, 0.3);
-}
-
-.play-button:hover:not(:disabled) {
-  background: linear-gradient(135deg, #42A5F5 0%, #2196F3 100%);
-  transform: translateY(-1px);
-  box-shadow: 0 4px 8px rgba(33, 150, 243, 0.4);
-}
-
-.play-button:active:not(:disabled) {
-  transform: translateY(0);
-}
-
-.play-button:disabled {
-  background: #ccc;
-  cursor: not-allowed;
-  box-shadow: none;
-}
-
-.playback-info {
-  margin: 0;
-  font-size: 14px;
-  color: #666;
-}
-
-.playback-info strong {
-  color: #4CAF50;
-}
-
-/* Responsive design */
-@media (max-width: 768px) {
-  .playback-controls {
-    padding: 15px;
-  }
-
-  .play-button {
-    padding: 10px 20px;
-    font-size: 13px;
-  }
-}
-
-/* Compact Layout Styles */
-.playback-controls.compact {
-  background: #f8f9fa;
-  border: 2px solid #e9ecef;
-  border-radius: 6px;
-  padding: 12px;
-  margin: 0;
-}
-
-.selection-info.compact {
-  background: rgba(76, 175, 80, 0.08);
-  border: 1px solid #4CAF50;
-  border-radius: 4px;
-  padding: 8px 12px;
-  margin: 0;
+.playback-bar {
   display: flex;
   align-items: center;
   gap: 8px;
-  font-size: 14px;
+  padding: 8px 16px;
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: 6px;
+  font-size: 13px;
 }
 
-.selection-count {
-  color: #2e7d32;
-  font-weight: 500;
+.playback-hint {
   flex: 1;
+  color: rgba(255, 255, 255, 0.8);
+  font-weight: 500;
+}
+
+.playback-hint.muted {
+  color: rgba(255, 255, 255, 0.4);
+  font-style: italic;
+  font-weight: 400;
 }
 
 .play-button.compact {
@@ -247,46 +33,21 @@
   align-items: center;
   justify-content: center;
   transition: all 0.2s ease;
+  flex-shrink: 0;
 }
 
-.play-button.compact:hover {
+.play-button.compact:hover:not(:disabled) {
   background: #45a049;
   transform: scale(1.05);
 }
 
 .play-button.compact:disabled {
-  background: #ccc;
+  background: #555;
   cursor: not-allowed;
-  transform: none;
-}
-
-.play-button.compact.disabled {
-  background: #ccc;
-  cursor: not-allowed;
-  transform: none;
-}
-
-.no-selection-info {
-  background: rgba(158, 158, 158, 0.08);
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  padding: 8px 12px;
-  margin: 0;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 14px;
-}
-
-.no-selection-text {
-  color: #666;
-  font-weight: 500;
-  flex: 1;
-  font-style: italic;
 }
 
 .clear-button.compact {
-  background: #f44336;
+  background: rgba(244, 67, 54, 0.8);
   color: white;
   border: none;
   border-radius: 50%;
@@ -298,114 +59,10 @@
   align-items: center;
   justify-content: center;
   font-weight: bold;
+  flex-shrink: 0;
+  transition: background 0.2s ease;
 }
 
 .clear-button.compact:hover {
   background: #d32f2f;
-}
-
-.chord-info.compact {
-  background: rgba(103, 58, 183, 0.08);
-  border: 1px solid #673ab7;
-  border-radius: 4px;
-  padding: 8px 12px;
-  text-align: center;
-}
-
-.chord-name {
-  color: #4527a0;
-  font-weight: 600;
-  font-size: 14px;
-}
-
-.instruction-text {
-  color: #4527a0;
-  font-weight: 500;
-  font-size: 14px;
-  font-style: italic;
-}
-
-/* ============================================
-   MOBILE-FIRST TOUCH OPTIMIZATIONS - Phase 3
-   ============================================ */
-
-/* Base Mobile Styles (320px+) - Touch-First Playback */
-@media (max-width: 767px) {
-  .playback-header {
-    min-height: 56px !important;
-    padding: 12px 16px !important;
-    -webkit-tap-highlight-color: rgba(76, 175, 80, 0.1);
-  }
-  
-  .playback-controls .collapse-button {
-    min-width: 44px !important;
-    min-height: 44px !important;
-    padding: 10px !important;
-  }
-  
-  .playback-controls .collapse-button:active {
-    transform: scale(0.95);
-    background: rgba(76, 175, 80, 0.3) !important;
-  }
-  
-  .playback-content {
-    padding: 16px 12px !important;
-  }
-  
-  /* Touch-friendly play buttons */
-  .play-button.compact {
-    min-width: 48px !important;
-    min-height: 48px !important;
-    font-size: 16px !important;
-    touch-action: manipulation;
-  }
-  
-  .clear-button.compact {
-    min-width: 44px !important;
-    min-height: 44px !important;
-    font-size: 14px !important;
-  }
-  
-  .selection-info.compact,
-  .no-selection-info,
-  .chord-info.compact {
-    padding: 12px 16px !important;
-    font-size: 15px !important;
-  }
-  
-  .selection-count,
-  .no-selection-text,
-  .instruction-text {
-    font-size: 15px !important;
-  }
-}
-
-/* Remove hover on touch devices */
-@media (hover: none) and (pointer: coarse) {
-  .playback-header:hover {
-    background: linear-gradient(135deg, #e8f5e8 0%, #c8e6c9 100%) !important;
-  }
-  
-  .playback-controls .collapse-button:hover {
-    background: none !important;
-  }
-}
-
-/* Tablet Portrait (768px+) - Restore Desktop */
-@media (min-width: 768px) {
-  .playback-header {
-    padding: 16px 20px !important;
-  }
-  
-  .playback-header:hover {
-    background: linear-gradient(135deg, #c8e6c9 0%, #a5d6a7 100%);
-  }
-  
-  .playback-controls .collapse-button:hover {
-    background: rgba(76, 175, 80, 0.2);
-  }
-  
-  .playback-content {
-    padding: 20px !important;
-  }
 }
