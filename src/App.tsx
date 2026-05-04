@@ -119,19 +119,6 @@ function App() {
     <div className="app">
       <main className="app-main">
         <div className="main-content">
-          <div className="top-settings">
-            <Controls
-              instrument={instrument}
-              onInstrumentChange={setInstrument}
-              mirrorStrings={mirrorStrings}
-              onMirrorStringsChange={setMirrorStrings}
-              colorTheme={colorTheme}
-              onColorThemeChange={setColorTheme}
-              enharmonicPreference={enharmonicPreference}
-              onEnharmonicPreferenceChange={setEnharmonicPreference}
-            />
-          </div>
-
           <div className="theory-panel">
             <MusicTheoryControls
               selectedChordScale={selectedChordScale}
@@ -143,18 +130,21 @@ function App() {
           </div>
 
           <div className="right-content">
-            <div className="desktop-settings">
-              <Controls
-                instrument={instrument}
-                onInstrumentChange={setInstrument}
-                mirrorStrings={mirrorStrings}
-                onMirrorStringsChange={setMirrorStrings}
-                colorTheme={colorTheme}
-                onColorThemeChange={setColorTheme}
-                enharmonicPreference={enharmonicPreference}
-                onEnharmonicPreferenceChange={setEnharmonicPreference}
+            {queue.length > 0 ? (
+              <PracticeBar
+                queue={queue}
+                queueIndex={queueIndex}
+                onAdvance={advanceQueue}
+                onRetreat={retreatQueue}
+                timer={timer}
+                onTimerChange={setTimer}
+                onEditQueue={() => setQueueEditorOpen(true)}
               />
-            </div>
+            ) : (
+              <div className="queue-empty-bar">
+                Queue is empty — add chords or scales using the panel on the left
+              </div>
+            )}
 
             <div className="fretboard-area">
               <PositionControls
@@ -181,21 +171,6 @@ function App() {
                   scrollToFret={scrollToFret}
                 />
               </div>
-              {queue.length > 0 ? (
-                <PracticeBar
-                  queue={queue}
-                  queueIndex={queueIndex}
-                  onAdvance={advanceQueue}
-                  onRetreat={retreatQueue}
-                  timer={timer}
-                  onTimerChange={setTimer}
-                  onEditQueue={() => setQueueEditorOpen(true)}
-                />
-              ) : (
-                <div className="queue-empty-bar">
-                  Queue is empty — add chords or scales using the panel on the left
-                </div>
-              )}
             </div>
 
             <div className="fretboard-playback">
@@ -204,6 +179,19 @@ function App() {
                 selectedChordScale={selectedChordScale}
                 selectedNotes={selectedNotes}
                 onClearSelection={handleClearSelection}
+              />
+            </div>
+
+            <div className="settings-panel">
+              <Controls
+                instrument={instrument}
+                onInstrumentChange={setInstrument}
+                mirrorStrings={mirrorStrings}
+                onMirrorStringsChange={setMirrorStrings}
+                colorTheme={colorTheme}
+                onColorThemeChange={setColorTheme}
+                enharmonicPreference={enharmonicPreference}
+                onEnharmonicPreferenceChange={setEnharmonicPreference}
               />
             </div>
           </div>

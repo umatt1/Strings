@@ -47,21 +47,10 @@
   width: 100%;
 }
 
-.top-settings {
-  width: 100%;
-  order: 1;
-  margin-bottom: 0;
+.settings-panel {
   z-index: 5;
-  transition: all 0.3s ease;
-  display: block; /* Show on mobile */
-}
-
-.desktop-settings {
-  display: none; /* Hide on mobile */
-  order: 1;
-  margin-bottom: 0;
-  z-index: 5;
-  transition: all 0.3s ease;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  padding-top: 12px;
 }
 
 .theory-panel {
@@ -90,7 +79,6 @@
 }
 
 .fretboard-area {
-  order: 3;
   flex: 1;
   display: flex;
   flex-direction: column;
@@ -106,7 +94,6 @@
 }
 
 .fretboard-playback {
-  order: 3;
 }
 
 .app-footer {
@@ -185,14 +172,6 @@
     align-items: flex-start;
   }
 
-  .top-settings {
-    display: none; /* Hide on desktop */
-  }
-
-  .desktop-settings {
-    display: block; /* Show on desktop */
-  }
-
   .theory-panel {
     flex: 0 0 260px;
     width: 260px;
@@ -214,7 +193,6 @@
   }
 
   .fretboard-area {
-    order: 2;
     flex: 1;
     min-height: 0;
   }
