@@ -4,7 +4,7 @@ import { getNoteAtFret } from '../types/music';
 import { FretboardNote } from './FretboardNote';
 import type { ChordScale } from '../utils/musicTheory';
 import { isNoteInChord, getScaleDegreeInfo } from '../utils/musicTheory';
-import type { DisplayMode } from '../utils/positions';
+import type { DisplayMode, Position } from '../utils/positions';
 import { isAllowedByDisplayMode } from '../utils/positions';
 import type { ColorTheme } from '../types/theme';
 import './Fretboard.css';
@@ -18,11 +18,40 @@ interface FretboardProps {
   colorTheme: ColorTheme;
   enharmonicPreference: EnharmonicPreference;
   positionHighlights?: Set<string> | null;
+  positions?: Position[];
+  positionIndex?: number;
   displayMode?: DisplayMode;
   scrollToFret?: number | null;
 }
 
 const INITIAL_FRETS = 24;
+
+// RGB values for each CAGED shape and scale degree position
+const SHAPE_RGB: Record<string, string> = {
+  'E Shape': '76, 175, 80',    // green
+  'D Shape': '255, 152, 0',    // orange
+  'C Shape': '156, 39, 176',   // purple
+  'A Shape': '33, 150, 243',   // blue
+  'G Shape': '239, 68, 68',    // red
+};
+const DEGREE_RGB = [
+  '99, 102, 241',   // I  — indigo
+  '234, 88, 12',    // II — orange
+  '21, 128, 61',    // III — green
+  '147, 51, 234',   // IV — purple
+  '2, 132, 199',    // V  — blue
+  '220, 38, 38',    // VI — red
+  '217, 119, 6',    // VII — amber
+];
+
+function positionRgb(name: string, index: number): string {
+  // CAGED names: "E Shape", "D Shape", etc.
+  for (const [key, rgb] of Object.entries(SHAPE_RGB)) {
+    if (name.startsWith(key.split(' ')[0] + ' Shape') || name === key) return rgb;
+  }
+  // Roman-numeral names: "I", "II", "I — C", etc. — use index mod 7
+  return DEGREE_RGB[index % 7];
+}
 const FRETS_TO_LOAD = 12;
 const MAX_FRETS = 500; // Reasonable maximum
 
@@ -35,6 +64,8 @@ export const Fretboard: React.FC<FretboardProps> = ({
   colorTheme,
   enharmonicPreference,
   positionHighlights = null,
+  positions = [],
+  positionIndex = 0,
   displayMode = 'scales',
   scrollToFret = null,
 }) => {
@@ -42,6 +73,7 @@ export const Fretboard: React.FC<FretboardProps> = ({
   const fretboardRef = useRef<HTMLDivElement>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const [cellWidth, setCellWidth] = useState(60);
 
   const handleScroll = useCallback(() => {
     if (!fretboardRef.current || isLoading || numFrets >= MAX_FRETS) return;
@@ -77,14 +109,25 @@ export const Fretboard: React.FC<FretboardProps> = ({
     return () => document.removeEventListener('fullscreenchange', handleFullscreenChange);
   }, []);
 
+  // Measure fret cell width for per-string fill positioning
+  useEffect(() => {
+    const measure = () => {
+      const cell = fretboardRef.current?.querySelector('.fret-cell') as HTMLElement | null;
+      if (cell) setCellWidth(cell.getBoundingClientRect().width || 60);
+    };
+    measure();
+    const ro = new ResizeObserver(measure);
+    if (fretboardRef.current) ro.observe(fretboardRef.current);
+    return () => ro.disconnect();
+  }, []);
+
   // Auto-scroll to current position when it changes
   useEffect(() => {
     if (scrollToFret === null || scrollToFret === undefined || !fretboardRef.current) return;
-    const fretWidth = 55; // approximate px per fret cell
     const container = fretboardRef.current;
-    const targetScroll = scrollToFret * fretWidth - container.clientWidth / 4;
+    const targetScroll = scrollToFret * cellWidth - container.clientWidth / 4;
     container.scrollTo({ left: Math.max(0, targetScroll), behavior: 'smooth' });
-  }, [scrollToFret]);
+  }, [scrollToFret, cellWidth]);
 
   const toggleFullscreen = async () => {
     if (!fretboardRef.current) return;
@@ -169,9 +212,36 @@ export const Fretboard: React.FC<FretboardProps> = ({
         );
       }
 
+      // Per-string fills: one strip per position instance, spanning that string's actual fret range
+      const stringFills = positions.length > 0
+        ? positions.map((pos, posIdx) => {
+            const sh = pos.highlights.filter(h => h.stringIndex === instrumentStringIndex);
+            if (sh.length === 0) return null;
+            const minFret = Math.min(...sh.map(h => h.fretNumber));
+            const maxFret = Math.max(...sh.map(h => h.fretNumber));
+            const rgb = positionRgb(pos.name, posIdx);
+            const isActive = posIdx === positionIndex;
+            return (
+              <div
+                key={`sfill-${posIdx}`}
+                className="string-region-fill"
+                style={{
+                  left: `${minFret * cellWidth}px`,
+                  width: `${(maxFret - minFret + 1) * cellWidth}px`,
+                  background: `rgba(${rgb}, ${isActive ? 0.45 : 0.12})`,
+                  border: isActive ? `1px solid rgba(${rgb}, 0.6)` : 'none',
+                }}
+              />
+            );
+          }).filter(Boolean)
+        : [];
+
       return (
         <div key={stringIndex} className="string-row">
-          <div className="frets">{frets}</div>
+          <div className="frets">
+            {stringFills}
+            {frets}
+          </div>
         </div>
       );
     });

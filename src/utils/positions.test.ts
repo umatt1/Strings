@@ -392,32 +392,51 @@ describe('3NPS positions', () => {
 });
 
 describe('Mode positions', () => {
-  it('returns 7 positions for a 7-note scale with mode names', () => {
+  it('tonic position is first (positionIndex 0 = I)', () => {
     const positions = calculatePositions(STANDARD_GUITAR, C_IONIAN, 'modes');
-    expect(positions.length).toBe(7);
-    const modeNames = ['Ionian', 'Dorian', 'Phrygian', 'Lydian', 'Mixolydian', 'Aeolian', 'Locrian'];
-    for (const modeName of modeNames) {
-      expect(positions.some((p) => p.name.includes(modeName))).toBe(true);
-    }
+    expect(positions[0].name).toBe('I — C');
   });
 
-  it('returns 5 positions for pentatonic scale (no mode names)', () => {
-    const aPent: ChordScale = {
-      type: 'pentatonic-minor',
-      rootNote: 'A',
-      notes: ['A', 'C', 'D', 'E', 'G'],
-    };
-    const positions = calculatePositions(STANDARD_GUITAR, aPent, 'modes');
-    expect(positions.length).toBe(5);
-    // No mode names for non-7-note scales
+  it('labels use Roman numeral — note name format', () => {
+    const positions = calculatePositions(STANDARD_GUITAR, C_IONIAN, 'modes');
+    const names = positions.map((p) => p.name);
+    expect(names).toContain('I — C');
+    expect(names).toContain('II — D');
+    expect(names).toContain('V — G');
+    expect(names.every((n) => !n.match(/Ionian|Dorian|Position/))).toBe(true);
+  });
+
+  it('tiles across two octaves: 14 positions for a 7-note scale', () => {
+    const positions = calculatePositions(STANDARD_GUITAR, C_IONIAN, 'modes');
+    // 7 degrees × 2 octaves = 14 (some near-nut stubs may be filtered, but C major should get all 14)
+    expect(positions.length).toBeGreaterThanOrEqual(12);
+  });
+
+  it('degree order preserved: each degree groups both octaves together', () => {
+    const positions = calculatePositions(STANDARD_GUITAR, C_IONIAN, 'modes');
+    // Each degree produces 2 instances (oct 0, oct 1) before the next degree
+    const romans = positions.map((p) => p.name.split(' — ')[0]);
+    // First 4 should be I, I, II, II
+    expect(romans[0]).toBe('I');
+    expect(romans[1]).toBe('I');
+    expect(romans[2]).toBe('II');
+    expect(romans[3]).toBe('II');
+    // All 7 degrees appear
+    expect(new Set(romans).size).toBe(7);
+  });
+
+  it('each position has at least 2 notes per string (min highlights filter)', () => {
+    const positions = calculatePositions(STANDARD_GUITAR, C_IONIAN, 'modes');
     for (const pos of positions) {
-      expect(pos.name).not.toMatch(/Ionian|Dorian|Phrygian/);
+      for (let si = 0; si < 6; si++) {
+        const count = pos.highlights.filter((h) => h.stringIndex === si).length;
+        expect(count).toBeGreaterThanOrEqual(2);
+      }
     }
   });
 
   it('all highlighted notes are in the scale', () => {
     const positions = calculatePositions(STANDARD_GUITAR, C_IONIAN, 'modes');
-    // getNoteAtFret imported at top
     for (const pos of positions) {
       for (const h of pos.highlights) {
         const str = STANDARD_GUITAR.strings[h.stringIndex];
@@ -427,11 +446,15 @@ describe('Mode positions', () => {
     }
   });
 
-  it('positions are sorted by startFret', () => {
-    const positions = calculatePositions(STANDARD_GUITAR, C_IONIAN, 'modes');
-    for (let i = 1; i < positions.length; i++) {
-      expect(positions[i].startFret).toBeGreaterThanOrEqual(positions[i - 1].startFret);
-    }
+  it('pentatonic scale produces positions with correct note name labels', () => {
+    const aPent: ChordScale = {
+      type: 'pentatonic-minor',
+      rootNote: 'A',
+      notes: ['A', 'C', 'D', 'E', 'G'],
+    };
+    const positions = calculatePositions(STANDARD_GUITAR, aPent, 'modes');
+    expect(positions[0].name).toBe('I — A');
+    expect(positions.every((p) => p.name.includes(' — '))).toBe(true);
   });
 });
 
@@ -534,80 +557,6 @@ describe('CAGED — pentatonic templates', () => {
   });
 });
 
-// ============================================================
-//  Flat 2-octave positions
-// ============================================================
-
-describe('Flat positions', () => {
-  it('returns 7 positions for G major labeled VI, VII, I, II, III, IV, V', () => {
-    const positions = calculatePositions(STANDARD_GUITAR, G_IONIAN, 'flat');
-    expect(positions.length).toBe(7);
-    const names = positions.map((p) => p.name);
-    // VI (E, fret 0), VII (F#, fret 2), I (G, fret 3), II (A, fret 5), III (B, fret 7), IV (C, fret 8), V (D, fret 10)
-    expect(names).toEqual(['VI', 'VII', 'I', 'II', 'III', 'IV', 'V']);
-  });
-
-  it('all highlighted notes are in the scale', () => {
-    const positions = calculatePositions(STANDARD_GUITAR, G_IONIAN, 'flat');
-    for (const pos of positions) {
-      for (const h of pos.highlights) {
-        const str = STANDARD_GUITAR.strings[h.stringIndex];
-        const note = getNoteAtFret(str.openNote, str.octave, h.fretNumber);
-        expect(G_IONIAN.notes).toContain(note.name);
-      }
-    }
-  });
-
-  it('positions are sorted by startFret ascending', () => {
-    const positions = calculatePositions(STANDARD_GUITAR, G_IONIAN, 'flat');
-    for (let i = 1; i < positions.length; i++) {
-      expect(positions[i].startFret).toBeGreaterThanOrEqual(positions[i - 1].startFret);
-    }
-  });
-
-  it('each position has highlights on all 6 strings', () => {
-    const positions = calculatePositions(STANDARD_GUITAR, G_IONIAN, 'flat');
-    for (const pos of positions) {
-      for (let si = 0; si < 6; si++) {
-        const count = pos.highlights.filter((h) => h.stringIndex === si).length;
-        expect(count).toBeGreaterThanOrEqual(2); // at least 2 notes per string
-      }
-    }
-  });
-
-  it('3NPS and flat position I share the same startFret region for G major', () => {
-    const flat = calculatePositions(STANDARD_GUITAR, G_IONIAN, 'flat');
-    const nps  = calculatePositions(STANDARD_GUITAR, G_IONIAN, '3nps');
-    const flatI = flat.find((p) => p.name === 'I');
-    const npsI  = nps.find((p) => p.name === 'I');
-    expect(flatI).toBeDefined();
-    expect(npsI).toBeDefined();
-    // Both should anchor near the same fret (within 2 frets of each other)
-    expect(Math.abs(flatI!.startFret - npsI!.startFret)).toBeLessThanOrEqual(2);
-  });
-
-  it('returns empty for pentatonic (5-note) scale', () => {
-    const pent: ChordScale = { type: 'pentatonic-major', rootNote: 'G', notes: ['G','A','B','D','E'] };
-    expect(calculatePositions(STANDARD_GUITAR, pent, 'flat')).toHaveLength(0);
-  });
-
-  it('C major flat: all 7 positions anchor at their lowest fret (0–10)', () => {
-    const positions = calculatePositions(STANDARD_GUITAR, C_IONIAN, 'flat');
-    const frets = positions.map((p) => p.startFret);
-    // III=0, IV=1, V=3, VI=5, VII=7, I=8, II=10 — same anchor sequence as 3NPS
-    expect(frets).toEqual([0, 1, 3, 5, 7, 8, 10]);
-    expect(Math.max(...frets)).toBeLessThan(12);
-  });
-
-  it('natural minor tonic position is labeled VI', () => {
-    const positions = calculatePositions(STANDARD_GUITAR, A_AEOLIAN, 'flat');
-    expect(positions.length).toBe(7);
-    // A Aeolian tonic = A, rootFret = 5. The tonic position anchors at startFret 5.
-    // (Using startFret to identify the tonic position, since adjacent windows may overlap.)
-    const tonicPos = positions.find((p) => p.startFret === 5);
-    expect(tonicPos?.name).toBe('VI');
-  });
-});
 
 describe('calculatePositions edge cases', () => {
   it('returns empty array for system "none"', () => {

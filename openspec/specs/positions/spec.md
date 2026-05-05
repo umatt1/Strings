@@ -79,12 +79,13 @@ CAGED tiles the five shapes (E, D, C, A, G) across the fretboard for 6-string gu
 
 ### REQ-POS-04: Mode positions
 
-Mode positions create one ~5-fret box per scale degree, centred on where that degree appears on the lowest string. For 7-note scales, each position is annotated with the mode name (Ionian, Dorian, etc.).
+Mode positions create one ~5-fret box per scale degree, tiled across two octaves. Positions are ordered with the tonic (degree I) first, then remaining degrees in scale order, each octave's lower instance before its higher instance. Positions with fewer than 2 notes per string are discarded. Labels use the format `"<Roman numeral> — <note name>"` (e.g. `"I — C"`, `"V — G"`).
 
 **Scenario:**
 - GIVEN C Ionian and positionSystem = `'modes'`
 - WHEN positions are computed
-- THEN Position 1 is labeled "Position 1 (Ionian)", Position 2 = "Position 2 (Dorian)", etc.
+- THEN positionIndex 0 is labeled "I — C"
+- AND subsequent positions follow degree order: "II — D", "III — E", "IV — F", "V — G", "VI — A", "VII — B", then the octave-2 instances "I — C", "II — D", etc.
 
 ### REQ-POS-05: Position navigation
 

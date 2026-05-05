@@ -5,7 +5,7 @@ import type { ChordScale } from './utils/musicTheory';
 import type { ColorTheme } from './types/theme';
 import { COLOR_THEMES } from './types/theme';
 import type { PositionSystem, DisplayMode } from './utils/positions';
-import { calculatePositions, is3npsEligible, isFlatEligible } from './utils/positions';
+import { calculatePositions, is3npsEligible } from './utils/positions';
 import type { QueueItem } from './types/practice';
 import { usePracticeMode } from './hooks/usePracticeMode';
 import { Controls } from './components/Controls';
@@ -15,6 +15,7 @@ import { Fretboard } from './components/Fretboard';
 import { PlaybackControls } from './components/PlaybackControls';
 import { PracticeBar } from './components/PracticeBar';
 import { QueueEditor } from './components/QueueEditor';
+import { OnboardingModal } from './components/OnboardingModal';
 import { PRESETS } from './data/presets';
 import './App.css';
 
@@ -31,6 +32,7 @@ function App() {
   const [positionSystem, setPositionSystem] = useState<PositionSystem>('none');
   const [positionIndex, setPositionIndex] = useState(0);
   const [displayMode, setDisplayMode] = useState<DisplayMode>('scales');
+  const [showOnboarding, setShowOnboarding] = useState(() => !localStorage.getItem('strings-onboarding-seen'));
 
   // ── Queue (always-on) ─────────────────────────────────────────────────
   const onItemActivated = useCallback((item: QueueItem) => {
@@ -65,9 +67,6 @@ function App() {
   useEffect(() => {
     setPositionIndex(0);
     if (positionSystem === '3nps' && selectedChordScale && !is3npsEligible(selectedChordScale)) {
-      setPositionSystem('none');
-    }
-    if (positionSystem === 'flat' && selectedChordScale && !isFlatEligible(selectedChordScale)) {
       setPositionSystem('none');
     }
   }, [selectedChordScale, positionSystem]); // eslint-disable-line react-hooks/exhaustive-deps
@@ -155,7 +154,6 @@ function App() {
                 onPositionIndexChange={setPositionIndex}
                 hasSelection={!!selectedChordScale}
                 is3npsEligible={!!selectedChordScale && is3npsEligible(selectedChordScale)}
-                isFlatEligible={!!selectedChordScale && isFlatEligible(selectedChordScale)}
               />
               <div className="fretboard-panel">
                 <Fretboard
@@ -167,6 +165,8 @@ function App() {
                   colorTheme={colorTheme}
                   enharmonicPreference={enharmonicPreference}
                   positionHighlights={positionHighlights}
+                  positions={positions}
+                  positionIndex={positionIndex}
                   displayMode={displayMode}
                   scrollToFret={scrollToFret}
                 />
@@ -192,11 +192,19 @@ function App() {
                 onColorThemeChange={setColorTheme}
                 enharmonicPreference={enharmonicPreference}
                 onEnharmonicPreferenceChange={setEnharmonicPreference}
+                onShowIntro={() => setShowOnboarding(true)}
               />
             </div>
           </div>
         </div>
       </main>
+
+      {showOnboarding && (
+        <OnboardingModal onDismiss={() => {
+          localStorage.setItem('strings-onboarding-seen', 'true');
+          setShowOnboarding(false);
+        }} />
+      )}
 
       {queueEditorOpen && (
         <QueueEditor

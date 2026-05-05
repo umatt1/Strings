@@ -150,6 +150,16 @@
   height: 100%;
 }
 
+/* Per-string position fills — sit inside .frets (position: relative), behind note dots */
+.string-region-fill {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  pointer-events: none;
+  z-index: 0;
+  border-radius: 3px;
+}
+
 .fret-cell {
   display: flex;
   flex-direction: column;
