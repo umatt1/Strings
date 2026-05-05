@@ -18,6 +18,7 @@ interface ControlsProps {
   onColorThemeChange: (theme: ColorTheme) => void;
   enharmonicPreference: EnharmonicPreference;
   onEnharmonicPreferenceChange: (preference: EnharmonicPreference) => void;
+  onShowIntro?: () => void;
 }
 
 export const Controls: React.FC<ControlsProps> = ({
@@ -28,6 +29,7 @@ export const Controls: React.FC<ControlsProps> = ({
   onColorThemeChange,
   enharmonicPreference,
   onEnharmonicPreferenceChange,
+  onShowIntro,
 }) => {
   const [selectedTuning, setSelectedTuning] = React.useState<TuningPreset>(
     GUITAR_TUNINGS.find(t => t.id === 'standard')!
@@ -125,6 +127,7 @@ export const Controls: React.FC<ControlsProps> = ({
       </div>
       
       {!isCollapsed && (
+        <>
         <div className="controls-content">
           <div className="controls-horizontal-layout">
             {/* Instrument & Tuning Section */}
@@ -244,6 +247,17 @@ export const Controls: React.FC<ControlsProps> = ({
         </div>
           </div>
         </div>
+        {onShowIntro && (
+          <div style={{ paddingTop: '8px', textAlign: 'right' }}>
+            <button
+              onClick={onShowIntro}
+              style={{ background: 'none', border: 'none', color: '#4f46e5', cursor: 'pointer', fontSize: '13px', padding: 0, textDecoration: 'underline' }}
+            >
+              Show intro
+            </button>
+          </div>
+        )}
+        </>
       )}
     </div>
   );

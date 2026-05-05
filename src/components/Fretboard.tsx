@@ -4,7 +4,7 @@ import { getNoteAtFret } from '../types/music';
 import { FretboardNote } from './FretboardNote';
 import type { ChordScale } from '../utils/musicTheory';
 import { isNoteInChord, getScaleDegreeInfo } from '../utils/musicTheory';
-import type { DisplayMode } from '../utils/positions';
+import type { DisplayMode, Position } from '../utils/positions';
 import { isAllowedByDisplayMode } from '../utils/positions';
 import type { ColorTheme } from '../types/theme';
 import './Fretboard.css';
@@ -18,6 +18,8 @@ interface FretboardProps {
   colorTheme: ColorTheme;
   enharmonicPreference: EnharmonicPreference;
   positionHighlights?: Set<string> | null;
+  positions?: Position[];
+  positionIndex?: number;
   displayMode?: DisplayMode;
   scrollToFret?: number | null;
 }
@@ -35,13 +37,18 @@ export const Fretboard: React.FC<FretboardProps> = ({
   colorTheme,
   enharmonicPreference,
   positionHighlights = null,
+  positions = [],
+  positionIndex = 0,
   displayMode = 'scales',
   scrollToFret = null,
 }) => {
   const [numFrets, setNumFrets] = useState(INITIAL_FRETS);
   const fretboardRef = useRef<HTMLDivElement>(null);
+  const gridRef = useRef<HTMLDivElement>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const [cellWidth, setCellWidth] = useState(60);
+  const [firstCellOffset, setFirstCellOffset] = useState(0);
 
   const handleScroll = useCallback(() => {
     if (!fretboardRef.current || isLoading || numFrets >= MAX_FRETS) return;
@@ -77,14 +84,31 @@ export const Fretboard: React.FC<FretboardProps> = ({
     return () => document.removeEventListener('fullscreenchange', handleFullscreenChange);
   }, []);
 
+  // Measure actual fret cell dimensions for region fill positioning
+  useEffect(() => {
+    const measure = () => {
+      const grid = gridRef.current;
+      if (!grid) return;
+      const cell = grid.querySelector('.fret-cell') as HTMLElement | null;
+      if (!cell) return;
+      const gridRect = grid.getBoundingClientRect();
+      const cellRect = cell.getBoundingClientRect();
+      setCellWidth(cellRect.width || 60);
+      setFirstCellOffset(cellRect.left - gridRect.left);
+    };
+    measure();
+    const ro = new ResizeObserver(measure);
+    if (fretboardRef.current) ro.observe(fretboardRef.current);
+    return () => ro.disconnect();
+  }, []);
+
   // Auto-scroll to current position when it changes
   useEffect(() => {
     if (scrollToFret === null || scrollToFret === undefined || !fretboardRef.current) return;
-    const fretWidth = 55; // approximate px per fret cell
     const container = fretboardRef.current;
-    const targetScroll = scrollToFret * fretWidth - container.clientWidth / 4;
+    const targetScroll = scrollToFret * cellWidth - container.clientWidth / 4;
     container.scrollTo({ left: Math.max(0, targetScroll), behavior: 'smooth' });
-  }, [scrollToFret]);
+  }, [scrollToFret, cellWidth]);
 
   const toggleFullscreen = async () => {
     if (!fretboardRef.current) return;
@@ -198,7 +222,21 @@ export const Fretboard: React.FC<FretboardProps> = ({
       >
         {isFullscreen ? '⤓' : '⛶'}
       </button>
-      <div className="fretboard-grid">
+      <div className="fretboard-grid" ref={gridRef}>
+        {positions.length > 0 && (
+          <div className="region-fills-layer" aria-hidden="true">
+            {positions.map((pos, i) => (
+              <div
+                key={`fill-${i}`}
+                className={`region-fill ${i === positionIndex ? 'region-fill--active' : ''}`}
+                style={{
+                  left: `${firstCellOffset + pos.startFret * cellWidth}px`,
+                  width: `${(pos.endFret - pos.startFret + 1) * cellWidth}px`,
+                }}
+              />
+            ))}
+          </div>
+        )}
         {renderFretboard()}
       </div>
       {isLoading && numFrets < MAX_FRETS && (

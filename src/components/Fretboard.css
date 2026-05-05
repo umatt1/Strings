@@ -27,6 +27,33 @@
   width: fit-content;
 }
 
+/* Region fill layer — sits behind all notes, z-index below fret markers */
+.region-fills-layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.region-fill {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  background: rgba(99, 102, 241, 0.12);
+  border-radius: 4px;
+  pointer-events: none;
+  z-index: 0;
+  transition: opacity 0.15s ease;
+}
+
+.region-fill--active {
+  background: rgba(99, 102, 241, 0.35);
+  border: 1px solid rgba(99, 102, 241, 0.4);
+}
+
 /* Fret marker dots - positioned on the fretboard grid background */
 /* These appear as visual guides between the strings, like on a real guitar */
 .fretboard-grid::before {
