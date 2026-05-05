@@ -25,6 +25,33 @@ interface FretboardProps {
 }
 
 const INITIAL_FRETS = 24;
+
+// RGB values for each CAGED shape and scale degree position
+const SHAPE_RGB: Record<string, string> = {
+  'E Shape': '76, 175, 80',    // green
+  'D Shape': '255, 152, 0',    // orange
+  'C Shape': '156, 39, 176',   // purple
+  'A Shape': '33, 150, 243',   // blue
+  'G Shape': '239, 68, 68',    // red
+};
+const DEGREE_RGB = [
+  '99, 102, 241',   // I  — indigo
+  '234, 88, 12',    // II — orange
+  '21, 128, 61',    // III — green
+  '147, 51, 234',   // IV — purple
+  '2, 132, 199',    // V  — blue
+  '220, 38, 38',    // VI — red
+  '217, 119, 6',    // VII — amber
+];
+
+function positionRgb(name: string, index: number): string {
+  // CAGED names: "E Shape", "D Shape", etc.
+  for (const [key, rgb] of Object.entries(SHAPE_RGB)) {
+    if (name.startsWith(key.split(' ')[0] + ' Shape') || name === key) return rgb;
+  }
+  // Roman-numeral names: "I", "II", "I — C", etc. — use index mod 7
+  return DEGREE_RGB[index % 7];
+}
 const FRETS_TO_LOAD = 12;
 const MAX_FRETS = 500; // Reasonable maximum
 
@@ -84,7 +111,7 @@ export const Fretboard: React.FC<FretboardProps> = ({
     return () => document.removeEventListener('fullscreenchange', handleFullscreenChange);
   }, []);
 
-  // Measure actual fret cell dimensions for region fill positioning
+  // Measure fret cell width for region fill positioning
   useEffect(() => {
     const measure = () => {
       const grid = gridRef.current;
@@ -225,16 +252,22 @@ export const Fretboard: React.FC<FretboardProps> = ({
       <div className="fretboard-grid" ref={gridRef}>
         {positions.length > 0 && (
           <div className="region-fills-layer" aria-hidden="true">
-            {positions.map((pos, i) => (
-              <div
-                key={`fill-${i}`}
-                className={`region-fill ${i === positionIndex ? 'region-fill--active' : ''}`}
-                style={{
-                  left: `${firstCellOffset + pos.startFret * cellWidth}px`,
-                  width: `${(pos.endFret - pos.startFret + 1) * cellWidth}px`,
-                }}
-              />
-            ))}
+            {positions.map((pos, i) => {
+              const rgb = positionRgb(pos.name, i);
+              const isActive = i === positionIndex;
+              return (
+                <div
+                  key={`fill-${i}`}
+                  className="region-fill"
+                  style={{
+                    left: `${firstCellOffset + pos.startFret * cellWidth}px`,
+                    width: `${(pos.endFret - pos.startFret + 1) * cellWidth}px`,
+                    background: `rgba(${rgb}, ${isActive ? 0.45 : 0.12})`,
+                    border: isActive ? `1px solid rgba(${rgb}, 0.6)` : 'none',
+                  }}
+                />
+              );
+            })}
           </div>
         )}
         {renderFretboard()}
