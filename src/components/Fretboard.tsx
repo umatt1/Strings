@@ -71,11 +71,9 @@ export const Fretboard: React.FC<FretboardProps> = ({
 }) => {
   const [numFrets, setNumFrets] = useState(INITIAL_FRETS);
   const fretboardRef = useRef<HTMLDivElement>(null);
-  const gridRef = useRef<HTMLDivElement>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [cellWidth, setCellWidth] = useState(60);
-  const [firstCellOffset, setFirstCellOffset] = useState(0);
 
   const handleScroll = useCallback(() => {
     if (!fretboardRef.current || isLoading || numFrets >= MAX_FRETS) return;
@@ -111,17 +109,11 @@ export const Fretboard: React.FC<FretboardProps> = ({
     return () => document.removeEventListener('fullscreenchange', handleFullscreenChange);
   }, []);
 
-  // Measure fret cell width for region fill positioning
+  // Measure fret cell width for per-string fill positioning
   useEffect(() => {
     const measure = () => {
-      const grid = gridRef.current;
-      if (!grid) return;
-      const cell = grid.querySelector('.fret-cell') as HTMLElement | null;
-      if (!cell) return;
-      const gridRect = grid.getBoundingClientRect();
-      const cellRect = cell.getBoundingClientRect();
-      setCellWidth(cellRect.width || 60);
-      setFirstCellOffset(cellRect.left - gridRect.left);
+      const cell = fretboardRef.current?.querySelector('.fret-cell') as HTMLElement | null;
+      if (cell) setCellWidth(cell.getBoundingClientRect().width || 60);
     };
     measure();
     const ro = new ResizeObserver(measure);
@@ -220,9 +212,36 @@ export const Fretboard: React.FC<FretboardProps> = ({
         );
       }
 
+      // Per-string fills: one strip per position instance, spanning that string's actual fret range
+      const stringFills = positions.length > 0
+        ? positions.map((pos, posIdx) => {
+            const sh = pos.highlights.filter(h => h.stringIndex === instrumentStringIndex);
+            if (sh.length === 0) return null;
+            const minFret = Math.min(...sh.map(h => h.fretNumber));
+            const maxFret = Math.max(...sh.map(h => h.fretNumber));
+            const rgb = positionRgb(pos.name, posIdx);
+            const isActive = posIdx === positionIndex;
+            return (
+              <div
+                key={`sfill-${posIdx}`}
+                className="string-region-fill"
+                style={{
+                  left: `${minFret * cellWidth}px`,
+                  width: `${(maxFret - minFret + 1) * cellWidth}px`,
+                  background: `rgba(${rgb}, ${isActive ? 0.45 : 0.12})`,
+                  border: isActive ? `1px solid rgba(${rgb}, 0.6)` : 'none',
+                }}
+              />
+            );
+          }).filter(Boolean)
+        : [];
+
       return (
         <div key={stringIndex} className="string-row">
-          <div className="frets">{frets}</div>
+          <div className="frets">
+            {stringFills}
+            {frets}
+          </div>
         </div>
       );
     });
@@ -249,27 +268,7 @@ export const Fretboard: React.FC<FretboardProps> = ({
       >
         {isFullscreen ? '⤓' : '⛶'}
       </button>
-      <div className="fretboard-grid" ref={gridRef}>
-        {positions.length > 0 && (
-          <div className="region-fills-layer" aria-hidden="true">
-            {positions.map((pos, i) => {
-              const rgb = positionRgb(pos.name, i);
-              const isActive = i === positionIndex;
-              return (
-                <div
-                  key={`fill-${i}`}
-                  className="region-fill"
-                  style={{
-                    left: `${firstCellOffset + pos.startFret * cellWidth}px`,
-                    width: `${(pos.endFret - pos.startFret + 1) * cellWidth}px`,
-                    background: `rgba(${rgb}, ${isActive ? 0.45 : 0.12})`,
-                    border: isActive ? `1px solid rgba(${rgb}, 0.6)` : 'none',
-                  }}
-                />
-              );
-            })}
-          </div>
-        )}
+      <div className="fretboard-grid">
         {renderFretboard()}
       </div>
       {isLoading && numFrets < MAX_FRETS && (

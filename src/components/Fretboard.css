@@ -150,18 +150,8 @@
   height: 100%;
 }
 
-/* Region fill layer — rectangle fills per position, z-index below notes */
-.region-fills-layer {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  pointer-events: none;
-  z-index: 0;
-}
-
-.region-fill {
+/* Per-string position fills — sit inside .frets (position: relative), behind note dots */
+.string-region-fill {
   position: absolute;
   top: 0;
   bottom: 0;
